@@ -50,7 +50,7 @@ levels(data$ExpT3)
 
 
 Eff1<-table(data$ExpT1)
-df<-data.frame(Eff=c(Eff),Freq=c(Eff)/sum(Eff))
+df<-data.frame(Eff1=c(Eff1),Freq=c(Eff1)/sum(Eff1))
 knitr::kable(t(df))
 
 Eff2<-table(data$ExpT2)
@@ -62,3 +62,4 @@ df<-data.frame(Eff3=c(Eff3),Freq=c(Eff3)/sum(Eff3))
 knitr::kable(t(df))
 
 ```
+Grossomierdo
