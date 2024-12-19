@@ -1,0 +1,32 @@
+---
+title: "Rapport"
+author: "ALIX Claire - ZEGHARI Saad"
+institute : "INSA Toulouse"
+date: "`r Sys.Date()`"
+output: 
+  pdf_document :
+    toc : TRUE
+    toc_depth : 2
+    number_section : TRUE
+header-includes:
+   - \usepackage{dsfont}
+   - \usepackage{color}
+   - \newcommand{\1}{\mathds{1}}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#library(reticulate)
+library(ggplot2)
+library(corrplot)
+library(FactoMineR)
+library(factoextra)
+library(gridExtra)
+```
+
+```{r,eval=F}
+Data<-read.table("data.txt",header=T, sep=";")
+head(Data)
+summary(Data)
+```
