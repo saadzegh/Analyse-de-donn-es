@@ -25,8 +25,21 @@ library(factoextra)
 library(gridExtra)
 ```
 
+On a 36 variables quantitavies (tous les tratements),
+On a 3 variables qualitatives (Résultat/Génétique d'experience)
+
+
 ```{r,eval=F}
-Data<-read.table("data.txt",header=T, sep=";")
-head(Data)
-summary(Data)
+data<-read.table("data.txt",header=T, sep=";")
+#head(data)
+summary(data)
+dim(data)
+#nrow(data)
+#ncol(data)
+str(data)
+
+Experience1 <- data[37]
+levels(Experience1)
+
+data$ExpT1 <- as.factor(data$ExpT1)
 ```
