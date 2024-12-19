@@ -42,4 +42,23 @@ Experience1 <- data[37]
 levels(Experience1)
 
 data$ExpT1 <- as.factor(data$ExpT1)
+levels(data$ExpT1)
+data$ExpT2 <- as.factor(data$ExpT2)
+levels(data$ExpT2)
+data$ExpT3 <- as.factor(data$ExpT3)
+levels(data$ExpT3)
+
+
+Eff1<-table(data$ExpT1)
+df<-data.frame(Eff=c(Eff),Freq=c(Eff)/sum(Eff))
+knitr::kable(t(df))
+
+Eff2<-table(data$ExpT2)
+df<-data.frame(Eff2=c(Eff2),Freq=c(Eff2)/sum(Eff2))
+knitr::kable(t(df))
+
+Eff3<-table(data$ExpT3)
+df<-data.frame(Eff3=c(Eff3),Freq=c(Eff3)/sum(Eff3))
+knitr::kable(t(df))
+
 ```
