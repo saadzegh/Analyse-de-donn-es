@@ -1,0 +1,30 @@
+Stat descriptives :
+
+Qualitative : pie, barplot => est ce qu'il y a des modalités qui ont plus d'impact que les autres
+
+Quantitatives : Regarder les distribution (boxplot). Voir comment la variable se disperce, est ce u'il y a des aberrations? 
+Graphe de 18 pour Réplicat 1
+Grape de 18 pour Réplicat 2
+Library(gridExtra)
+grid.arrange(g1,g2,nrow)
+g1 et g2<- ggplot
+
+
+Clustering :
+Classification hiérarchique + Kmeans
+=> Comparer les méthodes
+
+Comment gérer le nombre de classe
+et comment comparer les classes obtenus par les méthodes de clustering
+
+Regarder comment les variables évoluent d'une classe à une autre => aide interprétation
+
+
+
+On peut ne pas utiliser DBScan
+NE PAS REFAIRE LE COURS
+(exemple : pour classification hierarchique : préciser la distance et deuxieme truc important).
+
+SPOILER ZONE :
+CONSEIL DE METTRE DES COULEURS POUR VOIR QUEL INDIVIDU VIENT DU REPLICA 1 ET REPLICA 2
+Y A UN TRAITEMENT QUI REAGI PAS COMME LES AUTRES (VOIR LES HEURES)
