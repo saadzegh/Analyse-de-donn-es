@@ -1,4 +1,8 @@
 ---
+output:
+  html_document: default
+  pdf_document: default
+---
 title: "Rapport"
 author: "ALIX Claire - ZEGHARI Saad"
 institute : "INSA Toulouse"
@@ -24,22 +28,25 @@ library(FactoMineR)
 library(factoextra)
 library(gridExtra)
 ```
+Description du jeu de données (à compléter et reformuler(essayer d'utiliser le vocabulaire de l'intro du cours pour faire plaiz à la madame))
 
-On a 36 variables quantitavies (tous les tratements),
-On a 3 variables qualitatives (Résultat/Génétique d'experience)
+Le jeu de données est constitué de 39 variables décrivant les différences d'expression de 542 gènes (individus) d'une plante modèle pour les deux réplicats de l'expérience et les trois traitements appliqués durant six heures.
 
-
-```{r,eval=F}
-data<-read.table("data.txt",header=T, sep=";")
-#head(data)
+Les 36 premières variables sont des variables quantitatives continues Les trois dernières variables sont qualitatives (ordinales ?), elles représentent la décision à propos l'expression du gène.
+```{r,eval=T}
+data<-read.table("data.txt",header=T, sep=";", stringsAsFactors = T) #le dernier ça met les trois dernières variables en factors
+head(data, n=8)
 summary(data)
 dim(data)
 #nrow(data)
 #ncol(data)
 str(data)
+```
 
-Experience1 <- data[37]
-levels(Experience1)
+
+```{r,eval=F}
+#Experience1 <- data[37]
+#levels(Experience1)
 
 data$ExpT1 <- as.factor(data$ExpT1)
 levels(data$ExpT1)
@@ -47,8 +54,9 @@ data$ExpT2 <- as.factor(data$ExpT2)
 levels(data$ExpT2)
 data$ExpT3 <- as.factor(data$ExpT3)
 levels(data$ExpT3)
+```
 
-
+```{r,eval=F}
 Eff1<-table(data$ExpT1)
 df<-data.frame(Eff1=c(Eff1),Freq=c(Eff1)/sum(Eff1))
 knitr::kable(t(df))
@@ -62,4 +70,3 @@ df<-data.frame(Eff3=c(Eff3),Freq=c(Eff3)/sum(Eff3))
 knitr::kable(t(df))
 
 ```
-Grossomierdo
