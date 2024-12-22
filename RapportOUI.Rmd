@@ -33,11 +33,17 @@ Description du jeu de données (à compléter et reformuler(essayer d'utiliser l
 Le jeu de données est constitué de 39 variables décrivant les différences d'expression de 542 gènes (individus) d'une plante modèle pour les deux réplicats de l'expérience et les trois traitements appliqués durant six heures.
 
 Les 36 premières variables sont des variables quantitatives continues Les trois dernières variables sont qualitatives (ordinales ?), elles représentent la décision à propos l'expression du gène.
+
+stringsAsFactors = T
 ```{r,eval=T}
 data<-read.table("data.txt",header=T, sep=";", stringsAsFactors = T) #le dernier ça met les trois dernières variables en factors
 head(data, n=8)
 summary(data)
 dim(data)
+class(data)
+names(data)
+#colnames(data)
+#attributes(data)
 #nrow(data)
 #ncol(data)
 str(data)
@@ -48,11 +54,11 @@ str(data)
 #Experience1 <- data[37]
 #levels(Experience1)
 
-data$ExpT1 <- as.factor(data$ExpT1)
+#data$ExpT1 <- as.factor(data$ExpT1)
 levels(data$ExpT1)
-data$ExpT2 <- as.factor(data$ExpT2)
+#data$ExpT2 <- as.factor(data$ExpT2)
 levels(data$ExpT2)
-data$ExpT3 <- as.factor(data$ExpT3)
+#data$ExpT3 <- as.factor(data$ExpT3)
 levels(data$ExpT3)
 ```
 
@@ -70,3 +76,21 @@ df<-data.frame(Eff3=c(Eff3),Freq=c(Eff3)/sum(Eff3))
 knitr::kable(t(df))
 
 ```
+
+P'tite expérience :
+```{r}
+ggplot(data=data) + geom_point(aes(x = T1_1H_R1, y = T1_6H_R1, color=ExpT1))
+```
+
+```{r}
+data1 <- melt(data[, -c(19:39)])
+ggplot(data1, aes(x = variable, y = value)) + geom_boxplot()
+
+data2 <- melt(data[, -c(1:18,37:39)])
+ggplot(data2, aes(x = variable, y = value)) + geom_boxplot()
+```
+J'ai fait un graph avec les boxplots des variables du premier replicat et un autre avec les variables du deuxième réplicat et je trouve que les deux graphes se ressemblent pas mal
+```{r}
+corrplot(cor(data[, -c(37:39)]), method = "ellipse")
+```
+LOOOOOOL C'EST MAGNIFIQUE (NON A L'AIDE Y'A TROP DE VARIABLES)
