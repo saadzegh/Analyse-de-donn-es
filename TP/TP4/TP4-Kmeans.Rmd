@@ -1,0 +1,329 @@
+---
+title: "TP4 Kmeans et variantes"
+date : "3 MIC / 2024-2025"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth : 4
+    number_sections : true
+header-includes:
+  - \usepackage{comment}
+params:
+  soln: TRUE   
+---
+
+```{css,echo=F}
+.badCode {
+background-color: #cfdefc;  
+}
+
+.corrO { background-color: rgb(255,238,237); }
+.corrS { background-color: pink; color: black; border: 1px solid red; }
+```
+
+```{r setup, echo=FALSE, cache=TRUE}
+library(knitr)
+## Global options
+options(max.print="75")
+opts_chunk$set(echo=TRUE,
+	             cache=FALSE,
+               prompt=FALSE,
+               tidy=TRUE,
+               comment=NA,
+               message=FALSE,
+               warning=FALSE,
+               class.source="badCode")
+opts_knit$set(width=75)
+```
+
+L'objectif de ce TP est d'illustrer les notions abordées dans le chapitre dédié aux algorithmes de clustering de type Kmeans. Les librairies R nécessaires pour ce TP : 
+
+```{r,echo=T, error=F,warning=F,message=F}
+library(forcats)
+library(ggplot2)
+library(corrplot)
+library(reshape2)
+
+library(FactoMineR)
+library(factoextra)
+
+library(mclust)
+library(cluster)
+library(ppclust)
+
+library(circlize)
+library(ggalluvial)
+```
+
+# Prise en main des données de vins 
+## Lecture des données
+
+Dans ce TP, on va utiliser le jeu de données `wine` disponible sur la page moodle du cours. 
+
+Ce jeu de données comprend des mesures physico-chimiques réalisées sur un échantillon de $n=600$ vins (rouges et blancs) du Portugal. Ces mesures sont complétées par une évaluation sensorielle de la qualité par un ensemble d’experts. Chaque vin est décrit par les variables suivantes :
+
+- Qualite : son évaluation sensorielle par les experts (“bad”,“medium”,“good”),
+- Type : son type (1 pour un vin rouge, 0 pour un vin blanc),
+- AcidVol : la teneur en acide volatile (en g/dm3 d’acide acétique),
+- AcidCitr : la teneur en acide citrique (en g/dm3),
+- SO2lbr : le dosage du dioxyde de soufre libre (en mg/dm3),
+- SO2tot : le dosage du dioxyde de soufre total (en mg/dm3),
+- Densite : la densité (en g/cm3),
+- Alcool : le degré d’alcool (en % Vol.).
+
+**Question 1.** Récupérez sur moodle le jeu de données `wine.txt` et chargez-le sous R. 
+
+```{r,eval=F}
+wine <-read.table("wine.txt", header=T)
+```
+
+Vérifiez la nature des variables à l'aide de la fonction `str()`. Modifiez si nécessaire les variables qualitatives (à l'aide de `as.factor()`) et transformez les modalités "1" et "0" de la variable `Type`en "rouge" et "blanc" respectivement (à l'aide de la fonction `factor()`).
+
+```{r,eval=F}
+wine$Qualite <- as.factor(wine$Qualite)
+wine$Type <- factor(wine$Type, labels=c("blanc","rouge"))
+```
+
+
+## Statistiques descriptives avec R
+
+**Question 2.** Faites quelques statistiques descriptives pour faire connaissance avec le jeu de données, avec des choix adaptés à la nature des variables. En particulier, étudiez les corrélations entre les variables quantitatives et faites une ACP à l'aide de la fonction `PCA()` de la librairie `FactoMineR`. 
+
+```{r,eval=F}
+# A completer - Stat. descriptives
+ggplot(melt(wine[,-c(11,12)]),aes(x=variable,y=value))+geom_boxplot()
+
+g1<-ggplot(wine,aes())+geom_density()
+g2<-ggplot(melt(wine[,c(2:4)]),aes(x=value,color=variable))+geom_density()
+g3<-ggplot(melt(wine[,c(5:7)]),aes(x=value,color=variable))+geom_density()
+grid.arrange(g1,g2,g3,ncol=2)
+
+ggplot(wine, aes(x = pluie)) +  
+  geom_bar(aes(y = (..count..)/sum(..count..)))+ylab("")+ggtitle("Frequences")
+
+quan <- as.vector(table(wine$Qualite))/nrow(wine)
+df <- data.frame(group = levels(wine$Qualite),value = quan)
+ggplot(df, aes(x="", y=value, fill=group))+
+  geom_bar(width = 1, stat = "identity")+ coord_polar("y", start=0)+ theme(legend.position="bottom")
+```
+
+```{r,eval=F}
+# ACP A completer
+resacp<-PCA(wine,quali.sup=c(1,2), scale.unit = TRUE,graph=FALSE)
+fviz_eig(resacp)
+fviz_pca_ind(resacp,geom=c("point"))
+fviz_pca_var(resacp,geom=c("point"))
+```
+
+
+**Question :** 
+Pour la suite, on va utiliser les variables quantitatives pour faire de la classification non supervisée des vins. Les variables *Qualite* et *Type* seront utilisées comme des variables extérieures pour comparer / croiser avec les classifications obtenues pour l'interprétation. 
+
+Pensez-vous qu'il est nécessaire de transformer les variables quantitatives dans l'objectif de clustering avec un algorithme des Kmeans ? Si oui, mettez en place cette transformation. 
+
+```{r,eval=F}
+# A completer
+```
+
+# Classification avec l'algorithme des Kmeans
+## A K=3 fixé  
+
+**Question :** A l'aide de la fonction `kmeans()`, faites une classification non supervisée en 3 classes des vins. Regardez les options disponibles dans la fonction `kmeans()`. 
+
+```{r,eval=F}
+help(kmeans)
+reskmeans<-kmeans(....)
+```
+
+**Question : ** Combien a-t-on de vins par classe (vous pouvez vous aider de la fonction `table()`) ? Visualisez la classification obtenue dans les premiers plans de l'ACP (vous pouvez utiliser la fonction `PCA()` de la librairie `FactoMineR` et la fonction `fviz_cluster` de la librairie `factoextra`). 
+
+```{r,eval=F}
+# A COMPLETER
+table(....)
+fviz_cluster(reskmeans,data=wine[,-c(1,2)],
+             ellipse.type="norm",labelsize=8,
+             geom=c("point"))+ggtitle("")
+fviz_pca_ind(resacp,col.ind=as.factor(reskmeans$cluster),
+             geom = c("point"),axes=c(1,2))
+```
+
+**Question : ** La classification obtenue précédemment a-t-elle un lien avec le type de vins ? Avec la qualité du vin ? Vous pouvez vous aider de la fonction `table()`, la fonction `adjustedRandIndex()` de la librairie `mclust`, ...
+
+```{r,eval=F}
+# A COMPLETER
+table(...,... )
+adjustedRandIndex(...,...)
+
+```
+
+```{r, eval=F}
+clust<-paste("Cl-K",reskmeans$cluster,sep="")
+Tab<-melt(table(clust,wine[,1]))
+ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
+  geom_alluvium(aes(fill=clust))+
+  geom_stratum(width = 1/12)+   
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
+  theme(legend.position = "none")
+chordDiagram(table(clust,wine[,2]))
+```
+
+## Choix du nombre de classes 
+
+**Question :**
+On s'intéresse dans cette section au choix du nombre de classes $K$ en étudiant l'évolution de l'inertie intraclasse. En faisant varier $K$ entre 2 et 15, calculez l'inertie intraclasse associée à chaque classification obtenue. Tracez l'évolution de l'inertie intraclasse en fonction du nombre de classes. Qu'en concluez-vous ? 
+
+```{r,eval=F}
+# A completer
+Kmax<-15
+reskmeanscl<-matrix(0,nrow=nrow(wine),ncol=Kmax-1)
+Iintra<-NULL
+for (k in 2:Kmax){
+  resaux<-kmeans(...)
+  reskmeanscl[,k-1]<-resaux$...
+  Iintra<-c(Iintra,resaux$...)
+}
+
+df<-data.frame(K=2:15,Iintra=Iintra)
+ggplot(df,aes(x=K,y=Iintra))+
+  geom_line()+
+  geom_point()+
+  xlab("Nombre de classes")+
+  ylab("Inertie intraclasse")
+```
+
+**Question :** Reprendre la question du choix du nombre de classes en utilisant le critère silhouette (vous pouvez vous aider de la fonction `silhouette()`). Pour la classification sélectionnée, représentez les poids $s(i)$ de chaque individu à l'aide de la fonction `fviz_silhouette()`. 
+
+```{r, eval=F}
+# A COMPLETER
+Silhou<-NULL
+for (k in 2:Kmax){
+   aux<-silhouette(reskmeanscl[,k-1], daisy(wine[,-c(1,2)]))
+   Silhou<-c(Silhou,mean(aux[,3]))
+}
+
+df<-data.frame(K=2:Kmax,Silhouette=Silhou)
+ggplot(df,aes(x=K,y=Silhouette))+
+  geom_point()+
+  geom_line()+theme(legend.position = "bottom")
+
+aux<-silhouette(...)
+fviz_silhouette(aux)+
+  theme(plot.title = element_text(size =9))
+rm(df,Silhou,aux)
+```
+
+# Classification avec l'algorithme PAM 
+
+**Question :** Déterminez une classification en $K=3$ classes des vins en utilisant la méthode PAM et représentez graphiquement la classification obtenue. A-t-elle un lien avec le type de vins ? Avec la qualité ? Avec la classification en $K=3$ classes obtenue avec la méthode des Kmeans? 
+
+```{r,eval=F}
+# A COMPLETER
+
+resPAM<-pam(...,k=...,metric=...)
+resPAM$medoids
+resPAM$id.med
+
+fviz_cluster(resPAM,data=wine[,-c(1,2)],
+             ellipse.type="norm",
+             labelsize=8,
+             geom=c("point"))+
+             ggtitle("")
+fviz_pca_ind(resacp,
+             col.ind=as.factor(resPAM$clustering),
+             geom = c("point"),
+             axes=c(1,2))
+
+adjustedRandIndex(... , ...)
+table(... , ....)
+```
+
+**Question :** Déterminez le nombre de classes optimal par le critère Silhouette pour $K$ variant entre 2 et 15 avec l'algorithme PAM. Commentez la classification retenue. Est-elle proche de celle obtenue avec l'algorithme des Kmeans ?
+
+```{r,eval=F}
+# A compléter
+
+Kmax<-15
+resPAMcl<-matrix(0,nrow=nrow(wine),ncol=Kmax-1)
+Silhou<-NULL
+for (k in 2:Kmax){
+  resaux<-pam(.....)
+  resPAMcl[,k-1]<-resaux$clustering
+  aux<-silhouette(resPAMcl[,k-1], daisy(wine[,-c(1,2)]))
+  Silhou<-c(Silhou,......)
+}
+
+df<-data.frame(K=2:Kmax,Silhouette=Silhou)
+ggplot(df,aes(x=K,y=Silhouette))+
+  geom_point()+
+  geom_line()+theme(legend.position = "bottom")
+
+
+aux<-silhouette(resPAMcl[,1], daisy(wine[,-c(1:2)]))
+fviz_silhouette(aux)+theme(plot.title = element_text(size =9))
+
+adjustedRandIndex(.....)
+table(.....)
+```
+
+# Pour aller plus loin : Classification avec l'algorithme fuzzy c-means
+
+## Présentation 
+Avec les algorithmes de clustering précédents (Kmeans, PAM) nous obtenons une classification "dure" au sens que chaque individu ne peut appartenir qu'à une seule classe et chaque individu participe avec le même poids à la construction des classes. Une classification dure $\mathcal{P}_K=\{\mathcal{C}_1,\ldots,\mathcal{C}_K\}$ peut se traduire en une matrice $Z=(z_{ik})_{\underset{1\leq k \leq K}{1\leq i \leq n}}$ avec $z_{ik}=1$ si $i\in\mathcal{C}_k$ et 0 sinon. Dans cette section, nous allons nous intéresser à une adaptation de l'algorithme des Kmeans, appelée *fuzzy c-means*. L'idée est de retourner une classification *fuzzy* c'est-à-dire une matrice $W=(\omega_{ik})_{\underset{1\leq k \leq K}{1\leq i \leq n}}$ avec $\forall i,\ k,\ \omega_{ik}\geq 0$ et $\forall i,\ \underset{k=1}{\stackrel{K}{\sum}} \omega_{ik}=1$. On donne ainsi plutôt un poids $\omega_{ik}$ que l'individu $i$ appartienne à la classe $\mathcal{C}_k$. 
+
+L'algorithme fuzzy c-means a pour fonction objective 
+
+$$
+\underset{W,\{m_1,\ldots,m_K\}}{\mbox{argmin}}\ \underset{i=1}{\stackrel{n}{\sum}}\underset{k=1}{\stackrel{K}{\sum}} (\omega_{ik})^\gamma\ \|x_i - m_k\|^2
+$$
+où $X=(x_1,\ldots,x_n)'$ est la matrice des données, $\gamma\in[1,+\infty[$, $m_k$ est le centre de la classe $\mathcal{C}_k$. 
+
+Dans le même principe que l'algorithme des Kmeans, l'algorithme fuzzy c-means est un algorithme itératif : 
+
+- Step 1: Initialisation des poids $W^{(0)}$
+- Step 2: A l'itération $r$, on calcule les centres des classes
+
+$$
+m_k^{(r)} = \frac{\underset{i=1}{\stackrel{n}{\sum}} (\omega_{ik}^{(r-1)})^\gamma x_i}{\underset{i=1}{\stackrel{n}{\sum}} (\omega_{ik}^{(r-1)})^\gamma}
+$$
+
+- Step 3: Mise à jour des poids ($\gamma>1$)
+$$
+\omega_{ik}^{(r)} = \left[\underset{\ell=1}{\stackrel{K}{\sum}} \left(\frac{\|x_i - m_k^{(r)}\|^2}{\|x_i - m_\ell^{(r)}\|^2}\right)^{\frac{1}{\gamma-1}}  \right]^{-1}
+$$
+
+- Step 4: Si $\|W^{(r)} - W^{(r-1)}\|<$ seuil, on s'arrête, sinon on retourne à l'étape 2. 
+
+En général, la puissance choisie sur les poids est $\gamma=2$. Dans le cas $\gamma=1$, on retrouve l'algorithme des Kmeans.  
+
+
+
+Nous allons ici nous appuyer sur la fonction `fcm()` de la librairie `ppclust`. 
+
+**Question :** Utilisez cet algorithme pour obtenir une classification en $3$ classes. Comment sont initialisés les poids ? Comment est obtenue la classification finale ? A l'aide des poids, étudiez la stabilité des classes. Vous pouvez pour cela étudier les poids des individus par classe. 
+
+```{r,eval=F}
+# A COMPLETER
+library(ppclust)
+resfcm<-fcm(....,centers= ... , m=2)
+table(.....)
+
+Aux<-data.frame(cluster=as.factor(resfcm$cluster),
+                PoidsMax=apply(resfcm$u,1,max))
+ggplot(Aux,aes(x=cluster,y=PoidsMax))+
+  geom_violin()
+```
+
+**Question :** Représentez la classification obtenue sur le premier plan de l'ACP en nuançant selon les poids.
+
+```{r,eval=F}
+# A COMPLETER
+fviz_pca_ind(resacp,axes=c(1,2),geom=c("point"),col.ind=apply(....................))+
+scale_color_gradient2(low="white", mid="blue",high="red", midpoint=0.8, space = "Lab")
+```
+
+**Question **: Comparez les classifications obtenues avec Kmeans et fuzzy c-means. Commentez. 
+
+```{r,eval=F}
+# A COMPLETER
+```

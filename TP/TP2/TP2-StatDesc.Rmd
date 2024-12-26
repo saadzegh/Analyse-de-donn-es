@@ -1,0 +1,531 @@
+---
+title: "TP2 - Statistique Descriptive"
+date : "3MIC - 2024-2025"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth : 4
+    number_sections: true
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{css,echo=F}
+.badCode {
+background-color: #C9DDE4;
+}
+
+.corrO { background-color: rgb(255,238,237); }
+.corrS { background-color: pink; color: black; border: 1px solid red; }
+```
+
+```{r setup, echo=FALSE, cache=FALSE}
+library(knitr)
+## Global options
+options(max.print="75")
+opts_chunk$set(echo=TRUE,
+	             cache=FALSE,
+               prompt=FALSE,
+               tidy=TRUE,
+               comment=NA,
+               message=FALSE,
+               warning=FALSE,
+               class.source="badCode")
+opts_knit$set(width=75)
+```
+
+```{r,echo=F, error=F,warning=F}
+library(corrplot)
+library(ggplot2)
+library(gridExtra)
+library(forcats)
+library(reshape2)
+library(BioStatR)
+```
+
+Ce TP a pour objectif de mener l'étude descriptive uni- et
+bi-dimensionnelle du jeu de données `wine` disponible sous Moodle. Vous
+rédigerez les réponses et vos observations dans le script .Rmd du TP au
+fur et à mesure. Vous pourrez compiler votre script à la fin du TP pour
+obtenir un compte-rendu du TP.
+
+*Remarque : pensez à enlever les "eval=F" au fur et à mesure de
+l'avancement dans le TP pour avoir les résultats dans votre compte-rendu
+final de TP.*
+
+# Données
+
+On va étudier le jeu de données **wine** disponible sur la page moodle
+du cours. Commencez par récupérer ce jeu de données et sauvegardez le
+fichier dans votre dossier de travail.
+
+Le jeu de données **wine** comprend des mesures physico-chimiques
+réalisées sur un échantillon de $600$ vins (rouges et blancs) du
+Portugal. Ces mesures sont complétées par une évaluation sensorielle de
+la qualité par un ensemble d'experts. Chaque vin est décrit par les
+variables suivantes :
+
+-   *Qualite* : son évaluation sensorielle par les experts
+    ("bad","medium","good"),
+-   *Type* : son type (1 pour un vin rouge, 0 pour un vin blanc),
+-   *AcidVol* : la teneur en acide volatile (en g/dm3 d'acide acétique),
+-   *AcidCitr* : la teneur en acide citrique (en g/dm3),
+-   *SO2lbr* : le dosage du dioxyde de soufre libre (en mg/dm3),
+-   *SO2tot* : le dosage du dioxyde de soufre total (en mg/dm3),
+-   *Densite* : la densité (en g/cm3),
+-   *Alcool* : le degré d'alcool (en % Vol.).
+
+Dans un premier temps, commencez par charger le jeu de données à l'aide
+de la fonction `read.table()`.
+
+```{r}
+wine <- read.table("wine.txt",header=TRUE)
+```
+
+Vous pouvez voir les premières lignes du jeu de données à l'aide de la
+fonction `head()`
+
+```{r}
+head(wine)
+```
+
+**Question :** Contrôlez la dimension du jeu de données (c'est-à-dire le
+nombre d'individus et le nombre de variables) ? Vous pouvez vous aider
+des fonctions `dim()`, `nrow()`et `ncol()`.
+
+```{r}
+dim(wine)
+nrow(wine)
+ncol(wine)
+```
+
+**Question :** Contrôlez que l'objet `wine` est bien de type data.frame
+(commande `is.data.frame()`) ? Remarquons que l'on peut obtenir les noms
+des variables grâce à la commande `names(wine)` ou `colnames(wine)`.
+Plus largement, on peut utiliser la commande `attributes()`.
+
+```{r}
+is.data.frame(wine)
+print("3 nuits")
+names(wine)
+print("par semaine")
+colnames(wine)
+print("aym blue dabedi dabebda")
+attributes(wine)
+```
+
+**Question :** Quelle est la nature de chaque variable ? Vous pouvez
+vous aider de la commande `str()`.
+
+```{r}
+str(wine)
+```
+
+Attention, il faut bien préciser à R les variables qui doivent être
+considérées comme qualitatives. On utilise donc la fonction
+`as.factor()` sur les variables *Qualite* et *Type*. On va aussi en
+profiter pour renommer les modalités de la variable *Type* en `blanc`et
+`rouge`.
+
+```{r}
+wine$Qualite<-as.factor(wine$Qualite)
+wine$Type<-factor(wine$Type,labels=c("blanc","rouge"))
+head(wine)
+```
+
+On peut obtenir un résumé rapide du jeu de données à l'aide de la
+fonction `summary()`
+
+```{r}
+summary(wine)
+```
+
+# Présentation de `ggplot2`
+
+Avant de commencer l'analyse uni- et bi-dimensionnelle du jeu de
+données, on va ici donner quelques notions sur les graphiques avec
+`ggplot2` pour comprendre la suite.
+
+[**ggplot2**](https://ggplot2.tidyverse.org/){target="_blank"} est une
+extension dédiée aux graphiques. Elle est basée sur une syntaxe
+particulière (il faut oublier les graphiques de base de R) mais robuste
+et efficace pour la construction de graphiques complexes. Elle part du
+principe (comme tout package de tidyverse) que les données relatives au
+graphique sont stockées dans un tableau (data.frame ou tibble).
+
+Un graphique en `ggplot2` s'initialise avec la fonction `ggplot()` qui
+prend en argument le jeu de données étudié. Par exemple,
+
+```{r}
+gEx <- ggplot(data=wine)
+```
+
+Pour l'instant, on ne voit rien mais pourtant l'objet `gEx` contient des
+informations:
+
+```{r}
+summary(gEx)
+names(gEx)
+gEx$layers
+```
+
+mais pour l'instant son `layers` est vide.
+
+On ajoute ensuite des éléments graphiques, appelés `geom`, à l'objet
+graphique grâce à l'opérateur `+` et on précise à l'aide de la fonction
+`aes()` les données à utiliser en argument du `geom`. Par exemple, si on
+veut tracer le nuage de points entre les variables `Densite` et `Alcool`
+:
+
+```{r}
+ggplot(data=wine,aes(x=Densite,y=Alcool))+
+   geom_point()
+```
+
+Parmi les `geom` les plus utilisés, on peut citer
+
+-   `geom_point()` (nuage de points)
+-   `geom_line()`(trace des lignes)
+-   `geom_bar()` (représentation en bâtons)
+-   `geom_boxplot()` (boxplot)
+-   `geom_violin()` (violin plot)
+-   `geom_histogram()` (histogramme)
+-   `geom_density()` (densité)
+-   `geom_smooth()`
+
+On peut ajouter un **mappage**, c'est à dire une mise en relation entre
+un attribut graphique d'un `geom` et une variable du tableau de données.
+Par exemple, on peut mettre des couleurs à un nuage de points en
+fonction d'une variable qualitative, ... Il faut bien distinguer un
+mappage d'une modification d'un attribut graphique sans lien avec une
+variable. Une règle importante à retenir est donc
+
+-   pour définir un mappage (relation entre les valeurs d'une variable
+    et un attribut graphique), on le déclare dans `aes()`
+-   pour modifier un attribut graphique de la même manière pour tous les
+    points, on le définit en-dehors de la fonction `aes()`.
+
+Par exemple,
+
+```{r}
+ggplot(data=wine)+
+   geom_point(aes(x=Densite,y=Alcool,color=Type))
+```
+
+```{r}
+ggplot(data=wine)+
+   geom_point(aes(x=Densite,y=Alcool),color="blue")
+```
+
+On peut représenter plusieurs `geom` sur un même graphique
+simultanément, il suffit d'utiliser l'opérateur `+` pour les ajouter au
+fur et à mesure. Par exemple,
+
+```{r}
+ggplot(data=wine)+
+  geom_violin(aes(x=Qualite,y=Alcool))+
+   geom_point(aes(x=Qualite,y=Alcool), col = "blue", alpha = 0.2,position="jitter")
+```
+
+Les *scales* permettent de modifier la façon dont un attribut graphique
+est lié aux valeurs d'une variable. Pour les modifier, on ajoute un
+nouvel élément de la forme `scale_<attribut>_<type>` à l'objet graphique
+ggplot2 avec `+`. Les fonctions *scale* les plus connues sont :
+
+-   `scale_size()` (avec son argument `range`) pour modifier les tailles
+    minimales, maximales, ...
+-   `scale_x()` et `scale_y()` pour modifier l'axe `x`et l'axe `y`
+    respectivement
+-   `scale_x_continuous()` (resp. `scale_x_discrete()`) pour modifier
+    l'axe des `x` dans le cas d'une variable quantitative (resp. une
+    variable qualitative)
+-   `scale_y_continuous()` (resp. `scale_y_discrete()`) pour modifier
+    l'axe des `y` dans le cas d'une variable quantitative (resp. une
+    variable qualitative)
+-   `scale_color()` pour modifier les couleurs de dessin
+-   `scale_fill()` pour modifier les couleurs de remplissage
+
+Pour les couleurs, on peut spécifier un gradient de couleur sur une
+variable quantitative avec `scale_color_gradient()`, modifier
+manuellement la palette de couleur avec `scale_color_manual()`, faire
+appel à une palette de couleur prédéfinie (par exemple en utilisant le
+package
+[viridis](%22https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html%22){target="_blank"}
+avec `scale_color_viridis`, en s'appuyant sur les palettes disponibles
+dans
+[ColorBrewer](https://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3){target="_blank"}
+avec `scale_color_brewer()`), ...
+
+```{r}
+ggplot(data=wine)+
+  geom_point(aes(x=Alcool,y=Densite,size=AcidVol,color=Type))+
+  scale_size("Acide vol.", range = c(0,1.5),breaks=seq(0,1.5,0.2)) +
+  scale_x_continuous("Alcool",limits=c(8,16)) +
+  scale_y_continuous("Densité",limits=c(0.985,1.01))
+```
+
+Remarque : on peut modifier certains éléments avec une commande
+spécifique comme
+
+-   `ggtitle()` pour modifier le titre
+-   `xlab()`et `ylab()` pour modifier l'intituler de l'axe des abscisses
+    et des ordonnées respectivement
+
+En bref, les possibles avec `ggplot2` sont infinis car de nombreux
+éléments sont personnalisables. Voici quelques références pour les
+graphiques en `ggplot2` parmi les nombreuses ressources disponibles sur
+le web :
+
+-   Le livre *Ggplot2: Elegant Graphics for Data Analysis* de H.
+    Wickham. [@ggplot2]
+-   Le [site web de
+    ggplot2](%22https://ggplot2.tidyverse.org/%22){target="_blank"}
+-   [The R Graph
+    Gallery](https://www.r-graph-gallery.com/ggplot2-package.html){target="_blank"}
+-   [The Cheat Sheet de ggplot
+    2](https://thinkr.fr/pdf/ggplot2-french-cheatsheet.pdf){target="_blank"}
+
+# Etude statistique unidimensionnelle
+
+## Pour une variable qualitative
+
+Nous nous intéressons dans cette partie aux deux variables qualitatives
+*Type* et *Qualite*.
+
+**Question :** A l'aide des commandes `table()`, `summary()` et
+`levels()`, donnez un résumé de la variable `Type`. Quels sont les
+modalités du facteur ?
+
+```{r}
+table(wine$Type)
+summary(wine$Type)
+levels(wine$Type)
+```
+
+**Question :** A l'aide du code suivant, résumez graphiquement la
+variable `Type` par une représentation par secteurs ou un diagramme en
+barres. Interprétez les résultats.
+
+```{r,eval=F}
+g1<-ggplot(wine, aes(x=Type))+ 
+  geom_bar()+
+  ylab("")+ggtitle("Effectifs")
+g2<-ggplot(wine, aes(x = Type)) +  
+  geom_bar(aes(y = (..count..)/sum(..count..)))+ylab("")+ggtitle("Frequences")
+
+df <- data.frame(group = levels(wine$Type),
+                 value = as.vector(table(wine$Type))/nrow(wine))
+g3<-ggplot(df, aes(x="", y=value, fill=group))+
+  geom_bar(width = 1, stat = "identity")+ 
+  coord_polar("y", start=0)+ 
+  theme(legend.position="bottom")
+grid.arrange(g3,g1,g2,ncol=3)
+```
+
+**Question :** La variable *Qualite* est une variable qualitative
+ordinale. On peut donc utiliser les effectifs cumulés et les fréquences
+cumulées. Pour tracer les fréquences cumulées, il faut que l'ordre des
+modalités soit bien compris par R. Ici, on commence par réorganiser les
+modalités en `bad`, `medium` et `good`. A l'aide des codes suivants,
+étudiez la variable *Qualite*.
+
+```{r,echo=T,eval=F}
+wine$Qualite <- fct_relevel(wine$Qualite,"bad","medium","good")
+
+EffQual=as.vector(table(wine$Qualite))
+FreqQual= data.frame(Eff = EffQual, Freq = EffQual/length(wine$Qualite), FreqCumul=cumsum(EffQual)/length(wine$Qualite))
+rownames(FreqQual)=levels(wine$Qualite)
+
+knitr::kable(FreqQual, caption = 'Description de la variable Qualite',booktabs = TRUE,digits=3)
+```
+
+```{r,eval=F}
+df <- data.frame(Qualite = levels(wine$Qualite), value = table(wine$Qualite),
+    valuecumul = 100 * cumsum(prop.table(table(wine$Qualite))))
+df$Qualite <- fct_relevel(df$Qualite, "bad", "medium", "good")
+
+df <- data.frame(df, freq = df$value.Freq/nrow(wine))
+g1 <- ggplot(wine) + geom_bar(aes(x = Qualite)) + ggtitle("Effectifs")+xlab("Qualite")
+g2 <- ggplot(wine) + geom_bar(aes(x = Qualite, y = ..prop.., group = 1)) + ggtitle("Frequences")+xlab("Qualite")
+g3 <- ggplot(df, aes(x = Qualite, y = valuecumul)) + geom_bar(stat = "identity") +
+    ggtitle("Fréquences cumulées")
+
+g4 <- ggplot(df, aes(x = "", y = freq, fill = Qualite)) + geom_bar(width = 1, stat = "identity") +
+    coord_polar("y", start = 0)
+grid.arrange(g1, g2, g3, g4, ncol = 2)
+```
+
+## Pour une variable quantitative
+
+Pour cette section, on se focalise sur la variable *Alcool*.
+
+### Indicateurs statistiques
+
+**Question :** Que calculent les commandes `mean()`, `median()`,
+`var()`, `sd()`, `range()` ? Calculez l'étendue des données.
+
+```{r}
+mean(wine$Alcool)
+median(wine$Alcool)
+var(wine$Alcool)
+sd(wine$Alcool)
+range(wine$Alcool)
+```
+
+**Question :** Etudiez les sorties des commandes `summary(wine$Alcool)`
+et `quantile(wine$Alcool)`. Donnez également l'écart interquartile et
+les valeurs adjacentes.
+
+```{r}
+summary(wine$Alcool)
+quantile(wine$Alcool)
+qua = quantile(wine$Alcool)
+interq = qua[4] - qua[2]
+interq
+Lplus = qua[4]+1.5 * interq
+Lmoins = qua[2]-1.5 * interq
+Lplus
+Lmoins
+```
+
+### Représentations graphiques
+
+Le but de la statistique exploratoire est de synthétiser, résumer et
+structurer l'information contenue dans des données. On utilise pour cela
+des représentations de données sous forme de graphiques.
+
+**Question :** On peut utiliser la représentation par histogramme. Tapez
+`H<-hist(wine$Alcool)` et commentez les différents attributs de `H`.
+
+```{r}
+H<-hist(wine$Alcool)
+summary(wine$Alcool)
+```
+
+Pour tracer un histogramme avec ggplot, on pouvez utiliser le code
+suivant. Commentez.
+
+```{r hist,eval=F}
+g1<-ggplot(wine,aes(x=Alcool))+
+  geom_histogram(bins=15,color="black",fill="white")+
+  ggtitle("Histo. des effectifs")+
+  ylab("Frequency")+xlab("Alcool")
+g2<-ggplot(wine,aes(x=Alcool))+
+  geom_histogram(aes(y=..density..),bins=15,color="black", fill="white")+
+  ggtitle("Histo. des frequences")+
+  ylab("Density")+xlab("Alcool")
+grid.arrange(g1,g2,ncol=2)
+```
+
+**Question :** A l'aide du code suivant, représentez un boxplot de la
+variable "Alcool". Que remarquez-vous ? Comparez avec les valeurs
+adjacentes calculées précédemment.
+
+```{r}
+ggplot(wine,aes(y=Alcool))+geom_boxplot()
+```
+
+Pour tracer les boxplots de toutes les variables quantitatives en même
+temps, il faut réorganiser en amont le jeu de données.
+
+```{r boxplot, eval=F}
+wineaux<-melt(wine[,-c(1,2)])
+ggplot(wineaux,aes(x=variable,y=value))+
+  geom_boxplot()
+```
+
+**Question :** En vous aidant de l'aide de R et des résultats de la
+section précédente, tapez `B<-boxplot(wine$Alcool)` et commentez les
+différents attributs de `B`.
+
+```{r}
+B<-boxplot(wine$Alcool, horizontal = TRUE)
+```
+
+# Statistiques descriptives bidimensionnelles
+
+## Entre 2 variables quantitatives
+
+**Question :** Calculez la matrice de corrélation des variables
+quantitatives (commande `cor()`) ou la matrice de variance-covariance
+(commandes `var()` ou `cov()`). Représentez graphiquement les
+corrélations à l'aide de la fonction `corrplot()` de la librairie
+`corrplot`. Vous pourrez utiliser l'option `method="ellipse"` pour une
+meilleure lisibilité.
+
+```{r}
+quant_vars <- wine[, c("AcidVol", "AcidCitr", "SO2lbr", "SO2tot", "Densite", "Alcool")]
+
+# Matrice de corrélation
+mat_corr <- cor(quant_vars, use = "complete.obs")
+print("Matrice de corrélation :")
+print(mat_corr)
+
+# Matrice de variance-covariance
+mat_cov <- cov(quant_vars, use = "complete.obs")
+print("Matrice de variance-covariance :")
+print(mat_cov)
+
+# Représentation graphique des corrélations
+library(corrplot)
+corrplot(mat_corr, method = "ellipse", main = "Matrice de corrélation des variables quantitatives")
+```
+
+**Question :** Interprétez les résultats.
+
+**Question :** Représentez graphiquement la *Densite* en fonction de
+l'**Alcool** à l'aide de la commande `geom_point()`. Au vu de ce
+graphique, les variables sont-elles corrélées ? Vous pourrez ajouter la
+commande `+geom_smooth(method="lm")` pour tracer la droite de régression
+linéaire. Est-ce cohérent avec la corrélation calculée ci-dessus ?
+
+```{r}
+# A COMPLETER
+```
+
+## Entre une variable quantitative et une variable qualitative
+
+**Question :** Représentez le boxplot de la variable `Alcool` pour
+chaque modalité de la variable qualitative *Type*. Même question avec
+*Qualite*. Interprétez les résultats.
+
+```{r}
+# A COMPLETER
+```
+
+**Question :** Explorez les autres combinaisons de variables
+quantitatives avec les variables qualitatives afin de déterminer les
+variables fortement liées.
+
+```{r}
+# A COMPLETER
+```
+
+**Question :** A l'aide de la fonction `eta2()` de la librairie
+`BioStatR`, calculez le rapport de corrélation $\eta^2$ entre chaque
+variable quantitative et la variable *Type*. Commentez. Faites de même
+avec la variable *Qualité*.
+
+```{r}
+# A COMPLETER
+```
+
+## Entre deux variables qualitatives
+
+**Question :** Analysez la table de contingence entre les deux variables
+qualitatives *Type* et *Qualite* avec la commande `table()`. Ajoutez les
+effectifs marginaux avec la commande `addmargins()`.
+
+```{r}
+# A COMPLETER
+```
+
+**Question :** Calculez et représentez les profils-lignes à l'aide des
+fonctions `prop.table(..., margin = ...)`et `mosaicplot`. Interprétez
+les résultats. Faites de même avec les profils-colonnes.
+
+```{r}
+# A COMPLETER
+```
