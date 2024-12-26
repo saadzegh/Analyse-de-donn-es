@@ -84,12 +84,13 @@ ggplot(data=data) + geom_point(aes(x = T1_1H_R1, y = T1_6H_R1, color=ExpT1))
 
 ```{r}
 data1 <- melt(data[, -c(19:39)])
-ggplot(data1, aes(x = variable, y = value)) + geom_boxplot()
+plot1 <- ggplot(data1, aes(x = variable, y = value)) + geom_boxplot()
 
 data2 <- melt(data[, -c(1:18,37:39)])
-ggplot(data2, aes(x = variable, y = value)) + geom_boxplot()
+plot2 <- ggplot(data2, aes(x = variable, y = value)) + geom_boxplot()
+grid.arrange(plot1,plot2)
 ```
-J'ai fait un graph avec les boxplots des variables du premier replicat et un autre avec les variables du deuxième réplicat et je trouve que les deux graphes se ressemblent pas mal
+J'ai fait un graphe avec les boxplots des variables du premier replicat et un autre avec les variables du deuxième réplicat et je trouve que les deux graphes se ressemblent pas mal
 ```{r}
 corrplot(cor(data[, -c(37:39)]), method = "ellipse")
 ```
