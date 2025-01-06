@@ -29,45 +29,53 @@ library(factoextra)
 library(gridExtra)
 library(BioStatR)
 library(reshape2)
+library(forcats)
+library(mclust)
+library(cluster)
+library(ppclust)
+library(circlize)
+library(ggalluvial)
+library(clusterSim)
+library(dbscan)
+library(seriation)
 
 ```
-Decrivez l’ensemble du jeu de donn´ees en pr´ecisant la nature des variables.
-Utiliser des commandes (comme dans le cours) pour montrer ou on a obtenu les infos
+#Description du jeu de données (mettre en titre partie 1)
 
-Description du jeu de données (à compléter et reformuler(essayer d'utiliser le vocabulaire de l'intro du cours pour faire plaiz à la madame))
+Dans ce projet, on s'intéresse à la population des gènes d'une plante modèle. On souhaite analyser les données représentant les différences d'expression d'un certain nombre d'individus (gènes) pour différents traitements appliqués.
 
-Le jeu de données est constitué de 39 variables décrivant les différences d'expression de 542 gènes (individus) d'une plante modèle pour les deux réplicats de l'expérience et les trois traitements appliqués durant six heures.
-
-Les 36 premières variables sont des variables quantitatives continues Les trois dernières variables sont qualitatives (ordinales ?), elles représentent la décision à propos l'expression du gène.
-
-stringsAsFactors = T
 ```{r,eval=T}
-data<-read.table("data.txt",header=T, sep=";", stringsAsFactors = T) #le dernier ça met les trois dernières variables en factors
-head(data, n=8)
-summary(data)
-dim(data)
-class(data)
-names(data)
+data<-read.table("data.txt",header=T, sep=";", stringsAsFactors = T) #stringsAsFactors converti les variables qualitatives en factors
+#class(data)
+#dim(data)
+#summary(data) on en a pas vraiment besoin mais on peut le laisser dans le code
+head(data, n=5)
+str(data) #techniquement on n'a pas besoin de dim et class parce que str les donne au début et puis names, colnames donnent les noms des variables mais on les voit déjà dans str donc inutile
+#names(data)
 #colnames(data)
-#attributes(data)
-#nrow(data)
-#ncol(data)
-str(data)
+attributes(data) #par contre pour ça, il donne les noms des individus (gènes) donc peut-être à garder juste dans le code
 ```
+Le jeu de données fourni est composé d'un échantillon de n=542 gènes et de 39 variables statistiques qui caractérisent les individus. On observe que les 36 premières variables sont des variables quantitatives continues. Elles permettent d'évaluer les différences d'expression des gènes pour trois traitements appliqués (T1, T2 et T3) durant 6 heures et ceci pour deux réplicats biologiques (R1 et R2).
+Les trois dernières variables (ExpT1, ExpT2 et ExpT3) sont des variables qualitatives (ORDINALES OU NOMINALES JE SAIS PAS TROP) dont les trois modalités sont : "Non", "Sous" et "Sur". Ces dernières représentent pour chaque traitement la décision si le gène est sur-exprimé, sous-exprimé ou non-exprimé à 6h.
+
+#A verifier que tout le vocabulaire soit bien utilisé et que la description est assez claire, concise et complète + fautes d'orthographe maybe (demander à chatgpt parce que flemme)
 
 
 ```{r,eval=F}
-#Experience1 <- data[37]
-#levels(Experience1)
+#Tout ça rentre également dans la dscription du jeu de données du dessus mais pas forcément utile car l'info est déjà donnée par le str(data) du dessus
 
-#data$ExpT1 <- as.factor(data$ExpT1)
+#data$ExpT1 <- as.factor(data$ExpT1) inutile car déjà fait quand on lit les données
 levels(data$ExpT1)
 #data$ExpT2 <- as.factor(data$ExpT2)
 levels(data$ExpT2)
 #data$ExpT3 <- as.factor(data$ExpT3)
 levels(data$ExpT3)
 ```
+#Analyse uni-dimensionnelle et bi-dimensionnelle
 
+Il faut ajouter des graphes pour l'analyse uni-dimensionnelle (voir avec Tessa ce qu'on peut mettre mais notamment les graphes de fréquences/effectifs des trois variables qualitatives et voir dans le cours ce qui peut être intéressant à exploiter) puis voir pour les quantitatives
+Peut-être faire un histogramme ou un graphe de la focntion de répartition empirique pour deux ou trois variables pour tester ce que ça donne
+NE PAS OUBLIER de faire le truc qui nous dit si il faut centrer et réduire les données ou non avant de faire l'ACP (je sais plus ce que c'était)
 ```{r,eval=F}
 Eff1<-table(data$ExpT1)
 df<-data.frame(Eff1=c(Eff1),Freq=c(Eff1)/sum(Eff1))
@@ -83,12 +91,19 @@ knitr::kable(t(df))
 
 ```
 
-P'tite expérience :
 ```{r}
-ggplot(data=data) + geom_point(aes(x = T1_1H_R1, y = T1_6H_R1, color=ExpT1))
-```
+#On a regardé ça avec Tessa, pas sures de son utilité mais y'a moyen de trouver une interprétation logique avec les différences entre les différents boxplots
+#C'est du bi-dimensionnel par contre, je ne sais pas si il faut séparer les deux et faire deux parties ou laisser comme ça mais on moins bien organiser le code lol
 
+ggplot(data,aes(x=ExpT1,y=T1_6H_R1 ))+geom_boxplot()
+ggplot(data,aes(x=ExpT2,y=T2_6H_R1))+geom_boxplot()
+ggplot(data,aes(x=ExpT3,y=T3_6H_R1 ))+geom_boxplot()
+ggplot(data,aes(x=ExpT1,y=T1_6H_R2 ))+geom_boxplot()
+ggplot(data,aes(x=ExpT2,y=T2_6H_R2))+geom_boxplot()
+ggplot(data,aes(x=ExpT3,y=T3_6H_R2 ))+geom_boxplot()
+```
 ```{r}
+#mettre les deux boxplots sur deux graphes différents pour que ce soit plus lisible
 data1 <- melt(data[, -c(19:39)])
 plot1 <- ggplot(data1, aes(x = variable, y = value)) + geom_boxplot()
 
@@ -101,8 +116,7 @@ J'ai fait un graphe avec les boxplots des variables du premier replicat et un au
 ```{r}
 corrplot(cor(data[, -c(37:39)]), method = "ellipse")
 ```
-LOOOOOOL C'EST MAGNIFIQUE (NON A L'AIDE Y'A TROP DE VARIABLES) LOLILOOOOL
-Garder le grand pour interpréter que T1 du replicat 1 est pas super corrélé au T1 du réplicat 2
+#Garder le grand pour interpréter que T1 du replicat 1 est pas super corrélé au T1 du réplicat 2 maybe si on a la place et que c'est vraiment intéressant
 
 ```{r}
 cor1<-corrplot(cor(data[, c(1:18)]), method = "ellipse")
