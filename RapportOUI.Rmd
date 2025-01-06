@@ -27,10 +27,13 @@ library(corrplot)
 library(FactoMineR)
 library(factoextra)
 library(gridExtra)
-library(melt)
 library(BioStatR)
+library(reshape2)
 
 ```
+Decrivez l’ensemble du jeu de donn´ees en pr´ecisant la nature des variables.
+Utiliser des commandes (comme dans le cours) pour montrer ou on a obtenu les infos
+
 Description du jeu de données (à compléter et reformuler(essayer d'utiliser le vocabulaire de l'intro du cours pour faire plaiz à la madame))
 
 Le jeu de données est constitué de 39 variables décrivant les différences d'expression de 542 gènes (individus) d'une plante modèle pour les deux réplicats de l'expérience et les trois traitements appliqués durant six heures.
@@ -99,13 +102,15 @@ J'ai fait un graphe avec les boxplots des variables du premier replicat et un au
 corrplot(cor(data[, -c(37:39)]), method = "ellipse")
 ```
 LOOOOOOL C'EST MAGNIFIQUE (NON A L'AIDE Y'A TROP DE VARIABLES) LOLILOOOOL
-
+Garder le grand pour interpréter que T1 du replicat 1 est pas super corrélé au T1 du réplicat 2
 
 ```{r}
-corrplot(cor(data[, c(1:18)]), method = "ellipse")
-corrplot(cor(data[, c(19:36)]), method = "ellipse")
-
+cor1<-corrplot(cor(data[, c(1:18)]), method = "ellipse")
 ```
+```{r}
+cor2<-corrplot(cor(data[, c(19:36)]), method = "ellipse")
+```
+
 
 G séparé les 2 exp en 2, c plus simple lolilol (mais on perd en zozo)
 
