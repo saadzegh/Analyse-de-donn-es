@@ -1,15 +1,11 @@
 ---
-output:
-  html_document: default
-  pdf_document: default
----
 title: "Rapport"
 author: "ALIX Claire - ZEGHARI Saad"
 institute : "INSA Toulouse"
 date: "`r Sys.Date()`"
 output: 
   pdf_document :
-    toc : TRUE
+    toc : FALSE
     toc_depth : 2
     number_section : TRUE
 header-includes:
@@ -40,7 +36,8 @@ library(dbscan)
 library(seriation)
 
 ```
-#Description du jeu de données (mettre en titre partie 1)
+
+# Description du jeu de données (mettre en titre partie 1)
 
 Dans ce projet, on s'intéresse à la population des gènes d'une plante modèle. On souhaite analyser les données représentant les différences d'expression d'un certain nombre d'individus (gènes) pour différents traitements appliqués.
 
@@ -71,7 +68,7 @@ levels(data$ExpT2)
 #data$ExpT3 <- as.factor(data$ExpT3)
 levels(data$ExpT3)
 ```
-#Analyse uni-dimensionnelle et bi-dimensionnelle
+# Analyse uni-dimensionnelle et bi-dimensionnelle
 
 Il faut ajouter des graphes pour l'analyse uni-dimensionnelle (voir avec Tessa ce qu'on peut mettre mais notamment les graphes de fréquences/effectifs des trois variables qualitatives et voir dans le cours ce qui peut être intéressant à exploiter) puis voir pour les quantitatives
 Peut-être faire un histogramme ou un graphe de la focntion de répartition empirique pour deux ou trois variables pour tester ce que ça donne
@@ -135,19 +132,19 @@ round(apply(dataScale,2,mean))
 #Pas nécéssaire
 ```
 
-ACP CENTRéE
+# ACP CENTRéE
 
 ```{r,eval=F}
-respca<-PCA(data,quali.sup=c(37:39),scale.unit = F,graph=F)
-#respca<-PCA(data,quanti.sup=c(1:18),scale.unit = F,graph=F) Je suis bebete
+
+respca<-PCA(t(data[c(1:36)]),scale.unit = F,graph=F)
 respca$eig
 fviz_eig(respca)
 
 ```
 
 ```{r,eval=F}
-#plot(respca,choix="varcor") 
-fviz_pca_var(respca) #graphique des corrélations entre les variables initiales et les méta-variables => Illisible
+plot(respca,choix="varcor") 
+#fviz_pca_var(respca) #graphique des corrélations entre les variables initiales et les méta-variables => Illisible
 
 corrplot(respca$var$cor,method="ellipse")  #les corrélations des variables initiales avec toutes les méta-variables => Plus lisible (même si c pas ouf)
 
@@ -158,12 +155,12 @@ fviz_pca_ind(respca,geom=c("point"),select.ind = list(cos2=0.95))
 #ATTENTION : problème d'overflow, à regler
 ```
 
-ACP CENTRéE REUDITE
+# ACP CENTRéE REUDITE
 
 
 ```{r,eval=F}
 
-respca2<-PCA(data,quali.sup=c(37:39),scale.unit=T,graph=F)
+respca2<-PCA(data[c(1:36)],scale.unit = TRUE,graph=F)
 respca2$eig
 fviz_eig(respca2)
 
@@ -182,7 +179,7 @@ fviz_pca_ind(respca2,geom=c("point"),select.ind = list(cos2=0.95))
 
 
 
-TENTATIVE DE KmEANS
+# TENTATIVE DE KmEANS
 ```{r,eval=F}
 reskmeans<-kmeans(dataScale,4) 
 fviz_pca_ind(respca,habillage=as.factor(reskmeans$cluster) ,geom=c("point"))
@@ -196,7 +193,7 @@ fviz_pca_ind(respca,col.ind=as.factor(reskmeans$cluster),
 ```
 
 
-Méthode PAM (approximative)
+# Méthode PAM (approximative)
 ```{r,eval=F}
 
 Kmax<-15
