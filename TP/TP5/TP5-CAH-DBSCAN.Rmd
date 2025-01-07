@@ -1,0 +1,260 @@
+---
+title: "TP Clustering - CAH et DBSCAN"
+date : "3MIC / 2024-2025"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth : 4
+    number_sections : true
+header-includes:
+  - \usepackage{comment}
+params:
+  soln: TRUE   
+---
+
+```{css,echo=F}
+.badCode {
+background-color: #cfdefc; 
+}
+
+.corrO { background-color: rgb(255,238,237); }
+.corrS { background-color: pink; color: black; border: 1px solid red; }
+```
+
+```{r setup, echo=FALSE, cache=TRUE, message=F,warning=F}
+library(knitr)
+## Global options
+options(max.print="75")
+opts_chunk$set(echo=TRUE,
+	             cache=FALSE,
+               prompt=FALSE,
+               tidy=TRUE,
+               comment=NA,
+               message=FALSE,
+               warning=FALSE,
+               class.source="badCode")
+opts_knit$set(width=75)
+```
+
+L'objectif de ce TP est d'illustrer les notions abordées pour la classification hiérarchique et la méthode DBSCAN. Les librairies R nécessaires pour ce TP : 
+
+```{r,echo=T, error=F,warning=F,message=F}
+## Pour faire le TP
+library(mclust)
+library(clusterSim)
+library(factoextra)
+library(FactoMineR)
+library(ggplot2)
+library(reshape2)
+library(circlize)
+library(viridis)
+library(dbscan)
+library(seriation)
+```
+
+# Clustering hiérarchique
+
+On reprend dans ce TP les données `wine` disponibles sur la page moodle du cours. 
+On charge ici les données.  
+
+```{r}
+wine<-read.table("wine.txt",header=T)
+wine$Qualite = as.factor(wine$Qualite)
+wine$Type = factor(wine$Type, labels = c("blanc", "rouge"))
+wineinit<-wine
+wine[,-c(1,2)]<-scale(wine[,-c(1,2)],center=T,scale=T)
+head(wine)
+```
+
+On fait une ACP pour la visualisation des résultats dans la suite
+
+```{r}
+resacp<-PCA(wine,quali.sup=c(1,2), scale.unit = TRUE,graph=FALSE)
+fviz_pca_ind(resacp,geom=c("point"),habillage=2)
+```
+
+**Question **: A l'aide de la fonction `hclust()`, faites une classification hiérarchique des données de vins avec les mesures d'agrégation `single`, `complete` et `average` respectivement. Comparez visuellement les dendrogrammes associés. Commentez. 
+
+```{r,eval=F}
+# A COMPLETER
+md = dist(wine[-c(1:2)], method="euclidean")
+
+hclustsingle<-hclust(md, method = "single")
+hclustcomplete<-hclust(md, method = "complete")
+hclustaverage<-hclust(md, method = "average")
+
+# Dendrogramme
+plot(hclustsingle,hang=-1,labels=FALSE)
+#plot(hclustcomplete,hang=-1,labels=FALSE)
+#plot(hclustaverage,hang=-1,labels=FALSE)
+
+
+#fviz_dend(hclustsingle,show_labels=FALSE)
+fviz_dend(hclustcomplete,show_labels=FALSE)
+fviz_dend(hclustaverage,show_labels=FALSE)
+
+```
+
+**Question :** Déduisez du dendrogramme avec la mesure d'agrégation `complete` une classification en 3 classes. Vous pouvez utiliser la fonction `cutree()`. Comparez-la avec les variables *Qualité* et *Type*. Commentez.  
+
+```{r,eval=F}
+clust <- cutree(hclustcomplete,k = 3)
+table(clust,wine$Type )
+table(clust,wine$Qualite )
+adjustedRandIndex(clust,wine$Type)
+adjustedRandIndex(clust,wine$Qualite)
+```
+
+**Question :** Tracez la distribution des variables quantitatives de `wine` en fonction de la classification en 3 classes de la question précédente. Commentez. 
+
+```{r,eval=F}
+df<-data.frame(wine[,-c(1,2)],Class=as.factor(clust))
+df<-melt(df,id="Class")
+ggplot(df,aes(x=variable,y=value))+geom_boxplot(aes(fill=Class))
+```
+
+**Question :** Dans cette question et pour les suivantes, on se focalise sur la mesure d'agrégation de Ward. Ajustez une classification hiérarchique avec la mesure de Ward. Que représentent les hauteurs du dendrogramme dans ce cas ? 
+
+```{r,eval=F}
+# A COMPLETER
+hward<-hclust(md, method = "ward.D2")
+fviz_dend(hward,show_labels=FALSE)
+```
+
+**Question : ** Déterminez le nombre de classes à retenir avec l'indice de Calinski-Harabasz. Vous pouvez vous aider de la fonction `ìndex.G1()` de la librairie `clusterSim`. Tracez la classification obtenue sur le dendrogramme et sur le premier plan factoriel de l'ACP. 
+
+```{r,eval=F}
+# A completer
+CH<-NULL
+Kmax<-20
+for (k in 2:Kmax){
+  CH<-c(CH,index.G1(x=wine[,-c(1,2)], cl=cutree(hward,k)))
+}
+daux<-data.frame(NbClust=2:Kmax,CH=CH)
+ggplot(daux,aes(x=NbClust,y=CH))+
+  geom_line()+
+  geom_point()
+
+ClustCH<-cutree(hward,k=4)
+fviz_dend(hward,k=4,show_labels = F)
+fviz_pca_ind(resacp,geom=c("point"),habillage=as.factor(ClustCH))
+```
+
+**Question :** Comparez la classification obtenue avec la méthode des Kmeans dans le TP 1 et celle obtenue à la question précédente. 
+
+```{r,eval=F}
+reskmeans<-kmeans(wine[-c(1:2)],4)
+fviz_pca_ind(resacp,habillage=as.factor(reskmeans$cluster) ,geom=c("point"))
+```
+
+# DBSCAN 
+
+Dans cette partie, on considère les données simulées "chameleon_ds7" disponibles dans la librairie `seriation`. 
+
+```{r}
+library(seriation)
+data(Chameleon)
+ggplot(chameleon_ds7,aes(x=x,y=y))+geom_point()
+```
+
+## DBSCAN à paramètres fixés
+
+**Question :** Dans un premier temps, utilisez l'algorithme DBSCAN avec les paramètres `minPts=25` et `eps= 15` à l'aide de la fonction `dbscan()` de la librairie `dbscan`. Quels sont les effectifs par classe ? Combien d'individus ne sont pas classés ?
+
+```{r,eval=F}
+# A COMPLETER
+minPts<-25
+eps<-15
+res.db <- dbscan::dbscan(chameleon_ds7,eps, minPts)
+table(res.db$cluster)
+```
+
+```{r,eval=F}
+fviz_cluster(res.db, chameleon_ds7, geom="point",ellipse="FALSE")+
+  theme(legend.position="none")+
+  xlab("")+ylab("")+ggtitle("Avec DBSCAN")
+```
+
+## Influence des paramètres de DBSCAN
+
+**Question :** Pour étudier l'influence des paramètres `minPts` et `eps`, évaluez le nombre de classes obtenues et le nombre d'individus non classés pour différentes valeurs de ces paramètres. Faites varier minPts dans $\{5,10,15,20,25,30,35,40\}$ et eps dans $\{5,6,\ldots,20\}$.  
+
+```{r,eval=F}
+minPts <- c(5,10,15,20,25,30,35,40)
+eps <- c(5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20)
+NBCluster <- matrix(0,nrow=length(minPts),ncol=length(eps))
+NBNonCl <-matrix(0,nrow=length(minPts),ncol=length(eps))
+for (i in 1:length(minPts)){
+  for (j in 1:length(eps)){
+    res<-dbscan::dbscan(chameleon_ds7, eps=eps[j], minPts=minPts[i])
+    NBCluster[i,j] <- length(table(res$cluster)) - 1
+    NBNonCl[i,j] <- sum(res$cluster == 0) 
+  }
+}
+NBCluster
+NBNonCl
+
+df<-data.frame(eps=rep(eps,each=length(minPts)),
+              minPts=as.factor(rep(minPts,length(eps))),
+              NBCluster=c(NBCluster),
+              NBNonCl=c(NBNonCl)*100/nrow(chameleon_ds7))
+
+ggplot(df,aes(x=eps,y=NBCluster,col=minPts))+
+  geom_point()+
+  geom_line()
+ggplot(df,aes(x=eps,y=NBNonCl,col=minPts))+
+  geom_point()+
+  geom_line()
+```
+
+**Question :** Pour une valeur de `minPts=30`, déterminez à l'aide de la question précédente la valeur de `eps` qui permet d'avoir un clustering en $9$ classes. Vérifiez ce clustering sur le nuage de points. 
+
+```{r}
+eps30 <- eps[which(NBCluster[6,]==9)]
+eps30
+```
+
+**Question :** Pour une valeur de `minPts=30`, tracez le graphe de distance kNN afin de choisir le paramètre `eps`. Vous pouvez utiliser la fonction `kNNdistplot()`. Qu'en pensez-vous ? Etudiez le clustering obtenu. 
+
+```{r,eval=F}
+DS7<-chameleon_ds7
+dbscan::kNNdistplot(DS7, k =29)
+abline(h = 18, lty = 8.2)
+
+res.db <- dbscan::dbscan(chameleon_ds7,eps=18,minPts =  30)
+table(res.db$cluster)
+fviz_cluster(res.db, chameleon_ds7, geom="point",ellipse="FALSE")+
+  theme(legend.position="none")+
+  xlab("")+ylab("")+ggtitle("Avec DBSCAN")
+```
+
+## Comparaison avec Kmeans
+
+**Question :** Mettez en place une stratégie de classification de ces données avec les Kmeans. Comparez les résultats. Retrouvez les grandes caractéristiques de ces deux méthodes. 
+
+```{r,eval=F}
+help(kmeans)
+reskmeans<-kmeans(chameleon_ds7,3)
+fviz_cluster(reskmeans, chameleon_ds7, geom="point",ellipse="FALSE")+
+  theme(legend.position="none")+
+  xlab("")+ylab("")+ggtitle("Avec DBSCAN")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
