@@ -124,8 +124,105 @@ cor1<-corrplot(cor(data[, c(1:18)]), method = "ellipse")
 ```{r}
 cor2<-corrplot(cor(data[, c(19:36)]), method = "ellipse")
 ```
-
-
 G séparé les 2 exp en 2, c plus simple lolilol (mais on perd en zozo)
 
 On perd les correlations entre la 1ere et la 2eme experience.
+
+```{r,eval=F}
+dataScale<-scale(data[,-c(37:39)], center = TRUE , scale = FALSE)
+round(apply(dataScale,2,mean))
+
+#Pas nécéssaire
+```
+
+ACP CENTRéE
+
+```{r,eval=F}
+respca<-PCA(data,quali.sup=c(37:39),scale.unit = F,graph=F)
+#respca<-PCA(data,quanti.sup=c(1:18),scale.unit = F,graph=F) Je suis bebete
+respca$eig
+fviz_eig(respca)
+
+```
+
+```{r,eval=F}
+#plot(respca,choix="varcor") 
+fviz_pca_var(respca) #graphique des corrélations entre les variables initiales et les méta-variables => Illisible
+
+corrplot(respca$var$cor,method="ellipse")  #les corrélations des variables initiales avec toutes les méta-variables => Plus lisible (même si c pas ouf)
+
+fviz_pca_ind(respca,col.ind="contrib",geom=c("point"))
+fviz_pca_ind(respca,geom=c("point"),select.ind = list(cos2=0.95))
+
+
+#ATTENTION : problème d'overflow, à regler
+```
+
+ACP CENTRéE REUDITE
+
+
+```{r,eval=F}
+
+respca2<-PCA(data,quali.sup=c(37:39),scale.unit=T,graph=F)
+respca2$eig
+fviz_eig(respca2)
+
+```
+
+```{r,eval=F}
+#plot(respca2,choix="varcor") 
+fviz_pca_var(respca2) #graphique des corrélations entre les variables initiales et les méta-variables => Illisible
+
+corrplot(respca2$var$cor,method="ellipse")  #les corrélations des variables initiales avec toutes les méta-variables => Plus lisible (même si c pas ouf)
+
+fviz_pca_ind(respca2,col.ind="contrib",geom=c("point"))
+fviz_pca_ind(respca2,geom=c("point"),select.ind = list(cos2=0.95))
+```
+
+
+
+
+TENTATIVE DE KmEANS
+```{r,eval=F}
+reskmeans<-kmeans(dataScale,4) 
+fviz_pca_ind(respca,habillage=as.factor(reskmeans$cluster) ,geom=c("point"))
+```
+```{r,eval=F}
+fviz_cluster(reskmeans,data=dataScale,
+             ellipse.type="norm",labelsize=8,
+             geom=c("point"))+ggtitle("")
+fviz_pca_ind(respca,col.ind=as.factor(reskmeans$cluster),
+             geom = c("point"),axes=c(1,2))
+```
+
+
+Méthode PAM (approximative)
+```{r,eval=F}
+
+Kmax<-15
+resPAMcl<-matrix(0,nrow=nrow(data),ncol=Kmax-1)
+Silhou<-NULL
+for (k in 2:Kmax){
+  resaux<-pam(dataScale,k, metric="euclidean")
+  resPAMcl[,k-1]<-resaux$clustering
+  aux<-silhouette(resPAMcl[,k-1], daisy(dataScale))
+  Silhou<-c(Silhou,mean(aux[,3]))
+}
+
+df<-data.frame(K=2:Kmax,Silhouette=Silhou)
+ggplot(df,aes(x=K,y=Silhouette))+
+  geom_point()+
+  geom_line()+theme(legend.position = "bottom")
+
+#on a le coude à 4, on prend 4 classes du coup
+
+
+#Les lignes suivantes font un truc mais g pas encore trop compris
+# aux<-silhouette(resPAMcl[,1], daisy(dataScale))
+# fviz_silhouette(aux)+theme(plot.title = element_text(size =9))
+# 
+# adjustedRandIndex(resPAMcl[,1],reskmeanscl[,3])
+# table(resPAMcl[,1],reskmeanscl[,3])
+
+```
+On a le coude 4, donc on va choisir 4 classes
