@@ -14,10 +14,11 @@ header-includes:
    - \newcommand{\1}{\mathds{1}}
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-#importation des packages utiles au projet
+```{r setup, include=FALSE }
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning=FALSE,fig.width=15,fig.height = 6, dpi=300)
 
+#importation des packages utiles au projet
+library(reticulate)
 library(ggplot2)
 library(corrplot)
 library(FactoMineR)
@@ -40,6 +41,9 @@ library(knitr)
 
 Dans ce projet, on s'intéresse à la population des gènes d'une plante modèle. On souhaite analyser les données représentant les différences d'expression d'un certain nombre d'individus (gènes) pour différents traitements appliqués.
 
+
+# Statistiques descriptives
+
 # Description du jeu de données
 
 ```{r,eval=T, echo=FALSE}
@@ -48,6 +52,7 @@ data<-read.table("data.txt",header=T, sep=";", stringsAsFactors = T)
 Le jeu de données fourni est composé d'un échantillon de n=542 gènes et de 39 variables statistiques qui caractérisent les individus. On observe que les 36 premières variables sont des variables quantitatives continues. Elles permettent d'évaluer les différences d'expression des gènes pour trois traitements appliqués (T1, T2 et T3) durant 6 heures et ceci pour deux réplicats biologiques (R1 et R2).
 Les trois dernières variables (ExpT1, ExpT2 et ExpT3) sont des variables qualitatives (ORDINALES OU NOMINALES) dont les trois modalités sont : "Non", "Sous" et "Sur". Ces dernières représentent pour chaque traitement la décision si le gène est sur-exprimé, sous-exprimé ou non-exprimé à 6 heures. 
 Les premières lignes du jeu de données sont affichées dans la Table 1.
+
 ```{r, echo=FALSE, eval=TRUE}
 kable(head(data[,c(1:6,37)]),caption="\\label{tab:tabdata}Les premières lignes du jeu de données.")
 #head(data, n=5)
@@ -62,10 +67,9 @@ kable(head(data[,c(1:6,37)]),caption="\\label{tab:tabdata}Les premières lignes 
 levels(data$ExpT1)
 levels(data$ExpT2)
 levels(data$ExpT3)
-```
-# Statistiques descriptives uni-dimensionnelles et bi-dimensionnelles
-
 Nous commençons par faire quelques statistiques descriptives uni-dimensionnelles et bi-dimensionnelles pour prendre en main les données.
+```
+## Analyse uni-dimensionnelle
 
 ## Variables qualitatives
 
