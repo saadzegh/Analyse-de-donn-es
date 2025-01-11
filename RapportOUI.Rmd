@@ -128,6 +128,7 @@ grid.arrange(g1,g2,g3,ncol=3)
 #GARDER LA LEGENDE, mettre le %ge sur le graphiqeu plus clair
 
 # Pour ExpT1
+df1 <- data.frame(group = levels(data$ExpT1), value = as.vector(table(data$ExpT1)) / nrow(data))
 g1pie <- ggplot(df1, aes(x = "", y = value, fill = group)) + 
   geom_bar(width = 1, stat = "identity") +
   coord_polar("y", start = 0) +
@@ -149,6 +150,7 @@ g1pie <- ggplot(df1, aes(x = "", y = value, fill = group)) +
   ggtitle("ExpT1") 
 
 # Pour ExpT2
+df2 <- data.frame(group = levels(data$ExpT2), value = as.vector(table(data$ExpT2)) / nrow(data))
 g2pie <- ggplot(df2, aes(x = "", y = value, fill = group)) + 
   geom_bar(width = 1, stat = "identity") +
   coord_polar("y", start = 0) +
@@ -170,6 +172,7 @@ g2pie <- ggplot(df2, aes(x = "", y = value, fill = group)) +
   ggtitle("ExpT2") 
 
 # Pour ExpT3
+df3 <- data.frame(group = levels(data$ExpT3), value = as.vector(table(data$ExpT3)) / nrow(data))
 g3pie <- ggplot(df3, aes(x = "", y = value, fill = group)) + 
   geom_bar(width = 1, stat = "identity") +
   coord_polar("y", start = 0) +
