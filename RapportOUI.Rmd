@@ -122,154 +122,28 @@ g3 = ggplot(data) + geom_bar(aes(x = ExpT3))
 grid.arrange(g1,g2,g3,ncol=3)
 ```
 
-```{r, }
+```{r, echo=TRUE, eval=FALSE, fig.align='center', fig.cap="Diagramme en secteur"}
 #Reblochon des effectifs des variables qualitatives (non utilisés dans le rapport)
-
-# Pour ExpT1
-df1 <- data.frame(group = levels(data$ExpT1), value = as.vector(table(data$ExpT1)) / nrow(data))
-g1pie <- ggplot(df1, aes(x = "", y = value, fill = group)) + 
-  geom_bar(width = 1, stat = "identity") +
-  coord_polar("y", start = 0) +
-  geom_text(aes(label = scales::percent(value, accuracy = 0.1)), 
-            position = position_stack(vjust = 0.5), 
-            size = 3) +
-  theme_grey(base_size = 15) +  # Conserve le fond gris
-  theme(
-    panel.grid = element_blank(),      # Supprime les lignes de grille
-    axis.title = element_blank(),      # Supprime les titres d'axes
-    axis.text = element_blank(),       # Supprime les textes des axes
-    axis.ticks = element_blank(),      # Supprime les ticks des axes
-    legend.position = "bottom"
-  )
-
-# Pour ExpT2
-df2 <- data.frame(group = levels(data$ExpT2), value = as.vector(table(data$ExpT2)) / nrow(data))
-g2pie <- ggplot(df2, aes(x = "", y = value, fill = group)) + 
-  geom_bar(width = 1, stat = "identity") +
-  coord_polar("y", start = 0) +
-  geom_text(aes(label = scales::percent(value, accuracy = 0.1)), 
-            position = position_stack(vjust = 0.5), 
-            size = 3) +
-  theme_grey(base_size = 15) + 
-  theme(
-    panel.grid = element_blank(),
-    axis.title = element_blank(),
-    axis.text = element_blank(),
-    axis.ticks = element_blank(),
-    legend.position = "bottom"
-  )
-
-# Pour ExpT3
-df3 <- data.frame(group = levels(data$ExpT3), value = as.vector(table(data$ExpT3)) / nrow(data))
-g3pie <- ggplot(df3, aes(x = "", y = value, fill = group)) + 
-  geom_bar(width = 1, stat = "identity") +
-  coord_polar("y", start = 0) +
-  geom_text(aes(label = scales::percent(value, accuracy = 0.1)), 
-            position = position_stack(vjust = 0.5), 
-            size = 3) +
-  theme_grey(base_size = 15) + 
-  theme(
-    panel.grid = element_blank(),
-    axis.title = element_blank(),
-    axis.text = element_blank(),
-    axis.ticks = element_blank(),
-    legend.position = "bottom"
-  )
-
-# Disposition des graphiques
-grid.arrange(g1pie, g2pie, g3pie, ncol = 3)
-
-# Disposition des graphiques
-grid.arrange(g1pie, g2pie, g3pie, ncol = 3)
-```
-
-```{r}
 
 #GARDER LA LEGENDE, mettre le %ge sur le graphiqeu plus clair
 
-# Fonction pour créer un dataframe avec les pourcentages formatés
-create_df_with_percentage <- function(data_col) {
-  counts <- table(data_col)
-  total <- sum(counts)
-  df <- data.frame(
-    group = names(counts),
-    value = as.vector(counts) / total,
-    label = paste0(names(counts), " (", scales::percent(as.vector(counts) / total, accuracy = 0.1), ")")
-  )
-  return(df)
-}
-
-# Pour ExpT1
-df1 <- create_df_with_percentage(data$ExpT1)
-g1pie <- ggplot(df1, aes(x = "", y = value, fill = group)) + 
-  geom_bar(width = 1, stat = "identity") +
-  coord_polar("y", start = 0) +
-  scale_fill_manual(values = scales::hue_pal()(length(df1$group)), labels = df1$label) +  # Ajout des pourcentages dans la légende
-  theme_grey(base_size = 15) + 
-  theme(
-    panel.grid = element_blank(),
-    axis.title = element_blank(),
-    axis.text = element_blank(),
-    axis.ticks = element_blank(),
-    legend.position = "bottom",
-    legend.title = element_blank()
-  )
-
-# Pour ExpT2
-df2 <- create_df_with_percentage(data$ExpT2)
-g2pie <- ggplot(df2, aes(x = "", y = value, fill = group)) + 
-  geom_bar(width = 1, stat = "identity") +
-  coord_polar("y", start = 0) +
-  scale_fill_manual(values = scales::hue_pal()(length(df2$group)), labels = df2$label) + 
-  theme_grey(base_size = 15) + 
-  theme(
-    panel.grid = element_blank(),
-    axis.title = element_blank(),
-    axis.text = element_blank(),
-    axis.ticks = element_blank(),
-    legend.position = "bottom",
-    legend.title = element_blank()
-  )
-
-# Pour ExpT3
-df3 <- create_df_with_percentage(data$ExpT3)
-g3pie <- ggplot(df3, aes(x = "", y = value, fill = group)) + 
-  geom_bar(width = 1, stat = "identity") +
-  coord_polar("y", start = 0) +
-  scale_fill_manual(values = scales::hue_pal()(length(df3$group)), labels = df3$label) + 
-  theme_grey(base_size = 15) + 
-  theme(
-    panel.grid = element_blank(),
-    axis.title = element_blank(),
-    axis.text = element_blank(),
-    axis.ticks = element_blank(),
-    legend.position = "bottom",
-    legend.title = element_blank()
-  )
-
-# Disposition des graphiques
-grid.arrange(g1pie, g2pie, g3pie, ncol = 3)
-
-
-##########################################################
-##########################################################
-
 # Pour ExpT1
 df1 <- data.frame(group = levels(data$ExpT1), value = as.vector(table(data$ExpT1)) / nrow(data))
 g1pie <- ggplot(df1, aes(x = "", y = value, fill = group)) + 
   geom_bar(width = 1, stat = "identity") +
   coord_polar("y", start = 0) +
   geom_text(aes(label = scales::percent(value, accuracy = 0.1)), 
-            position = position_stack(vjust = 0.7),  # Décalage pour rendre les étiquettes plus visibles
-            size = 4) +  # Taille du texte ajustée pour plus de lisibilité
+            position = position_stack(vjust = 0.7),  
+            size = 5.5) +  # Taille du %age
   theme_grey(base_size = 15) + 
   theme(
     panel.grid = element_blank(),
     axis.title = element_blank(),
     axis.text = element_blank(),
     axis.ticks = element_blank(),
-    legend.position = "bottom"
-  )
+    legend.position = "bottom")+
+  labs(fill = NULL)+    #Ne pas afficher "group" dans la légende
+  ggtitle("ExpT1") # Ajouter le titre 
 
 # Pour ExpT2
 df2 <- data.frame(group = levels(data$ExpT2), value = as.vector(table(data$ExpT2)) / nrow(data))
@@ -278,15 +152,16 @@ g2pie <- ggplot(df2, aes(x = "", y = value, fill = group)) +
   coord_polar("y", start = 0) +
   geom_text(aes(label = scales::percent(value, accuracy = 0.1)), 
             position = position_stack(vjust = 0.7), 
-            size = 4) +
+            size = 5.5) +
   theme_grey(base_size = 15) + 
   theme(
     panel.grid = element_blank(),
     axis.title = element_blank(),
     axis.text = element_blank(),
     axis.ticks = element_blank(),
-    legend.position = "bottom"
-  )
+    legend.position = "bottom")+
+  labs(fill = NULL)+
+  ggtitle("ExpT2") # Ajouter le titre
 
 # Pour ExpT3
 df3 <- data.frame(group = levels(data$ExpT3), value = as.vector(table(data$ExpT3)) / nrow(data))
@@ -295,19 +170,19 @@ g3pie <- ggplot(df3, aes(x = "", y = value, fill = group)) +
   coord_polar("y", start = 0) +
   geom_text(aes(label = scales::percent(value, accuracy = 0.1)), 
             position = position_stack(vjust = 0.7), 
-            size = 4) +
+            size = 5.5) +
   theme_grey(base_size = 15) + 
   theme(
     panel.grid = element_blank(),
     axis.title = element_blank(),
     axis.text = element_blank(),
     axis.ticks = element_blank(),
-    legend.position = "bottom"
-  )
+    legend.position = "bottom")+
+  labs(fill = NULL)+
+  ggtitle("ExpT3") # Ajouter le titre
 
 # Disposition des graphiques
 grid.arrange(g1pie, g2pie, g3pie, ncol = 3)
-
 
 ```
 
