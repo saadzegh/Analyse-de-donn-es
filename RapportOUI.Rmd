@@ -128,58 +128,67 @@ grid.arrange(g1,g2,g3,ncol=3)
 #GARDER LA LEGENDE, mettre le %ge sur le graphiqeu plus clair
 
 # Pour ExpT1
-df1 <- data.frame(group = levels(data$ExpT1), value = as.vector(table(data$ExpT1)) / nrow(data))
 g1pie <- ggplot(df1, aes(x = "", y = value, fill = group)) + 
   geom_bar(width = 1, stat = "identity") +
   coord_polar("y", start = 0) +
   geom_text(aes(label = scales::percent(value, accuracy = 0.1)), 
             position = position_stack(vjust = 0.7),  
-            size = 5.5) +  # Taille du %age
+            size = 6, family = "serif") +  # Changer la police
+  #         size = 6, family = "serif", fontface = "bold") +
   theme_grey(base_size = 15) + 
   theme(
-    panel.grid = element_blank(),
+    panel.grid = element_line(color = "gray"),  # Lignes de la grille visibles
     axis.title = element_blank(),
-    axis.text = element_blank(),
+    axis.text.y = element_text(size = 10),       # Indicateurs autour du graphique
+    axis.text.x = element_blank(),
     axis.ticks = element_blank(),
-    legend.position = "bottom")+
-  labs(fill = NULL)+    #Ne pas afficher "group" dans la légende
-  ggtitle("ExpT1") # Ajouter le titre 
+    legend.position = "bottom",
+    plot.title = element_text(hjust = 0.5, family = "serif", size = 20, face = "bold")  # Centrer et styliser le titre
+  ) +
+  labs(fill = NULL) +
+  ggtitle("ExpT1") 
 
 # Pour ExpT2
-df2 <- data.frame(group = levels(data$ExpT2), value = as.vector(table(data$ExpT2)) / nrow(data))
 g2pie <- ggplot(df2, aes(x = "", y = value, fill = group)) + 
   geom_bar(width = 1, stat = "identity") +
   coord_polar("y", start = 0) +
   geom_text(aes(label = scales::percent(value, accuracy = 0.1)), 
             position = position_stack(vjust = 0.7), 
-            size = 5.5) +
+            size = 6, family = "serif") +  # Changer la police
+  #         size = 6, family = "serif", fontface = "bold") +
   theme_grey(base_size = 15) + 
   theme(
-    panel.grid = element_blank(),
+    panel.grid = element_line(color = "gray"),  # Lignes de la grille visibles
     axis.title = element_blank(),
-    axis.text = element_blank(),
+    axis.text.y = element_text(size = 10),       # Indicateurs autour du graphique
+    axis.text.x = element_blank(),
     axis.ticks = element_blank(),
-    legend.position = "bottom")+
-  labs(fill = NULL)+
-  ggtitle("ExpT2") # Ajouter le titre
+    legend.position = "bottom",
+    plot.title = element_text(hjust = 0.5, family = "serif", size = 20, face = "bold")  # Centrer et styliser le titre
+  ) +
+  labs(fill = NULL) +
+  ggtitle("ExpT2") 
 
 # Pour ExpT3
-df3 <- data.frame(group = levels(data$ExpT3), value = as.vector(table(data$ExpT3)) / nrow(data))
 g3pie <- ggplot(df3, aes(x = "", y = value, fill = group)) + 
   geom_bar(width = 1, stat = "identity") +
   coord_polar("y", start = 0) +
   geom_text(aes(label = scales::percent(value, accuracy = 0.1)), 
             position = position_stack(vjust = 0.7), 
-            size = 5.5) +
+            size = 6, family = "serif") +  # Changer la police
+  #         size = 6, family = "serif", fontface = "bold") +
   theme_grey(base_size = 15) + 
   theme(
-    panel.grid = element_blank(),
+    panel.grid = element_line(color = "gray"),  # Lignes de la grille visibles
     axis.title = element_blank(),
-    axis.text = element_blank(),
+    axis.text.y = element_text(size = 10),       #Plus joli avec les indicateurs autour
+    axis.text.x = element_blank(),
     axis.ticks = element_blank(),
-    legend.position = "bottom")+
-  labs(fill = NULL)+
-  ggtitle("ExpT3") # Ajouter le titre
+    legend.position = "bottom",
+    plot.title = element_text(hjust = 0.5, family = "serif", size = 20, face = "bold")  # Centrer et styliser le titre
+  ) +
+  labs(fill = NULL) +
+  ggtitle("ExpT3") 
 
 # Disposition des graphiques
 grid.arrange(g1pie, g2pie, g3pie, ncol = 3)
