@@ -122,7 +122,7 @@ g3 = ggplot(data) + geom_bar(aes(x = ExpT3))
 grid.arrange(g1,g2,g3,ncol=3)
 ```
 
-```{r, echo=TRUE, eval=FALSE, fig.align='center', fig.cap="Diagramme en secteur"}
+```{r, echo=FALSE, eval=TRUE, fig.align='center', fig.cap="Diagramme en secteur"}
 #Reblochon des effectifs des variables qualitatives (non utilisés dans le rapport)
 
 #GARDER LA LEGENDE, mettre le %ge sur le graphiqeu plus clair
