@@ -8,7 +8,7 @@ output:
     toc : TRUE
     toc_depth : 2
     number_section : TRUE
-geometry: margin=0.5in
+geometry: margin=0.7in
 header-includes:
    - \usepackage{dsfont}
    - \usepackage{color}
@@ -40,43 +40,56 @@ library(knitr)
 ```
 # Introduction
 
-Dans ce projet, on s'intéresse à la population des gènes d'une plante modèle. On souhaite analyser les données représentant les différences d'expression d'un certain nombre de gènes pour différents traitements appliqués.
+Dans ce projet, on s'intéresse à la population des gènes d'une plante modèle. On souhaite analyser un jeu de données représentant les différences d'expression d'un certain nombre de gènes pour plusieurs traitements appliqués et en tirer des conclusions pertinentes à propos l'expérience menée.
 
 # Statistiques descriptives
 
 ## Description du jeu de données
 
 ```{r,eval=T, echo=FALSE}
+#On récupère le jeu de données
 data<-read.table("data.txt",header=T, sep=";", stringsAsFactors = T)
 ```
-Le jeu de données fourni est composé d'un échantillon de n=542 individus (gènes) et de 39 variables statistiques qui caractérisent les individus. On observe que les 36 premières variables sont des variables quantitatives continues (variables Tt_sh_Rr). Elles permettent d'évaluer les différences d'expression des gènes pour trois traitements appliqués (T1, T2 et T3) durant 6 heures et ceci pour deux réplicats biologiques (R1 et R2).
 
-Les trois dernières variables (ExpT1, ExpT2 et ExpT3) sont des variables qualitatives nominales dont les trois modalités sont : "Non", "Sous" et "Sur". Ces dernières représentent pour chaque traitement la décision si le gène est sur-exprimé, sous-exprimé ou non-exprimé à 6 heures.
-Les premières lignes du jeu de données (pour les variables T1_1h_R1 à T1_6h_R1 et la variable ExpT1) sont affichées dans la Table 1.
-
-```{r, echo=FALSE, eval=TRUE}
-kable(head(data[,c(1:6,37)]),caption="\\label{tab:tabdata}Les premières lignes du jeu de données.")
-```
 ```{r,eval=T, echo=FALSE, results='hide'}
-#commandes pour l'analyse du jeu de données
+#commandes utiles pour l'analyse du jeu de données
 head(data)
 str(data)
 names(data)
 colnames(data)
 attributes(data)
+```
+Le jeu de données fourni est composé d'un échantillon de 542 individus qui correspondent aux gènes de la plante modèle et comporte 39 variables statistiques qui caractérisent les individus. 
+
+Grace à la commande `str(data)`, on observe que les 36 premières variables sont des variables quantitatives continues (variables nommées Tt_sh_Rr). Ces variables permettent d'évaluer les divergences d'expression des gènes pour trois traitements appliqués (T1, T2 et T3) par rapport à un état sans traitement de référence. Les données de chaque traitement ont été relevées durant 6 heures et ceci pour deux réplicats biologiques (R1 et R2).
+
+Les trois dernières variables (nommées ExpT1, ExpT2 et ExpT3) sont des variables qualitatives nominales/ordinales dont les trois modalités sont : "Non", "Sous" et "Sur". Ces dernières représentent la décision si le gène est sur-exprimé, sous-exprimé ou non-exprimé à 6 heures par rapport à l'état de référence, pour chaque traitement.
+
+Afin de visualiser les données, les premières lignes du jeu de données sont affichées dans la Table \ref{tab:tabdata}. 
+En raison de la grande quantité de données, nous avons choisi de représenter seulement les variables T1_1h_R1 à T1_6h_R1 et ExpT1 qui donnent un aperçu de la structure du jeu de données pour le réplicat 1.
+
+```{r, echo=FALSE, eval=TRUE}
+kable(head(data[,c(1:6,37)]),caption="\\label{tab:tabdata}Les premières lignes du jeu de données.")
+```
+
+## Analyse uni-dimensionnelle
+
+Nous commençons par faire quelques statistiques descriptives uni-dimensionnelles et bi-dimensionnelles afin de prendre en main le jeu de données.
+
+### Variables qualitatives
+
+Nous avons à notre disposition trois variables qualitatives : ExpT1, ExpT2, ExpT3, comme décrites précédemment. Pour extraire certaines tendances des traitements appliqués, nous analysons les fréquences d'apparition des différentes modalités et nous les représentons sous forme de diagramme en secteur dans la figure 1.
+
+```{r echo=FALSE, eval=FALSE}
+#Visualisation des modalités des trois variables qualitatives
 levels(data$ExpT1)
 levels(data$ExpT2)
 levels(data$ExpT3)
 ```
-## Analyse uni-dimensionnelle
-
-Nous commençons par faire quelques statistiques descriptives uni-dimensionnelles et bi-dimensionnelles pour prendre en main les données.
-
-### Variables qualitatives
-
-Nous avons à notre disposition trois variables qualitatives : ExpT1, ExpT2, ExpT3 comme décrites précédemment.
 
 ```{r ,echo=F, eval=TRUE}
+#Tableau des fréquences pour les variables qualitatives
+
 Eff1<-table(data$ExpT1)
 #df1<-data.frame(Eff1=c(Eff1),Freq=c(Eff1)/sum(Eff1))
 #knitr::kable(t(df1))
@@ -89,16 +102,225 @@ Eff3<-table(data$ExpT3)
 #df3<-data.frame(Eff3=c(Eff3),Freq=c(Eff3)/sum(Eff3))
 #knitr::kable(t(df3))
 
-df<-data.frame(ExpT1=c(Eff1)*100/sum(Eff1), ExpT2=c(Eff2)*100/sum(Eff2), ExpT3=c(Eff3)*100/sum(Eff3) )
-knitr::kable(t(df),caption="\\label{tab:tabfreq}Fréquences en pourcentages des variables qualitatives")
-
-#g1 = ggplot(data) + geom_bar(aes(x = ExpT1)) 
-#g2 = ggplot(data) + geom_bar(aes(x = ExpT2)) 
-#g3 = ggplot(data) + geom_bar(aes(x = ExpT3)) 
-
-#grid.arrange(g1,g2,g3,ncol=3)
+#On regroupe les trois variables dans un même tableau pour pouvoir comparer les traitements
+df<-data.frame(ExpT1=round(c(Eff1)*100/sum(Eff1),digits = 3), ExpT2=round(c(Eff2)*100/sum(Eff2),digits=3), ExpT3=round(c(Eff3)*100/sum(Eff3),digits=3))
+knitr::kable(t(df),caption="\\label{tab:tabfreq}Tableau des fréquences pour les variables qualitatives (en %)")
 ```
-On peut déjà voir que les traitements T2 et T3 réagissent de façon similaire tandis que le traitement T1 est complètement différent
+COMMENT ZONE : Nous pouvons d'ores et déja observer des divergences de réaction entre les traitements 
+
+- Différences de réaction entre les différents traitements
+- Similarité des traitements 2 et 3 et traitement 1 à part
+- traitement 1 sans réaction majeure/à majorité sans effet
+- traitements 2 et 3 répartis de façon homogène entre sous et sur exprimé
+
+```{r, echo=FALSE, eval=FALSE}
+#barplots des effectifs des variables qualitatives (non utilisés dans le rapport)
+g1 = ggplot(data) + geom_bar(aes(x = ExpT1)) 
+g2 = ggplot(data) + geom_bar(aes(x = ExpT2)) 
+g3 = ggplot(data) + geom_bar(aes(x = ExpT3)) 
+
+grid.arrange(g1,g2,g3,ncol=3)
+```
+
+```{r, }
+#Reblochon des effectifs des variables qualitatives (non utilisés dans le rapport)
+
+# Pour ExpT1
+df1 <- data.frame(group = levels(data$ExpT1), value = as.vector(table(data$ExpT1)) / nrow(data))
+g1pie <- ggplot(df1, aes(x = "", y = value, fill = group)) + 
+  geom_bar(width = 1, stat = "identity") +
+  coord_polar("y", start = 0) +
+  geom_text(aes(label = scales::percent(value, accuracy = 0.1)), 
+            position = position_stack(vjust = 0.5), 
+            size = 3) +
+  theme_grey(base_size = 15) +  # Conserve le fond gris
+  theme(
+    panel.grid = element_blank(),      # Supprime les lignes de grille
+    axis.title = element_blank(),      # Supprime les titres d'axes
+    axis.text = element_blank(),       # Supprime les textes des axes
+    axis.ticks = element_blank(),      # Supprime les ticks des axes
+    legend.position = "bottom"
+  )
+
+# Pour ExpT2
+df2 <- data.frame(group = levels(data$ExpT2), value = as.vector(table(data$ExpT2)) / nrow(data))
+g2pie <- ggplot(df2, aes(x = "", y = value, fill = group)) + 
+  geom_bar(width = 1, stat = "identity") +
+  coord_polar("y", start = 0) +
+  geom_text(aes(label = scales::percent(value, accuracy = 0.1)), 
+            position = position_stack(vjust = 0.5), 
+            size = 3) +
+  theme_grey(base_size = 15) + 
+  theme(
+    panel.grid = element_blank(),
+    axis.title = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    legend.position = "bottom"
+  )
+
+# Pour ExpT3
+df3 <- data.frame(group = levels(data$ExpT3), value = as.vector(table(data$ExpT3)) / nrow(data))
+g3pie <- ggplot(df3, aes(x = "", y = value, fill = group)) + 
+  geom_bar(width = 1, stat = "identity") +
+  coord_polar("y", start = 0) +
+  geom_text(aes(label = scales::percent(value, accuracy = 0.1)), 
+            position = position_stack(vjust = 0.5), 
+            size = 3) +
+  theme_grey(base_size = 15) + 
+  theme(
+    panel.grid = element_blank(),
+    axis.title = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    legend.position = "bottom"
+  )
+
+# Disposition des graphiques
+grid.arrange(g1pie, g2pie, g3pie, ncol = 3)
+
+# Disposition des graphiques
+grid.arrange(g1pie, g2pie, g3pie, ncol = 3)
+```
+
+```{r}
+
+#GARDER LA LEGENDE, mettre le %ge sur le graphiqeu plus clair
+
+# Fonction pour créer un dataframe avec les pourcentages formatés
+create_df_with_percentage <- function(data_col) {
+  counts <- table(data_col)
+  total <- sum(counts)
+  df <- data.frame(
+    group = names(counts),
+    value = as.vector(counts) / total,
+    label = paste0(names(counts), " (", scales::percent(as.vector(counts) / total, accuracy = 0.1), ")")
+  )
+  return(df)
+}
+
+# Pour ExpT1
+df1 <- create_df_with_percentage(data$ExpT1)
+g1pie <- ggplot(df1, aes(x = "", y = value, fill = group)) + 
+  geom_bar(width = 1, stat = "identity") +
+  coord_polar("y", start = 0) +
+  scale_fill_manual(values = scales::hue_pal()(length(df1$group)), labels = df1$label) +  # Ajout des pourcentages dans la légende
+  theme_grey(base_size = 15) + 
+  theme(
+    panel.grid = element_blank(),
+    axis.title = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    legend.position = "bottom",
+    legend.title = element_blank()
+  )
+
+# Pour ExpT2
+df2 <- create_df_with_percentage(data$ExpT2)
+g2pie <- ggplot(df2, aes(x = "", y = value, fill = group)) + 
+  geom_bar(width = 1, stat = "identity") +
+  coord_polar("y", start = 0) +
+  scale_fill_manual(values = scales::hue_pal()(length(df2$group)), labels = df2$label) + 
+  theme_grey(base_size = 15) + 
+  theme(
+    panel.grid = element_blank(),
+    axis.title = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    legend.position = "bottom",
+    legend.title = element_blank()
+  )
+
+# Pour ExpT3
+df3 <- create_df_with_percentage(data$ExpT3)
+g3pie <- ggplot(df3, aes(x = "", y = value, fill = group)) + 
+  geom_bar(width = 1, stat = "identity") +
+  coord_polar("y", start = 0) +
+  scale_fill_manual(values = scales::hue_pal()(length(df3$group)), labels = df3$label) + 
+  theme_grey(base_size = 15) + 
+  theme(
+    panel.grid = element_blank(),
+    axis.title = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    legend.position = "bottom",
+    legend.title = element_blank()
+  )
+
+# Disposition des graphiques
+grid.arrange(g1pie, g2pie, g3pie, ncol = 3)
+
+
+##########################################################
+##########################################################
+
+# Pour ExpT1
+df1 <- data.frame(group = levels(data$ExpT1), value = as.vector(table(data$ExpT1)) / nrow(data))
+g1pie <- ggplot(df1, aes(x = "", y = value, fill = group)) + 
+  geom_bar(width = 1, stat = "identity") +
+  coord_polar("y", start = 0) +
+  geom_text(aes(label = scales::percent(value, accuracy = 0.1)), 
+            position = position_stack(vjust = 0.7),  # Décalage pour rendre les étiquettes plus visibles
+            size = 4) +  # Taille du texte ajustée pour plus de lisibilité
+  theme_grey(base_size = 15) + 
+  theme(
+    panel.grid = element_blank(),
+    axis.title = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    legend.position = "bottom"
+  )
+
+# Pour ExpT2
+df2 <- data.frame(group = levels(data$ExpT2), value = as.vector(table(data$ExpT2)) / nrow(data))
+g2pie <- ggplot(df2, aes(x = "", y = value, fill = group)) + 
+  geom_bar(width = 1, stat = "identity") +
+  coord_polar("y", start = 0) +
+  geom_text(aes(label = scales::percent(value, accuracy = 0.1)), 
+            position = position_stack(vjust = 0.7), 
+            size = 4) +
+  theme_grey(base_size = 15) + 
+  theme(
+    panel.grid = element_blank(),
+    axis.title = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    legend.position = "bottom"
+  )
+
+# Pour ExpT3
+df3 <- data.frame(group = levels(data$ExpT3), value = as.vector(table(data$ExpT3)) / nrow(data))
+g3pie <- ggplot(df3, aes(x = "", y = value, fill = group)) + 
+  geom_bar(width = 1, stat = "identity") +
+  coord_polar("y", start = 0) +
+  geom_text(aes(label = scales::percent(value, accuracy = 0.1)), 
+            position = position_stack(vjust = 0.7), 
+            size = 4) +
+  theme_grey(base_size = 15) + 
+  theme(
+    panel.grid = element_blank(),
+    axis.title = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    legend.position = "bottom"
+  )
+
+# Disposition des graphiques
+grid.arrange(g1pie, g2pie, g3pie, ncol = 3)
+
+
+```
+
+
+
+### Variables Quantitatives
+
+Nous analysons maintenant les variables quantitatives (Tt_sh_Rr)
+
+Faire tous les codes qu'on utilisera pas dans le rapport (ex histogrammes, moyennes, variances...)
+
+
+
 ```{r, fig.align='center', fig.cap="boxplots"}
 #On a regardé ça avec Tessa, pas sures de son utilité mais y'a moyen de trouver une interprétation logique avec les différences entre les différents boxplots
 
