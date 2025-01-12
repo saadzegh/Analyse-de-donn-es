@@ -337,7 +337,7 @@ grid.arrange(g1,g2,g3,g4,g5,g6,ncol=6)
 3. Indice de liaison 
 
 ```{r,fig.cap="\\label{fig:boxplots} Tableaux de contingence des variables qualitatives"}
-#prop.table(table(var1,var2),margin=1)
+prop.table(table(var1,var2),margin=1)
 g1<-ggplot(data1,aes(x=ExpT1,fill=ExpT2))+
 geom_bar(position = "fill")
 #prop.table(table(var1,var3),margin=1)
@@ -347,7 +347,7 @@ geom_bar(position = "fill")
 g3<-ggplot(data1,aes(x=ExpT2,fill=ExpT3))+
 geom_bar(position = "fill")
 grid.arrange(g1,g2,g3,ncol=3)
-#mosaicplot(table(var1,var2))
+mosaicplot(table(var1,var2))
 #mosaicplot(table(var1,var3))
 #mosaicplot(table(var2,var3))
 ```
@@ -396,7 +396,16 @@ fviz_eig(respca)
 g1<-fviz_pca_ind(respca,geom=c("point"))
 g2<-fviz_pca_var(respca)
 grid.arrange(g1,g2,ncol=2)
-
+#réplicat 1 en bleu et réplicat 2 en rouge 
+colors <- rep("red", nrow(data1ACP1))
+colors[1:18] <- "blue"
+fviz_pca_ind(respca, geom = c("point"), col.ind = colors) +
+  scale_color_manual(values = c("red", "blue"))
+#en fonction des traitement 
+colors <- rep("red", nrow(data1ACP1))
+colors[c(1:6,19:25)] <- "blue"
+colors[c(7:12,26:32)] <- "green"
+fviz_pca_ind(respca, geom = c("point"), col.ind = colors)
 ```
 
 
@@ -541,6 +550,17 @@ g2<-fviz_dend(hward, show_labels = FALSE, k = 3)
 g3<-fviz_pca_ind(respca, geom = c("point"), habillage = as.factor(ClustCH)) 
 
 grid.arrange(g1,g2,g3,ncol=3)
+```
+```{r}
+clust1<-paste("Cl-K",reskmeans$cluster,sep="")
+clust2<-paste("Cl-hiérarchique",ClustCH,sep="")
+Tab<-melt(table(clust1,clust2))
+ggplot(Tab,aes(y=value,axis1=clust1,axis2=clust2))+
+  geom_alluvium(aes(fill=clust1))+
+  geom_stratum(width = 1/12)+   
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
+  ggtitle("figure 15.2")
+  theme(legend.position = "none")
 ```
 
 
@@ -713,6 +733,7 @@ g3<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
 #chordDiagram(table(clust,data1ACP2[,21]))
 #clust<-paste("Cl-K",reskmeans$cluster,sep="")
 grid.arrange(g1,g2,g3,ncol=3)
+
 ```
  
  
@@ -759,6 +780,20 @@ g3<-fviz_pca_ind(respca2, geom = c("point"), habillage = as.factor(ClustCH))
 grid.arrange(g1,g2,g3,ncol=3)
 
 ```
+
+
+```{r}
+clust1<-paste("Cl-K",reskmeans$cluster,sep="")
+clust2<-paste("Cl-hiérarchique",ClustCH,sep="")
+Tab<-melt(table(clust1,clust2))
+ggplot(Tab,aes(y=value,axis1=clust1,axis2=clust2))+
+  geom_alluvium(aes(fill=clust1))+
+  geom_stratum(width = 1/12)+   
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
+  ggtitle("figure 15.2")
+  theme(legend.position = "none")
+```
+
 ## Clustering 2 
 Faites une classification non supervisée (clustering) des gènes à partir des variables ExpT1, ExpT2 et ExpT3. Comparez avec les résultats de la question précédente
 
