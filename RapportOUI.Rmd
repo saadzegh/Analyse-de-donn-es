@@ -16,7 +16,7 @@ header-includes:
 ---
 
 ```{r setup, include=FALSE }
-knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning=FALSE,fig.width=15,fig.height = 6, dpi=300)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning=FALSE,fig.align="center",fig.width=15,fig.height = 6, dpi=300)
 
 #importation des packages utiles au projet
 library(reticulate)
