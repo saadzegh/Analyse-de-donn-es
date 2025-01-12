@@ -1,1 +1,15 @@
 COUCOUUUUUU
+
+g1<-fviz_pca_ind(respca,geom=c("point"))
+g2<-fviz_pca_var(respca)
+grid.arrange(g1,g2,ncol=2)
+#réplicat 1 en bleu et réplicat 2 en rouge 
+colors <- rep("red", nrow(data1ACP1))
+colors[1:18] <- "blue"
+fviz_pca_ind(respca, geom = c("point"), col.ind = colors) +
+  scale_color_manual(values = c("red", "blue"))
+#en fonction des traitement 
+colors <- rep("red", nrow(data1ACP1))
+colors[c(1:6,19:25)] <- "blue"
+colors[c(7:12,26:32)] <- "green"
+fviz_pca_ind(respca, geom = c("point"), col.ind = colors)
