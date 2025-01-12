@@ -290,6 +290,7 @@ fviz_pca_var(respcav) #graphique des corrélations entre les variables initiales
 fviz_pca_ind(respcav,col.ind="contrib",geom=c("point"))
 
 ```
+PARLER DE L'INERTIE
 ```{r}
 #Habillages sur le graphe des individus
 
@@ -317,13 +318,116 @@ fviz_pca_ind(respcav, geom = c("point"), col.ind = colors)
 
 ```
 
-
 ## Clustering
 
-BLABLABLIBLO
+### Détermination du nombre de classes
 
+
+```{r}
+#Inertie intraclasse
+
+Kmax<-15
+reskmeanscl<-matrix(0,nrow=nrow(dataACPv),ncol=Kmax-1)
+Iintra<-NULL
+for (k in 2:Kmax){
+  resaux<-kmeans(dataACPv,k)
+  reskmeanscl[,k-1]<-resaux$cluster
+  Iintra<-c(Iintra,resaux$tot.withinss)
+}
+
+df<-data.frame(K=2:15,Iintra=Iintra)
+g1<-ggplot(df,aes(x=K,y=Iintra))+
+  geom_line()+
+  geom_point()+
+  xlab("Nombre de classes")+
+  ylab("Inertie intraclasse") 
+  #ggtitle("Figure 9.1: Inertie intraclasse")
+```
+
+
+```{r}
+#silhouette
+
+Silhou<-NULL
+for (k in 2:Kmax){
+   aux<-silhouette(reskmeanscl[,k-1], daisy(dataACPv))
+   Silhou<-c(Silhou,mean(aux[,3]))
+}
+
+df<-data.frame(K=2:Kmax,Silhouette=Silhou)
+g2<-ggplot(df,aes(x=K,y=Silhouette))+
+  geom_point()+
+  geom_line()+theme(legend.position = "bottom")
+# ggtitle("Figure 10 : Coefficients silhouette")
+
+aux<-silhouette(reskmeanscl[,3],daisy(dataACPv))
+g3<-fviz_silhouette(aux)+
+  theme(plot.title = element_text(size =9)) 
+#+ ggtitle("Figure 11 : Visualisation des silhouettes")
+rm(df,Silhou,aux)
+
+g1 <- g1 + ggtitle("Figure 9.1: Inertie intraclasse") + theme(plot.title = element_text(hjust = 0.5, vjust = 2))
+g2 <- g2 + ggtitle("Figure 9.2: Coefficients silhouettes") + theme(plot.title = element_text(hjust = 0.5, vjust = 2))
+g3 <- g3 + ggtitle("Figure 9.3 : Visualisation des silhouettes") + theme(plot.title = element_text(hjust = 0.5, vjust = 2))
+
+grid.arrange(g1,g2,g3,ncol=3)
+```
+
+Blablabla on choisi 3/4 classes parce que...
+
+### Kmeans
+
+```{r,echo=F,eval=T}
+reskmeans<-kmeans(dataACPv,3) 
+```
+
+
+```{r,eval=F}
+fviz_cluster(reskmeans,data=dataACPv,
+             ellipse.type="norm",labelsize=8,
+             geom=c("point"))+ggtitle("")
+
+fviz_pca_ind(respcav,col.ind=as.factor(reskmeans$cluster),
+             geom = c("point"),axes=c(1,2))
+```
+Interprétation Kmeans
+
+Il faut regarder ce qu'il y a dans reskmeans$cluster pour voir qu'elle variable va dans quelle classe et commenter 
+
+On ne compare pas avec les variables qualitatives car il n'y en a pas 
+
+### Classification hiérarchique
+
+```{r}
+# dendogramme
+dist_dataACPv = dist(dataACPv)
+
+hward<-hclust(dist_dataACPv, method = "ward.D2") 
+fviz_dend(hward,show_labels=FALSE)
+```
+```{r ,fig.cap="A compléter v"}
+# A COMPLETER
+CH<-NULL
+Kmax<-20
+for (k in 2:Kmax){
+  CH<-c(CH,index.G1(dataACPv, cl= cutree(hward,k)))
+}
+#On prend k = 3
+daux<-data.frame(NbClust=2:Kmax,CH=CH)
+g1<-ggplot(daux,aes(x=NbClust,y=CH))+
+  geom_line()+
+  geom_point()
+
+ClustCH<-cutree(hward,k=3)
+g2<-fviz_dend(hward, show_labels = FALSE, k = 3)
+g3<-fviz_pca_ind(respcav, geom = c("point"), habillage = as.factor(ClustCH)) 
+
+grid.arrange(g1,g2,g3,ncol=3)
+```
 
 # Analyse des gènes
+
+Construisez un jeu de données DataExpMoy contenant la moyenne des expressions sur les réplicats de chaque gène, pour chaque traitement et chaque heure. DataExpMoy est donc une matrice de taille G × 18. Vous pourrez utiliser les variables ExpT1, ExpT2 et ExpT3 pour commenter vos résultats des questions suivantes.
 
 ## Analyse en composantes principales
 
@@ -357,45 +461,6 @@ fviz_pca_ind(respcag,col.ind="contrib",geom=c("point"))
 
 ## Clustering
 
-### TENTATIVE DE KmEANS
-```{r,eval=F}
-reskmeans<-kmeans(dataScale,4) 
-fviz_pca_ind(respca,habillage=as.factor(reskmeans$cluster) ,geom=c("point"))
-```
-```{r,eval=F}
-fviz_cluster(reskmeans,data=dataScale,
-             ellipse.type="norm",labelsize=8,
-             geom=c("point"))+ggtitle("")
-fviz_pca_ind(respca,col.ind=as.factor(reskmeans$cluster),
-             geom = c("point"),axes=c(1,2))
-```
-### Méthode PAM (approximative)
-```{r,eval=F}
+## Kmeans
 
-Kmax<-15
-resPAMcl<-matrix(0,nrow=nrow(data),ncol=Kmax-1)
-Silhou<-NULL
-for (k in 2:Kmax){
-  resaux<-pam(dataScale,k, metric="euclidean")
-  resPAMcl[,k-1]<-resaux$clustering
-  aux<-silhouette(resPAMcl[,k-1], daisy(dataScale))
-  Silhou<-c(Silhou,mean(aux[,3]))
-}
-
-df<-data.frame(K=2:Kmax,Silhouette=Silhou)
-ggplot(df,aes(x=K,y=Silhouette))+
-  geom_point()+
-  geom_line()+theme(legend.position = "bottom")
-
-#on a le coude à 4, on prend 4 classes du coup
-
-
-#Les lignes suivantes font un truc mais g pas encore trop compris
-# aux<-silhouette(resPAMcl[,1], daisy(dataScale))
-# fviz_silhouette(aux)+theme(plot.title = element_text(size =9))
-# 
-# adjustedRandIndex(resPAMcl[,1],reskmeanscl[,3])
-# table(resPAMcl[,1],reskmeanscl[,3])
-
-```
-On a le coude 4, donc on va choisir 4 classes
+## Classification hiérarchique
