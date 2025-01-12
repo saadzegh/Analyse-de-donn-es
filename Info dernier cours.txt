@@ -1,220 +1,38 @@
----
-title: "Rapport de projet - Analyse de données"
-author: "ALIX Claire - ZEGHARI Saad"
-institute : "INSA Toulouse"
-date: "`r Sys.Date()`"
-output: 
-  pdf_document :
-    toc : TRUE
-    toc_depth : 2
-    number_section : TRUE
-geometry: margin=0.5in
-header-includes:
-   - \usepackage{dsfont}
-   - \usepackage{color}
-   - \newcommand{\1}{\mathds{1}}
----
+Stat descriptives :
 
-```{r setup, include=FALSE }
-knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning=FALSE,fig.width=15,fig.height = 6, dpi=300)
+Qualitative : pie, barplot => est ce qu'il y a des modalités qui ont plus d'impact que les autres
 
-#importation des packages utiles au projet
-library(reticulate)
-library(ggplot2)
-library(corrplot)
-library(FactoMineR)
-library(factoextra)
-library(gridExtra)
-library(BioStatR)
-library(reshape2)
-library(forcats)
-library(mclust)
-library(cluster)
-library(ppclust)
-library(circlize)
-library(ggalluvial)
-library(clusterSim)
-library(seriation)
-library(knitr)
-
-```
-# Introduction
-
-Dans ce projet, on s'intéresse à la population des gènes d'une plante modèle. On souhaite analyser les données représentant les différences d'expression d'un certain nombre de gènes pour différents traitements appliqués.
-
-# Statistiques descriptives
-
-## Description du jeu de données
-
-```{r,eval=T, echo=FALSE}
-data<-read.table("data.txt",header=T, sep=";", stringsAsFactors = T)
-```
-Le jeu de données fourni est composé d'un échantillon de n=542 individus (gènes) et de 39 variables statistiques qui caractérisent les individus. On observe que les 36 premières variables sont des variables quantitatives continues (variables Tt_sh_Rr). Elles permettent d'évaluer les différences d'expression des gènes pour trois traitements appliqués (T1, T2 et T3) durant 6 heures et ceci pour deux réplicats biologiques (R1 et R2).
-
-Les trois dernières variables (ExpT1, ExpT2 et ExpT3) sont des variables qualitatives nominales dont les trois modalités sont : "Non", "Sous" et "Sur". Ces dernières représentent pour chaque traitement la décision si le gène est sur-exprimé, sous-exprimé ou non-exprimé à 6 heures.
-Les premières lignes du jeu de données (pour les variables T1_1h_R1 à T1_6h_R1 et la variable ExpT1) sont affichées dans la Table 1.
-
-```{r, echo=FALSE, eval=TRUE}
-kable(head(data[,c(1:6,37)]),caption="\\label{tab:tabdata}Les premières lignes du jeu de données.")
-```
-```{r,eval=T, echo=FALSE, results='hide'}
-#commandes pour l'analyse du jeu de données
-head(data)
-str(data)
-names(data)
-colnames(data)
-attributes(data)
-levels(data$ExpT1)
-levels(data$ExpT2)
-levels(data$ExpT3)
-```
-## Analyse uni-dimensionnelle
-
-Nous commençons par faire quelques statistiques descriptives uni-dimensionnelles et bi-dimensionnelles pour prendre en main les données.
-
-### Variables qualitatives
-
-Nous avons à notre disposition trois variables qualitatives : ExpT1, ExpT2, ExpT3 comme décrites précédemment.
-
-```{r ,echo=F, eval=TRUE}
-Eff1<-table(data$ExpT1)
-#df1<-data.frame(Eff1=c(Eff1),Freq=c(Eff1)/sum(Eff1))
-#knitr::kable(t(df1))
-
-Eff2<-table(data$ExpT2)
-#df2<-data.frame(Eff2=c(Eff2),Freq=c(Eff2)/sum(Eff2))
-#knitr::kable(t(df2))
-
-Eff3<-table(data$ExpT3)
-#df3<-data.frame(Eff3=c(Eff3),Freq=c(Eff3)/sum(Eff3))
-#knitr::kable(t(df3))
-
-df<-data.frame(ExpT1=c(Eff1)*100/sum(Eff1), ExpT2=c(Eff2)*100/sum(Eff2), ExpT3=c(Eff3)*100/sum(Eff3) )
-knitr::kable(t(df),caption="\\label{tab:tabfreq}Fréquences en pourcentages des variables qualitatives")
-
-#g1 = ggplot(data) + geom_bar(aes(x = ExpT1)) 
-#g2 = ggplot(data) + geom_bar(aes(x = ExpT2)) 
-#g3 = ggplot(data) + geom_bar(aes(x = ExpT3)) 
-
-#grid.arrange(g1,g2,g3,ncol=3)
-```
-On peut déjà voir que les traitements T2 et T3 réagissent de façon similaire tandis que le traitement T1 est complètement différent
-```{r, fig.align='center', fig.cap="boxplots"}
-#On a regardé ça avec Tessa, pas sures de son utilité mais y'a moyen de trouver une interprétation logique avec les différences entre les différents boxplots
-
-plot1<-ggplot(data,aes(x=ExpT1,y=T1_6H_R1 ))+geom_boxplot()
-plot2<-ggplot(data,aes(x=ExpT2,y=T2_6H_R1))+geom_boxplot()
-plot3<-ggplot(data,aes(x=ExpT3,y=T3_6H_R1 ))+geom_boxplot()
-plot4<-ggplot(data,aes(x=ExpT1,y=T1_6H_R2 ))+geom_boxplot()
-plot5<-ggplot(data,aes(x=ExpT2,y=T2_6H_R2))+geom_boxplot()
-plot6<-ggplot(data,aes(x=ExpT3,y=T3_6H_R2 ))+geom_boxplot()
-grid.arrange(plot1,plot2,plot3,plot4,plot5,plot6,ncol=6)
-```
-
-```{r,echo=F, fig.cap="Boxplot du réplicat R1"}
-#mettre les deux boxplots sur deux graphes différents pour que ce soit plus lisible
-data1 <- melt(data[, -c(19:39)])
-ggplot(data1, aes(x = variable, y = value)) + geom_boxplot()
-```
-
-```{r,echo=F, fig.cap="Boxplot du réplicat R2"}
-data2 <- melt(data[, -c(1:18,37:39)])
-ggplot(data2, aes(x = variable, y = value)) + geom_boxplot()
-```
-
-```{r ,echo=F,fig.cap="matrice des corrélations"}
-corrplot(cor(data[, -c(37:39)]), method = "ellipse")
-```
-
-```{r,eval=F}
-dataScale<-scale(data[,-c(37:39)], center = TRUE , scale = FALSE)
-round(apply(dataScale,2,mean))
-
-#Pas nécéssaire
-```
-
-# ACP CENTRéE
-
-```{r,eval=F}
-
-respca<-PCA(t(data[c(1:36)]),scale.unit = F,graph=F)
-respca$eig
-fviz_eig(respca)
-
-```
-
-```{r,eval=F}
-plot(respca,choix="varcor") 
-#fviz_pca_var(respca) #graphique des corrélations entre les variables initiales et les méta-variables => Illisible
-
-corrplot(respca$var$cor,method="ellipse")  #les corrélations des variables initiales avec toutes les méta-variables => Plus lisible (même si c pas ouf)
-
-fviz_pca_ind(respca,col.ind="contrib",geom=c("point"))
-fviz_pca_ind(respca,geom=c("point"),select.ind = list(cos2=0.95))
+Quantitatives : Regarder les distribution (boxplot). Voir comment la variable se disperce, est ce u'il y a des aberrations? 
+Graphe de 18 pour Réplicat 1
+Grape de 18 pour Réplicat 2
+Library(gridExtra)
+grid.arrange(g1,g2,nrow)
+g1 et g2<- ggplot
 
 
-#ATTENTION : problème d'overflow, à regler
-```
+Clustering :
+Classification hiérarchique + Kmeans
+=> Comparer les méthodes
 
-# ACP centrée réduite
+Comment gérer le nombre de classe
+et comment comparer les classes obtenus par les méthodes de clustering
 
-
-```{r,eval=F}
-
-respca2<-PCA(data[c(1:36)],scale.unit = TRUE,graph=F)
-respca2$eig
-fviz_eig(respca2)
-
-```
-
-```{r,eval=F}
-#plot(respca2,choix="varcor") 
-fviz_pca_var(respca2) #graphique des corrélations entre les variables initiales et les méta-variables => Illisible
-
-corrplot(respca2$var$cor,method="ellipse")  #les corrélations des variables initiales avec toutes les méta-variables => Plus lisible (même si c pas ouf)
-
-fviz_pca_ind(respca2,col.ind="contrib",geom=c("point"))
-fviz_pca_ind(respca2,geom=c("point"),select.ind = list(cos2=0.95))
-```
-# TENTATIVE DE KmEANS
-```{r,eval=F}
-reskmeans<-kmeans(dataScale,4) 
-fviz_pca_ind(respca,habillage=as.factor(reskmeans$cluster) ,geom=c("point"))
-```
-```{r,eval=F}
-fviz_cluster(reskmeans,data=dataScale,
-             ellipse.type="norm",labelsize=8,
-             geom=c("point"))+ggtitle("")
-fviz_pca_ind(respca,col.ind=as.factor(reskmeans$cluster),
-             geom = c("point"),axes=c(1,2))
-```
-# Méthode PAM (approximative)
-```{r,eval=F}
-
-Kmax<-15
-resPAMcl<-matrix(0,nrow=nrow(data),ncol=Kmax-1)
-Silhou<-NULL
-for (k in 2:Kmax){
-  resaux<-pam(dataScale,k, metric="euclidean")
-  resPAMcl[,k-1]<-resaux$clustering
-  aux<-silhouette(resPAMcl[,k-1], daisy(dataScale))
-  Silhou<-c(Silhou,mean(aux[,3]))
-}
-
-df<-data.frame(K=2:Kmax,Silhouette=Silhou)
-ggplot(df,aes(x=K,y=Silhouette))+
-  geom_point()+
-  geom_line()+theme(legend.position = "bottom")
-
-#on a le coude à 4, on prend 4 classes du coup
+Regarder comment les variables évoluent d'une classe à une autre => aide interprétation
 
 
-#Les lignes suivantes font un truc mais g pas encore trop compris
-# aux<-silhouette(resPAMcl[,1], daisy(dataScale))
-# fviz_silhouette(aux)+theme(plot.title = element_text(size =9))
-# 
-# adjustedRandIndex(resPAMcl[,1],reskmeanscl[,3])
-# table(resPAMcl[,1],reskmeanscl[,3])
 
-```
-On a le coude 4, donc on va choisir 4 classes
+On peut ne pas utiliser DBScan
+NE PAS REFAIRE LE COURS
+(exemple : pour classification hierarchique : préciser la distance et deuxieme truc important).
+
+SPOILER ZONE :
+CONSEIL DE METTRE DES COULEURS POUR VOIR QUEL INDIVIDU VIENT DU REPLICA 1 ET REPLICA 2
+Y A UN TRAITEMENT QUI REAGI PAS COMME LES AUTRES (VOIR LES HEURES)
+
+KMeans compil aléatoire => resultats modifiés
+figer la graine d'aléa dans le rapport set.seed(
+
+dans les questions de clustering kmeans , hierarchique comparaison de clustering gerer le choix du nombre de classes
+
+indication 2 questions de clustering num 1 tableau des indiv ce sont les variables qui sont décrits par beaucoup de variables => methode avec une distance euclidienne on cumule les ecart de chaque variable => changer de strategie pour diminuer le tableau en termes de variables => ACP => clustering avec des sous-espaces
+dernier clustering les variables sont qualitatives
