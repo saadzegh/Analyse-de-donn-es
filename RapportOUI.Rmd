@@ -207,7 +207,7 @@ Cependant, les séries statistiques sont très variables. On observe par exemple
 
 Résultat pour l'ACP
 
-Valeurs aberrantes 
+Valeurs aberrantes/extremes
 
 
 ## Analyse bi-dimensionnelle
@@ -230,7 +230,24 @@ grid.arrange(plot1,plot2,plot3,plot4,plot5,plot6,ncol=6)
 ```
 ### Deux variables qualitatives
 
-BLIBLIBLI
+```{r,fig.cap="\\label{fig:boxplots} Tableaux de contingence des variables qualitatives"}
+#prop.table(table(data$ExpT1,data$ExpT2),margin=1)
+g1<-ggplot(data,aes(x=ExpT1,fill=ExpT2))+
+geom_bar(position = "fill")
+
+#prop.table(table(data$ExpT1,data$ExpT3),margin=1)
+g2<-ggplot(data,aes(x=ExpT1,fill=ExpT3))+
+geom_bar(position = "fill")
+
+#prop.table(table(data$ExpT2,data$ExpT3),margin=1)
+g3<-ggplot(data,aes(x=ExpT2,fill=ExpT3))+
+geom_bar(position = "fill")
+
+grid.arrange(g1,g2,g3,ncol=3)
+
+#mosaicplot(table(data$ExpT1,data$ExpT2)) #illisible
+#mosaicplot(table(data$ExpT1,data$ExpT3))
+```
 
 ### Deux variables quantitatives
 
@@ -239,57 +256,108 @@ BLUBLUBLU
 corrplot(cor(data[, -c(37:39)]), method = "ellipse")
 ```
 
-```{r,eval=F}
-dataScale<-scale(data[,-c(37:39)], center = TRUE , scale = FALSE)
-round(apply(dataScale,2,mean))
+# Analyse des Tt_sh_Rr
 
-#Pas nécéssaire
+## Analyse en composantes principales
+
+Menez une analyse en composantes principales où les Tt_sH_Rr sont les individus d´ecrits par les
+gènes.
+Pour savoir si utilise l'ACP centrée ou l'ACP centrée reduite, on compare les pourcentages des variances cumulées sur les deux ACP. Car on ne peut pas utiliser des boxplots pour le déterminer (trop de variables)
+
+```{r,echo=FALSE, eval=T}
+dataACPv<-t(data[c(1:36)]) #on retire les variables qualitatives et on transpose le dataframe 
+dim(dataACPv) #on vérifie les bonnes dimensions du jeu de données
+
+#ACP centrée
+resacpa<-PCA((dataACPv),scale.unit = F,graph=F)
+resacpa$eig[1:3,]
 ```
 
-# ACP CENTRéE
+```{r, echo=FALSE, eval=TRUE}
+#ACP centrée réduite
+respcav<-PCA((dataACPv),scale.unit = T,graph=F)
+respcav$eig[1:3,]
+fviz_eig(respcav)
+```
 
-```{r,eval=F}
+Par convention, on souhaite récuperer au minimum 80% de la variance. Avec deux composantes, l'ACP centrée réduite permet de récupérer plus d'information que l'ACP centréé (81,6% contre 80,5%)
 
-respca<-PCA(t(data[c(1:36)]),scale.unit = F,graph=F)
-respca$eig
-fviz_eig(respca)
+```{r,eval=T}
+#graphe des variables
+fviz_pca_var(respcav) #graphique des corrélations entre les variables initiales et les méta-variables => Illisible
+
+#graphe des individus
+fviz_pca_ind(respcav,col.ind="contrib",geom=c("point"))
+
+```
+```{r}
+#Habillages sur le graphe des individus
+
+#réplicat 1 en bleu et réplicat 2 en rouge 
+colors <- rep("red", nrow(dataACPv))
+colors[1:18] <- "blue"
+fviz_pca_ind(respcav, geom = c("point"), col.ind = colors) +
+  scale_color_manual(values = c("red", "blue"))
+
+#en fonction des traitement 
+colors <- rep("red", nrow(dataACPv))
+colors[c(1:6,19:25)] <- "blue"
+colors[c(7:12,26:32)] <- "green"
+fviz_pca_ind(respcav, geom = c("point"), col.ind = colors)
+
+#en fonction des heures
+colors <- rep("red", nrow(dataACPv))
+colors[c(1,7,13,19,25,31)] <- "blue"
+colors[c(2,8,14,20,26,32)] <- "green"
+colors[c(3,9,15,21,27,33)] <- "purple"
+colors[c(4,10,16,22,28,34)] <- "yellow"
+colors[c(5,11,17,23,29,35)] <- "orange"
+#colors[c(6,12,18,24,30,36)] <- "green"
+fviz_pca_ind(respcav, geom = c("point"), col.ind = colors)
+
+```
+
+
+## Clustering
+
+BLABLABLIBLO
+
+
+# Analyse des gènes
+
+## Analyse en composantes principales
+
+```{r}
+#Création du jeu de données DataExpMoy
+dataR1<-data[,1:18]
+dataR2<-data[,19:36]
+dataACPg<-(dataR1+dataR2)/2
+dim(dataACPg) #on a bien Gx18
+
+#On ajoute les variables qualitatives
+dataACPg<-cbind(dataACPg, ExpT1=data$ExpT1, ExpT2=data$ExpT2, ExpT3=data$ExpT3)
+dim(dataACPg)
+```
+Expliquer avec les boxplots pourquoi on fait l'ACP centrée réduite
+```{r,eval=T}
+#ACP Centrée réduite
+respcag<-PCA(dataACPg,quali.sup=c(19,20,21),scale.unit = TRUE,graph=F)
+respcag$eig[1:5,]
+fviz_eig(respcag)
 
 ```
 
 ```{r,eval=F}
-plot(respca,choix="varcor") 
-#fviz_pca_var(respca) #graphique des corrélations entre les variables initiales et les méta-variables => Illisible
+fviz_pca_var(respcag) #graphique des corrélations entre les variables initiales et les méta-variables => Illisible
 
-corrplot(respca$var$cor,method="ellipse")  #les corrélations des variables initiales avec toutes les méta-variables => Plus lisible (même si c pas ouf)
+corrplot(respcag$var$cor,method="ellipse")  #les corrélations des variables initiales avec toutes les méta-variables => Plus lisible (même si c pas ouf)
 
-fviz_pca_ind(respca,col.ind="contrib",geom=c("point"))
-fviz_pca_ind(respca,geom=c("point"),select.ind = list(cos2=0.95))
-
-
-#ATTENTION : problème d'overflow, à regler
+fviz_pca_ind(respcag,col.ind="contrib",geom=c("point"))
 ```
 
-# ACP centrée réduite
+## Clustering
 
-
-```{r,eval=F}
-
-respca2<-PCA(data[c(1:36)],scale.unit = TRUE,graph=F)
-respca2$eig
-fviz_eig(respca2)
-
-```
-
-```{r,eval=F}
-#plot(respca2,choix="varcor") 
-fviz_pca_var(respca2) #graphique des corrélations entre les variables initiales et les méta-variables => Illisible
-
-corrplot(respca2$var$cor,method="ellipse")  #les corrélations des variables initiales avec toutes les méta-variables => Plus lisible (même si c pas ouf)
-
-fviz_pca_ind(respca2,col.ind="contrib",geom=c("point"))
-fviz_pca_ind(respca2,geom=c("point"),select.ind = list(cos2=0.95))
-```
-# TENTATIVE DE KmEANS
+### TENTATIVE DE KmEANS
 ```{r,eval=F}
 reskmeans<-kmeans(dataScale,4) 
 fviz_pca_ind(respca,habillage=as.factor(reskmeans$cluster) ,geom=c("point"))
@@ -301,7 +369,7 @@ fviz_cluster(reskmeans,data=dataScale,
 fviz_pca_ind(respca,col.ind=as.factor(reskmeans$cluster),
              geom = c("point"),axes=c(1,2))
 ```
-# Méthode PAM (approximative)
+### Méthode PAM (approximative)
 ```{r,eval=F}
 
 Kmax<-15
