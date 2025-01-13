@@ -554,3 +554,15 @@ g3<-fviz_pca_ind(respcag, geom = c("point"), habillage = as.factor(ClustCH))
 
 grid.arrange(g1,g2,g3,ncol=3)
 ```
+
+```{r}
+clust1<-paste("Cl-K",reskmeans$cluster,sep="")
+clust2<-paste("Cl-hiérarchique",ClustCH,sep="")
+Tab<-melt(table(clust1,clust2))
+ggplot(Tab,aes(y=value,axis1=clust1,axis2=clust2))+
+  geom_alluvium(aes(fill=clust1))+
+  geom_stratum(width = 1/12)+   
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
+  ggtitle("figure 15.2")
+  theme(legend.position = "none")
+```
