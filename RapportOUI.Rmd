@@ -461,6 +461,96 @@ fviz_pca_ind(respcag,col.ind="contrib",geom=c("point"))
 
 ## Clustering
 
+```{r}
+dataACPgC<-scale(dataACPg[,-c(19,20,21)] ,center=TRUE,scale=TRUE)
+
+Kmax<-15
+reskmeanscl<-matrix(0,nrow=nrow(dataACPg),ncol=Kmax-1)
+Iintra<-NULL
+for (k in 2:Kmax){
+  resaux<-kmeans(dataACPgC,k)
+  reskmeanscl[,k-1]<-resaux$cluster
+  Iintra<-c(Iintra,resaux$tot.withinss)
+}
+
+df<-data.frame(K=2:15,Iintra=Iintra)
+g1<-ggplot(df,aes(x=K,y=Iintra))+
+  geom_line()+
+  geom_point()+
+  xlab("Nombre de classes")+
+  ylab("Inertie intraclasse")
+
+```
+
+```{r}
+# Silhouette 
+
+Silhou<-NULL
+for (k in 2:Kmax){
+   aux<-silhouette(reskmeanscl[,k-1], daisy(dataACPgC))
+   Silhou<-c(Silhou,mean(aux[,3]))
+}
+
+df<-data.frame(K=2:Kmax,Silhouette=Silhou)
+g2<-ggplot(df,aes(x=K,y=Silhouette))+
+  geom_point()+
+  geom_line()+theme(legend.position = "bottom")
+
+aux<-silhouette(reskmeanscl[,3],daisy(dataACPgC))
+g3<-fviz_silhouette(aux)+
+  theme(plot.title = element_text(size =9))
+rm(df,Silhou,aux)
+
+
+grid.arrange(g1,g2,g3,ncol=3)
+```
+
 ## Kmeans
 
-## Classification hiérarchique
+```{r,echo=F,eval=T}
+reskmeans<-kmeans(dataACPgC,3) 
+```
+
+
+```{r,eval=F}
+fviz_cluster(reskmeans,data=dataACPgC,
+             ellipse.type="norm",labelsize=8,
+             geom=c("point"))+ggtitle("")
+
+fviz_pca_ind(respcag,col.ind=as.factor(reskmeans$cluster),
+             geom = c("point"),axes=c(1,2))
+```
+
+
+
+
+### Classification hiérarchique
+
+```{r}
+# dendogramme
+dist_dataACPg = dist(dataACPgC)
+
+hward<-hclust(dist_dataACPg, method = "ward.D2") 
+fviz_dend(hward,show_labels=FALSE)
+```
+
+
+```{r}
+# A COMPLETER
+CH<-NULL
+Kmax<-20
+for (k in 2:Kmax){
+  CH<-c(CH,index.G1(dataACPgC, cl= cutree(hward,k)))
+}
+#On prend k = 3
+daux<-data.frame(NbClust=2:Kmax,CH=CH)
+g1<-ggplot(daux,aes(x=NbClust,y=CH))+
+  geom_line()+
+  geom_point()
+
+ClustCH<-cutree(hward,k=3)
+g2<-fviz_dend(hward, show_labels = FALSE, k = 3)
+g3<-fviz_pca_ind(respcag, geom = c("point"), habillage = as.factor(ClustCH)) 
+
+grid.arrange(g1,g2,g3,ncol=3)
+```
