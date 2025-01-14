@@ -4,7 +4,7 @@ author: "Despaux Laurine/ Ledroit Tessa"
 date: "`r Sys.Date()`"
 output:
   pdf_document:
-    toc: yes
+    toc: no
     toc_depth: 2
     number_section: yes
   word_document:
@@ -49,12 +49,13 @@ library(knitr)
 
 Dans ce projet on s'interesse à la poulation des gènes d'une plante modèle
 On souhaite réaliser une analyse descriptive de ce jeu de données.
+Le logo {\textbf{\textsf{R}}} indique que des informations dans le code ne sont pas transmises dans le pdf.
 
-# Statistique déscriptive
+# Statistique descriptive
 
 ## Description des données 
 
-Afin de décrire l’ensemble du jeu de donnees nous avons utlisé quelques commandes de R {\textbf{\textsf{R}}}
+Afin de décrire l’ensemble du jeu de donnees nous avons utlisé quelques commandes {\textbf{\textsf{R}}}
 
 ```{r,debut,echo=FALSE,results="hide"}
 data1<-read.table("DataProjet3MIC-2425.txt",header=T,sep = ";")
@@ -63,9 +64,6 @@ head(data1)
 summary(data1)
 str(data1)
 ```
-
-
-
 Dans ce jeu de données, on observe un échantillon G=542 gènes d'une plante modèle. Ici, notre individu est le gène.
 
 Ces individus sont representés par 39 variables statistiques : 
@@ -86,7 +84,6 @@ kable(head(data1[,c(1:6,37)]),caption="\\label{tab:tabdata1}Les premières ligne
 ```
 
 ## Anlayse uni-dimensionnelle
-
 ### Variables qualitatives (ici ExpT1 ExpT2 ExpT3)
 
 ```{r,echo=FALSE,results="hide",message = FALSE, warning = FALSE}
@@ -107,22 +104,25 @@ levels(data1$ExpT2)
 table(data1$ExpT3)
 levels(data1$ExpT3)
 ```
-```{r}
-#Commenter 
+Dans ce jeu de données nous avons 3 variables qualitatives : ExpT1, ExpT2, ExpT3.
 
-Eff1<-table(data1$ExpT1)
-df<-data.frame(Eff=c(Eff1),Freq=c(Eff1)/sum(Eff1))
-#knitr::kable(t(df))
-Eff2<-table(data1$ExpT2)
-df<-data.frame(Eff=c(Eff2),Freq=c(Eff2)/sum(Eff2))
-#knitr::kable(t(df))
-Eff3<-table(data1$ExpT3)
-df<-data.frame(Eff=c(Eff3),Freq=c(Eff3)/sum(Eff3))
-#knitr::kable(t(df))
-df<-data.frame(ExpT1=c(Eff1)*100/sum(Eff1),ExpT2=c(Eff2)*100/sum(Eff2),ExpT3=c(Eff3)*100/sum(Eff3))
-knitr::kable(t(df),caption="\\label{tab:tabfréquence} Fréquences en pourcentage des variables ExpT1, ExpT2, ExpT3")
+Chacune avec 3 modalités "non", "sur" et "sous"
 
+Afin d'étudier ces variables nous avons utilisés quelques commandes de {\textbf{\textsf{R}}}
 
+```{r,echo=FALSE,results="hide",message = FALSE, warning = FALSE}
+
+#resumé de la variable ExpT1
+table(data1$ExpT1)
+levels(data1$ExpT1)
+
+#resumé de la variable ExpT2
+table(data1$ExpT2)
+levels(data1$ExpT2)
+
+#resumé de la variable ExpT3
+table(data1$ExpT3)
+levels(data1$ExpT3)
 ```
 
 ```{r,echo=FALSE,results="hide",message = FALSE, warning = FALSE,fig.show = "hide"}
@@ -141,7 +141,6 @@ g3<-ggplot(df, aes(x="", y=value, fill=group))+
   theme(legend.position="bottom")
 grid.arrange(g3,g1,g2,ncol=3)
 ```
-
 
 ```{r,echo=FALSE,results="hide",message = FALSE, warning = FALSE,fig.show = "hide"}
 
@@ -162,8 +161,6 @@ g3<-ggplot(df, aes(x="", y=value, fill=group))+
 grid.arrange(g3,g1,g2,ncol=3)
 
 ```
-
-
 ```{r,fig.show = "hide"}
 
 #Variables ExpT3 
@@ -183,49 +180,93 @@ g3<-ggplot(df, aes(x="", y=value, fill=group))+
 grid.arrange(g3,g1,g2,ncol=3)
 
 ```
-Résumé 
 
-```{r,fig.cap="\\label{fig:Barplots}Barplots des variables qualitative ExpT1, ExpT2, ExpT3"}
-g1<-ggplot(data1, aes(x = ExpT1)) +  geom_bar(aes(y = (..count..)/sum(..count..)))+ylab("")+ggtitle("Frequences")
-g2<-ggplot(data1, aes(x = ExpT2)) +  geom_bar(aes(y = (..count..)/sum(..count..)))+ylab("")+ggtitle("Frequences")
-g3<-ggplot(data1, aes(x = ExpT3)) +  geom_bar(aes(y = (..count..)/sum(..count..)))+ylab("")+ggtitle("Frequences")
-grid.arrange(g1,g2,g3,ncol=3)
+Pour expliciter nos résultats nous avons décider de faire un diagramme en secteur Figure \ref{fig:diagsecteurs}
+
+```{r, echo=FALSE, eval=TRUE, fig.align='center', fig.cap="\\label{fig:diagsecteurs}Diagramme en secteur"}
+#Diagrammes en secteurs des fréquences pour les variables qualitatives
+
+# Pour ExpT1
+df1 <- data.frame(group = levels(data1$ExpT1), value = as.vector(table(data1$ExpT1)) / nrow(data1))
+g1pie <- ggplot(df1, aes(x = "", y = value, fill = group)) + 
+  geom_bar(width = 1, stat = "identity") +
+  coord_polar("y", start = 0) +
+  geom_text(aes(label = scales::percent(value, accuracy = 0.1)), 
+            position = position_stack(vjust = 0.7),  
+            size = 6, family = "serif", fontface = "bold") +  #Changer la police
+  theme_grey(base_size = 15) + 
+  theme(
+    panel.grid = element_line(color = "gray"),  #Lignes de la grille visibles
+    legend.position = "bottom",
+    plot.title = element_text(hjust = 0.5, family = "serif", size = 20, face = "bold")  # Centrer et styliser le titre
+  ) +
+  labs(fill = NULL) +
+  ggtitle("ExpT1") 
+
+#Pour ExpT2
+df2 <- data.frame(group = levels(data1$ExpT2), value = as.vector(table(data1$ExpT2)) / nrow(data1))
+g2pie <- ggplot(df2, aes(x = "", y = value, fill = group)) + 
+  geom_bar(width = 1, stat = "identity") +
+  coord_polar("y", start = 0) +
+  geom_text(aes(label = scales::percent(value, accuracy = 0.1)), 
+            position = position_stack(vjust = 0.7), 
+            size = 6, family = "serif", fontface = "bold") +  #Changer la police
+  theme_grey(base_size = 15) + 
+  theme(
+    panel.grid = element_line(color = "gray"),  #Lignes de la grille visibles
+    axis.text.y = element_text(size = 10),       #Indicateurs autour du graphique
+    legend.position = "bottom",
+    plot.title = element_text(hjust = 0.5, family = "serif", size = 20, face = "bold")  #Centrer et styliser le titre
+  ) +
+  labs(fill = NULL) +
+  ggtitle("ExpT2") 
+
+#Pour ExpT3
+df3 <- data.frame(group = levels(data1$ExpT3), value = as.vector(table(data1$ExpT3)) / nrow(data1))
+g3pie <- ggplot(df3, aes(x = "", y = value, fill = group)) + 
+  geom_bar(width = 1, stat = "identity") +
+  coord_polar("y", start = 0) +
+  geom_text(aes(label = scales::percent(value, accuracy = 0.1)), 
+            position = position_stack(vjust = 0.7), 
+            size = 6, family = "serif", fontface = "bold") +  # Changer la police
+  theme_grey(base_size = 15) + 
+  theme(
+    panel.grid = element_line(color = "gray"),  # Lignes de la grille visibles
+    axis.text.y = element_text(size = 10),
+    legend.position = "bottom",
+    plot.title = element_text(hjust = 0.5, family = "serif", size = 20, face = "bold")  #Centrer et styliser le titre
+  ) +
+  labs(fill = NULL) +
+  ggtitle("ExpT3") 
+
+#Disposition des graphiques
+grid.arrange(g1pie, g2pie, g3pie, ncol = 3)
+
 ```
+On observe differentes tendances en fonction des traitements :
+
+- ExpT1 : la majorité des gènes ne réagissent pas au traitement 1 
+ 
+- ExpT2 et ExpT3 : assez similaires, quasiment tous les gènes reagissent aux traitements 1 et 2 ,de façon équitables avec quand même une préponderance de surexpressions.
 
 ### Variables quantitatives 
-1. histogramme (les 2 manières)
-2. Moyenne empirique 
-3.variances et écart types 
-  pas forcement utile mais il faut mieux le faire
-4.Boxplot (faire un avec tout les varaibles du replicat 1 puis faire avec les variables du replicat 2)
-  Mise en page voir photo dans téléphone
+Au vue du nombres de variables quantitatives (36) nous ne pouvons pas faire une analyse complète de chaques variables.
 
-Boxplot 
+Nous avons donc décidé de faire un boxplot Figure \ref{fig:Boxplot} contenant tous les boxplots des variables.Ces boxplots permettent de resumer les variables de manière simple et visuelle, d'identifier les valeurs extremes et de comprendre la répartition des observations.
 
-```{r boxplot1,fig.cap="\\label{fig:BoxplotR1}Boxplot du réplicat 1 (R1)"}
+```{r boxplot1,fig.align='center',fig.cap="\\label{fig:Boxplot}Boxplot des varaibles quantitatives"}
  data1aux<-melt(data1[,-c(19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39)])
-ggplot(data1aux,aes(x=variable,y=value))+geom_boxplot()+ theme(plot.margin = unit(c(0, 0, 0, 0), "cm"))
-
-```
-
-
-```{r boxplot2,fig.cap=" Boxplot du réplicat 2 (R2)"}
+g1<-ggplot(data1aux,aes(x=variable,y=value))+geom_boxplot()+ theme(plot.margin = unit(c(0, 0, 0, 0), "cm"))
  data1auxR2<-melt(data1[,-c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,37,38,39)])
- ggplot(data1auxR2,aes(x=variable,y=value))+geom_boxplot()+ theme(plot.margin = unit(c(0, 0, 0, 0), "cm"))
-
+g2<-ggplot(data1auxR2,aes(x=variable,y=value))+geom_boxplot()+ theme(plot.margin = unit(c(0, 0, 0, 0), "cm"))
+grid.arrange(g1,g2,nrow=2)
 ```
+On observe une grande similarité entre le réplicat 1 et le réplicat 2.
 
 Faire une analyse des boxplots et comparer le replicat 1 et 2 
 
+
 ## Analyse bi-dimentionnelle 
-
-Une attention particulière sera portée sur le choix des représentations, et sur l’interprétation des résultats présentés.
-
-```{r}
-
-```
-
-
 ### 2 variables quantitatives 
 Commencer par faire un diagramme de corrélation entre les variables quantitative pour savoir lesquelles etudier 2 à 2 
 
@@ -245,53 +286,7 @@ corrplot(mcor, method = "ellipse", title = "Matrice 2")
 data1[,-c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,37,38,39)]
 mcor <- cor(data)
 corrplot(mcor, method = "ellipse", title = "Matrice 3")
-
 ```
-
-
-1. Nuage de points 
-2. Covariance
-3. Corrélation 
-4. Regression linéaire
-
-```{r,eval=FALSE,fig.show = "hide"}
-#analyse bi dimensionnelle pour deux variables avec une fort corélation
-var1 <- data1$T2_2H_R1
-var2 <- data1$T2_3H_R1
-ggplot(data1, aes(x=var1,y=var2))+
-  geom_point(size=2)
-cor(var1,var2)
-var(var1,var2)
-
-ggplot(data1, aes(x= var1, y = var2))+geom_point(color="blue", alpha=0.2)+geom_smooth(method="lm")
-
-```
-```{r,eval=FALSE,fig.show = "hide"}
-#analyse d'un deuxième point 
-var1 <- data1$T1_5H_R2
-var2 <- data1$T1_6H_R2
-ggplot(data1, aes(x=var1,y=var2))+
-  geom_point(size=2)
-cor(var1,var2)
-var(var1,var2)
-
-ggplot(data1, aes(x= var1, y = var2))+geom_point(color="blue", alpha=0.2)+geom_smooth(method="lm")
-```
-```{r,eval=FALSE,fig.show = "hide"}
-#avec deux points qui ne semblent pas corrélés
-var1 <- data1$T1_1H_R1
-var2 <- data1$T2_6H_R1
-ggplot(data1, aes(x=var1,y=var2))+
-  geom_point(size=2)
-cor(var1,var2)
-var(var1,var2)
-
-ggplot(data1, aes(x= var1, y = var2))+geom_point(color="blue", alpha=0.2)+geom_smooth(method="lm")
-```
-```{r}
-#résultats cohérents
-```
-
 
 
 ### 1 variable quantitative et 1 qualitative
@@ -312,22 +307,6 @@ g5<-ggplot(data=data1,aes(x=ExpT2,y=T2_6H_R2))+geom_boxplot()
 g6<-ggplot(data=data1,aes(x=ExpT3,y=T3_6H_R2 ))+geom_boxplot()
 
 grid.arrange(g1,g2,g3,g4,g5,g6,ncol=6)
-#on prend T3 car combinaison de traitements de T1 et de T2, et à 6h car expT1,T2,T2 sont des résultats que l'on connait à 6H. Puis on trace les boxplots des deux réplicats.
-```
-```{r}
-#Ne fonctionne pas à corriger 
-#eta2(x=Données$ExpT1,y=Données$T3_6H_R1)
-#eta2(x=Données$ExpT2,y=Données$T3_6H_R1)
-#eta2(x=Données$ExpT3,y=Données$T3_6H_R1)
-#eta2(x=Données$ExpT1,y=Données$T3_6H_R2)
-#eta2(x=Données$ExpT2,y=Données$T3_6H_R2)
-#eta2(x=Données$ExpT3,y=Données$T3_6H_R2)
-#v<-NULL
-#for (i in 1:6){
- # v <-c(v,eta2(Données[,i+2],Données[,2]))
-#}
-#v
-#apply(données[,-c(1,2)],2,function(x){eta2(x,Données$ExpT1)})
 ```
 
 
@@ -337,7 +316,7 @@ grid.arrange(g1,g2,g3,g4,g5,g6,ncol=6)
 3. Indice de liaison 
 
 ```{r,fig.cap="\\label{fig:boxplots} Tableaux de contingence des variables qualitatives"}
-prop.table(table(var1,var2),margin=1)
+#prop.table(table(var1,var2),margin=1)
 g1<-ggplot(data1,aes(x=ExpT1,fill=ExpT2))+
 geom_bar(position = "fill")
 #prop.table(table(var1,var3),margin=1)
@@ -347,7 +326,7 @@ geom_bar(position = "fill")
 g3<-ggplot(data1,aes(x=ExpT2,fill=ExpT3))+
 geom_bar(position = "fill")
 grid.arrange(g1,g2,g3,ncol=3)
-mosaicplot(table(var1,var2))
+#mosaicplot(table(var1,var2))
 #mosaicplot(table(var1,var3))
 #mosaicplot(table(var2,var3))
 ```
@@ -401,10 +380,19 @@ colors <- rep("red", nrow(data1ACP1))
 colors[1:18] <- "blue"
 fviz_pca_ind(respca, geom = c("point"), col.ind = colors) +
   scale_color_manual(values = c("red", "blue"))
-#en fonction des traitement 
+#en fonction des traitements 
 colors <- rep("red", nrow(data1ACP1))
 colors[c(1:6,19:25)] <- "blue"
 colors[c(7:12,26:32)] <- "green"
+fviz_pca_ind(respca, geom = c("point"), col.ind = colors)
+#en fonction des heures
+colors <- rep("red", nrow(data1ACP1))
+colors[c(1,7,13,19,25,31)] <- "blue"
+colors[c(2,8,14,20,26,32)] <- "green"
+colors[c(3,9,15,21,27,33)] <- "purple"
+colors[c(4,10,16,22,28,34)] <- "yellow"
+colors[c(5,11,17,23,29,35)] <- "orange"
+#colors[c(6,12,18,24,30,36)] <- "green"
 fviz_pca_ind(respca, geom = c("point"), col.ind = colors)
 ```
 
@@ -507,22 +495,6 @@ On ne compare pas avec les variables qualitatives car il n'y en a pas
 Classification hiérarchique
 ```{r}
 dist_data1ACP1 = dist(data1ACP1)
-#hclustsingle<-hclust(dist_data1ACP1, method = "single")
-#hclustcomplete<-hclust(dist_data1ACP1, method = "complete")
-#hclustaverage<-hclust(dist_data1ACP1, method = "average" )
-
-# Dendrogramme
-#plot(hclustsingle,hang=-1,labels=FALSE)
-
-#fviz_dend(hclustsingle,show_labels=FALSE)
-```
-```{r}
-# dendogramme
-#tree <- hclustcomplete<-hclust(dist_data1ACP1, method = "complete")
-#ClassK3 <- cutree(tree, k=3 )
-#df<-data.frame(data1ACP1,Class=as.factor(ClassK3))
-#df<-melt(df,id="Class")
-#ggplot(df,aes(x=variable,y=value))+geom_boxplot(aes(fill=Class))
 ```
 **Question :** Dans cette question et pour les suivantes, on se focalise sur la mesure d'agrégation de Ward. Ajustez une classification hiérarchique avec la mesure de Ward. Que représentent les hauteurs du dendrogramme dans ce cas ? 
 ```{r,fig.height=6,fig.width=15,fig.align = "center", fig.cap="Dendrogramme"}
@@ -552,6 +524,7 @@ g3<-fviz_pca_ind(respca, geom = c("point"), habillage = as.factor(ClustCH))
 grid.arrange(g1,g2,g3,ncol=3)
 ```
 ```{r}
+#comparaison entre les 2 clustering 
 clust1<-paste("Cl-K",reskmeans$cluster,sep="")
 clust2<-paste("Cl-hiérarchique",ClustCH,sep="")
 Tab<-melt(table(clust1,clust2))
@@ -679,68 +652,11 @@ reskmeans<-kmeans(data1ACP2C,3)
 fviz_cluster(reskmeans,data=data1ACP2C,
              ellipse.type="norm",labelsize=8,
              geom=c("point"))+ggtitle("")
-g1<-fviz_pca_ind(respca2,habillage="ExpT1",geom=c("point"))
-g2<-fviz_pca_ind(respca2,habillage="ExpT2",geom=c("point"))
-g3<-fviz_pca_ind(respca2,habillage="ExpT3",geom=c("point"))
-grid.arrange(g1,g2,g3,ncol=3)
-
 
 ```
 
 
 
-Faire d'autres clustering que les kmeans 
-
-```{r, fig.cap="A compléter y"}
-clust<-paste("Cl-K",reskmeans$cluster,sep="")
-Tab<-melt(table(clust,data1ACP2[,19]))
-g1<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
-  geom_alluvium(aes(fill=clust))+
-  geom_stratum(width = 1/12)+   
-  geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
-  ggtitle("Figure 15.3")+
-  theme(legend.position = "none")
-#chordDiagram(table(clust,data1ACP2[,19]))
-#clust<-paste("Cl-K",reskmeans$cluster,sep="")
-```
-
-
-```{r, fig.cap="A compléter h"}
-clust<-paste("Cl-K",reskmeans$cluster,sep="")
-Tab<-melt(table(clust,data1ACP2[,20]))
-g2<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
-  geom_alluvium(aes(fill=clust))+
-  geom_stratum(width = 1/12)+   
-  geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
-  ggtitle("figure15.1 a completer")
-  theme(legend.position = "none")
-#chordDiagram(table(clust,data1ACP2[,20]))
-#clust<-paste("Cl-K",reskmeans$cluster,sep="")
-```
-
-
-
-
-```{r, fig.cap="A compléter k"}
-clust<-paste("Cl-K",reskmeans$cluster,sep="")
-Tab<-melt(table(clust,data1ACP2[,21]))
-g3<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
-  geom_alluvium(aes(fill=clust))+
-  geom_stratum(width = 1/12)+   
-  geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
-  ggtitle("figure 15.2")
-  theme(legend.position = "none")
-#chordDiagram(table(clust,data1ACP2[,21]))
-#clust<-paste("Cl-K",reskmeans$cluster,sep="")
-grid.arrange(g1,g2,g3,ncol=3)
-
-```
- 
- 
- 
-
-
-Faire d'autres clustering que les kmeans 
 Classification hiérarchique
 ```{r, fig.cap="A compléter e"}
 dist_data1ACP2 = dist(data1ACP2)
@@ -798,5 +714,50 @@ ggplot(Tab,aes(y=value,axis1=clust1,axis2=clust2))+
 Faites une classification non supervisée (clustering) des gènes à partir des variables ExpT1, ExpT2 et ExpT3. Comparez avec les résultats de la question précédente
 
 ```{r}
+g1<-fviz_pca_ind(respca2,habillage="ExpT1",geom=c("point"))
+g2<-fviz_pca_ind(respca2,habillage="ExpT2",geom=c("point"))
+g3<-fviz_pca_ind(respca2,habillage="ExpT3",geom=c("point"))
+grid.arrange(g1,g2,g3,ncol=3)
+
+```
+
+```{r, fig.cap="A compléter y"}
+clust<-paste("Cl-K",reskmeans$cluster,sep="")
+Tab<-melt(table(clust,data1ACP2[,19]))
+g1<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
+  geom_alluvium(aes(fill=clust))+
+  geom_stratum(width = 1/12)+   
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
+  ggtitle("Figure 15.3")+
+  theme(legend.position = "none")
+#chordDiagram(table(clust,data1ACP2[,19]))
+#clust<-paste("Cl-K",reskmeans$cluster,sep="")
+```
+
+
+```{r, fig.cap="A compléter h"}
+clust<-paste("Cl-K",reskmeans$cluster,sep="")
+Tab<-melt(table(clust,data1ACP2[,20]))
+g2<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
+  geom_alluvium(aes(fill=clust))+
+  geom_stratum(width = 1/12)+   
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
+  ggtitle("figure15.1 a completer")
+  theme(legend.position = "none")
+
+```
+
+```{r, fig.cap="A compléter k"}
+clust<-paste("Cl-K",reskmeans$cluster,sep="")
+Tab<-melt(table(clust,data1ACP2[,21]))
+g3<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
+  geom_alluvium(aes(fill=clust))+
+  geom_stratum(width = 1/12)+   
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
+  ggtitle("figure 15.2")
+  theme(legend.position = "none")
+#chordDiagram(table(clust,data1ACP2[,21]))
+#clust<-paste("Cl-K",reskmeans$cluster,sep="")
+grid.arrange(g1,g2,g3,ncol=3)
 
 ```
