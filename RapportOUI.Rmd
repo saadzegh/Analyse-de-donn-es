@@ -290,6 +290,8 @@ fviz_pca_var(respcav) #graphique des corrélations entre les variables initiales
 fviz_pca_ind(respcav,col.ind="contrib",geom=c("point"))
 
 ```
+-Répartition "structuré" des individus => 
+
 PARLER DE L'INERTIE
 ```{r}
 #Habillages sur le graphe des individus
@@ -299,13 +301,19 @@ colors <- rep("red", nrow(dataACPv))
 colors[1:18] <- "blue"
 fviz_pca_ind(respcav, geom = c("point"), col.ind = colors) +
   scale_color_manual(values = c("red", "blue"))
-
+```
+Les points bleus et rouges sont répartis equitablement entre Dim1 et Dim2 (autant d'individus de chaque côté des axes)
+Ce mélange/chevauchement indique qu'il y a une part de variabilité entre les 2 réplicats : aucun des réplicats n'est dominant => D'autres facteurs comme le traitement ou les heures.
+```{r}
 #en fonction des traitement 
 colors <- rep("red", nrow(dataACPv))
 colors[c(1:6,19:25)] <- "blue"
 colors[c(7:12,26:32)] <- "green"
 fviz_pca_ind(respcav, geom = c("point"), col.ind = colors)
+```
+T(rouge) sont prinipalement à gauche du graphique (avec un léger mélange).
 
+```{r}
 #en fonction des heures
 colors <- rep("red", nrow(dataACPv))
 colors[c(1,7,13,19,25,31)] <- "blue"
@@ -505,7 +513,7 @@ rm(df,Silhou,aux)
 grid.arrange(g1,g2,g3,ncol=3)
 ```
 
-## Kmeans
+### Kmeans
 
 ```{r,echo=F,eval=T}
 reskmeans<-kmeans(dataACPgC,3) 
@@ -565,4 +573,87 @@ ggplot(Tab,aes(y=value,axis1=clust1,axis2=clust2))+
   geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
   ggtitle("figure 15.2")
   theme(legend.position = "none")
+```
+
+## Clustering 2 (comparaison avec variable qualitatives) 
+
+```{r}
+g1<-fviz_pca_ind(respcag,habillage="ExpT1",geom=c("point"))
+g2<-fviz_pca_ind(respcag,habillage="ExpT2",geom=c("point"))
+g3<-fviz_pca_ind(respcag,habillage="ExpT3",geom=c("point"))
+grid.arrange(g1,g2,g3,ncol=3)
+
+```
+
+```{r}
+clust<-paste("Cl-K",reskmeans$cluster,sep="")
+Tab<-melt(table(clust,dataACPg[,19]))
+g1<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
+  geom_alluvium(aes(fill=clust))+
+  geom_stratum(width = 1/12)+   
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
+  ggtitle("Figure 15.3")+
+  theme(legend.position = "none")
+```
+
+
+```{r}
+clust<-paste("Cl-K",reskmeans$cluster,sep="")
+Tab<-melt(table(clust,dataACPg[,20]))
+g2<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
+  geom_alluvium(aes(fill=clust))+
+  geom_stratum(width = 1/12)+   
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
+  ggtitle("figure15.1 a completer")
+  theme(legend.position = "none")
+
+```
+
+```{r}
+clust<-paste("Cl-K",reskmeans$cluster,sep="")
+Tab<-melt(table(clust,dataACPg[,21]))
+g3<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
+  geom_alluvium(aes(fill=clust))+
+  geom_stratum(width = 1/12)+   
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
+  ggtitle("figure 15.2")
+  theme(legend.position = "none")
+grid.arrange(g1,g2,g3,ncol=3)
+
+```
+```{r}
+clust<-paste("Cl-hiérarchique",ClustCH,sep="")
+Tab<-melt(table(clust,dataACPg[,19]))
+g1<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
+  geom_alluvium(aes(fill=clust))+
+  geom_stratum(width = 1/12)+   
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
+  ggtitle("Figure 15.3")+
+  theme(legend.position = "none")
+```
+
+
+```{r}
+clust<-paste("Cl-hiérarchique",ClustCH,sep="")
+Tab<-melt(table(clust,dataACPg[,20]))
+g2<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
+  geom_alluvium(aes(fill=clust))+
+  geom_stratum(width = 1/12)+   
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
+  ggtitle("figure15.1 a completer")
+  theme(legend.position = "none")
+
+```
+
+```{r}
+clust<-paste("Cl-hiérarchique",ClustCH,sep="")
+Tab<-melt(table(clust,dataACPg[,21]))
+g3<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
+  geom_alluvium(aes(fill=clust))+
+  geom_stratum(width = 1/12)+   
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
+  ggtitle("figure 15.2")
+  theme(legend.position = "none")
+grid.arrange(g1,g2,g3,ncol=3)
+
 ```
