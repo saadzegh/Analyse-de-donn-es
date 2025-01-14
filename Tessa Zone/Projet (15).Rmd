@@ -472,6 +472,7 @@ Ici Kmeans avec K=3
 
 
 ```{r, fig.cap="Nuées dynamiques"}
+#penser à bloquer les données pour le kmeans 
 
 data1ACP1C<-scale(x=data1ACP1 ,center=TRUE,scale=TRUE)
 reskmeans<-kmeans(data1ACP1C,3)
@@ -587,6 +588,7 @@ grid.arrange(g1,g2,ncol=2)
 
 ## Clustering 1 
 Faites une classification non supervisée (clustering) des gènes à partir de leur expression (DataExpMoy) afin d’obtenir des classes de gènes homogènes (ayant la même evolution d’expression).
+(penser a bloquer les données pour les kmeans)
 
 ```{r, fig.cap="A compléter r"}
 data1ACP2C<-scale(data1ACP2[,-c(19,20,21)] ,center=TRUE,scale=TRUE)
@@ -710,7 +712,7 @@ ggplot(Tab,aes(y=value,axis1=clust1,axis2=clust2))+
   theme(legend.position = "none")
 ```
 
-## Clustering 2 
+## Comparaison clustering avec variable qualitatives 
 Faites une classification non supervisée (clustering) des gènes à partir des variables ExpT1, ExpT2 et ExpT3. Comparez avec les résultats de la question précédente
 
 ```{r}
@@ -761,3 +763,47 @@ g3<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
 grid.arrange(g1,g2,g3,ncol=3)
 
 ```
+```{r, fig.cap="A compléter y"}
+clust<-paste("Cl-hiérarchique",ClustCH,sep="")
+Tab<-melt(table(clust,data1ACP2[,19]))
+g1<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
+  geom_alluvium(aes(fill=clust))+
+  geom_stratum(width = 1/12)+   
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
+  ggtitle("Figure 15.3")+
+  theme(legend.position = "none")
+#chordDiagram(table(clust,data1ACP2[,19]))
+#clust<-paste("Cl-K",reskmeans$cluster,sep="")
+```
+
+
+```{r, fig.cap="A compléter h"}
+clust<-paste("Cl-hiérarchique",ClustCH,sep="")
+Tab<-melt(table(clust,data1ACP2[,20]))
+g2<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
+  geom_alluvium(aes(fill=clust))+
+  geom_stratum(width = 1/12)+   
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
+  ggtitle("figure15.1 a completer")
+  theme(legend.position = "none")
+
+```
+
+```{r, fig.cap="A compléter k"}
+clust<-paste("Cl-hiérarchique",ClustCH,sep="")
+Tab<-melt(table(clust,data1ACP2[,21]))
+g3<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
+  geom_alluvium(aes(fill=clust))+
+  geom_stratum(width = 1/12)+   
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
+  ggtitle("figure 15.2")
+  theme(legend.position = "none")
+#chordDiagram(table(clust,data1ACP2[,21]))
+#clust<-paste("Cl-K",reskmeans$cluster,sep="")
+grid.arrange(g1,g2,g3,ncol=3)
+
+```
+## Clustering 2 
+Faites une classification non supervisée (clustering) des gènes à partir des variables ExpT1, ExpT2 et ExpT3. Comparez avec les résultats de la question précédente
+
+Faire clustering avec PAM 
