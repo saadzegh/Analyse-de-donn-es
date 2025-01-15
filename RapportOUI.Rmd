@@ -338,8 +338,19 @@ fviz_pca_ind(respcav, geom = c("point"), col.ind = colors) +
   labs(color = "Heures")
 
 ```
+Heure 2-3-4-5-6 => Tratement 1 à gauche et T2/T3 à droite
 Heure 1 => Ttes à droites quelque soit le traitement appliqué
-Heure 2 => Tratement 1 à gauche et T2/T3 à droite
+
+T1 : 
+Heure 1 à 5 baisse de contribution par rapport aux composantes Dim1 et surtout dim2
+Heure 6, legère remontée
+
+T2 et T3 : 
+Heure 2 :Augmentation contribution des deux composantes (Dim1 attaint max)
+Heure 3 : Augmentation dim1, baisse notable dim2
+Heure 4 : Augmentation notable Dim2, stabilisation (legere baisse) par rapport à Dim1
+Heure 5 : Stabilisation dim1 (legere hausse), baisse notable dim2 (atteint min)
+Heure 6 : Stabilisation dim1, augmentation notable dim2
 
 ## Clustering
 
