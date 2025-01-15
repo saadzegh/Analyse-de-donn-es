@@ -316,8 +316,8 @@ Analyse des profils lignes-colonne
 ### Une variable qualitative et une variable quantitative
 
 Enfin, nous nous intéressons à l'analyse du degré de liaison de certaines variables quantitatives avec des variables qualitatives. Figure \ref{fig:boxplots_paralleles}
-On trace la distribution de la variable quantitative 𝑌 en fonction de
-chaque modalité de la variable qualitative 𝑋
+On trace la distribution de la variable quantitative Y en fonction de
+chaque modalité de la variable qualitative X
 1. Représentation graphique : boxplots parallèles
 Plus les boxplot sont “diférents”, plus X et Y sont liés
 ATTENTION 1 VARIABLE QUALITATIVE ET 1 VARIABLE QUANTITATIVE SONT LIES PAS CORRELEE !!!!!!!
@@ -689,11 +689,11 @@ ggplot(Tab,aes(y=value,axis1=clust1,axis2=clust2))+
 
 ## Clustering 2 (comparaison avec variable qualitatives) 
 
-```{r}
+```{r, echo=FALSE, eval=FALSE}
 A<-pam(data[37:39], 3, metric = "euclidean")
 A$medoids
-adjustedRandIndex(A$clustering,data$ExpT1,data$ExpT2,data$ExpT3)
-table(data$ExpT1,data$ExpT2,data$ExpT3,A$clustering)
+#adjustedRandIndex(A$clustering,data$ExpT1,data$ExpT2,data$ExpT3)
+#table(data$ExpT1,data$ExpT2,data$ExpT3,A$clustering)
 ```
 
 
