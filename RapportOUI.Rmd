@@ -494,7 +494,20 @@ corrplot(respcag$var$cor,method="ellipse")  #les corrélations des variables ini
 
 fviz_pca_ind(respcag,col.ind="contrib",geom=c("point"))
 ```
+Cercle des correlations:
+Variables corrélées entre les traitements 2 et 3 et fortement influencées par dim2
+Variables du T1 plus influencées par dim1
+Seuls les gènes de l'experience T3_1H_R1 est à part => influencée par les 2 dim
 
+Graph des individus:
+Points majoritairement éloignés de l'origine
+=> Peu de gène avec peu de variations marquées
+On peut en déduire qu'il s'agit des gènes du premier traitement
+
+Gènes qui influencent dim1 contribue majoritairement de façon uniforme à dim2 (faiblement)
+Pour les gènes avec une faible contribution de dim1, plus de répartition sur la contribution de dim2
+
+=> On fé clustering
 
 ## Clustering
 
