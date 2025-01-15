@@ -65,10 +65,10 @@ Le jeu de données fourni est composé d'un échantillon de 542 individus qui co
 
 Grace à la commande `str(data)`, on observe que les 36 premières variables sont des variables quantitatives continues (variables nommées Tt_sh_Rr). Ces variables permettent d'évaluer les divergences d'expression des gènes pour trois traitements appliqués (T1, T2 et T3) par rapport à un état sans traitement de référence. Les données de chaque traitement ont été relevées durant 6 heures et ceci pour deux réplicats biologiques (R1 et R2).
 
-Les trois dernières variables (nommées ExpT1, ExpT2 et ExpT3) sont des variables qualitatives nominales/ordinales dont les trois modalités sont : "Non", "Sous" et "Sur". Ces dernières représentent la décision si le gène est sur-exprimé, sous-exprimé ou non-exprimé à 6 heures par rapport à l'état de référence, pour chaque traitement.
+Les trois dernières variables (nommées ExpT1, ExpT2 et ExpT3) sont des variables qualitatives nominales dont les trois modalités sont : "Non", "Sous" et "Sur". Ces dernières représentent la décision si le gène est sur-exprimé, sous-exprimé ou non-exprimé à 6 heures par rapport à l'état de référence, pour chaque traitement.
 
 Afin de visualiser les données, les premières lignes du jeu de données sont affichées dans la Table \ref{tab:tabdata}. 
-En raison de la grande quantité de données, nous avons choisi de représenter seulement les variables T1_1h_R1 à T1_6h_R1 et ExpT1 qui donnent un aperçu de la structure du jeu de données pour le réplicat 1.
+En raison de la grande quantité de données, nous avons choisi de représenter seulement les variables T1_1h_R1 à T1_6h_R1 et ExpT1 qui donnent un aperçu de la structure du jeu de données pour le réplicat R1.
 
 ```{r, echo=FALSE, eval=TRUE}
 kable(head(data[,c(1:6,37)]),caption="\\label{tab:tabdata}Les premières lignes du jeu de données.")
@@ -76,7 +76,7 @@ kable(head(data[,c(1:6,37)]),caption="\\label{tab:tabdata}Les premières lignes 
 
 ## Analyse uni-dimensionnelle
 
-Nous commençons par faire quelques statistiques descriptives uni-dimensionnelles et bi-dimensionnelles afin de prendre en main le jeu de données.
+Nous commençons par faire quelques statistiques descriptives uni-dimensionnelles afin de prendre en main le jeu de données.
 
 ### Variables qualitatives
 
@@ -177,60 +177,123 @@ g3pie <- ggplot(df3, aes(x = "", y = value, fill = group)) +
 grid.arrange(g1pie, g2pie, g3pie, ncol = 3)
 
 ```
-D'après la Figure \ref{fig:diagsecteurs}, on peut déjà remarquer que les traitements diffèrent dans la réaction des gènes. En effet, on observe une grande similarité entre les traitements 2 et 3 avec des réactions réparties de façon quasi-homogène entre les modalités "sous" et "sur" exprimé. Pour sa part, le traitement 1 n'a aucun effet sur la majorité des gènes, qui n'expriment pas de différence particulière par rapport à l'état de référence (81% de "non" exprimé pour ExpT1).
+D'après la Figure \ref{fig:diagsecteurs}, on peut déjà remarquer que les traitements diffèrent dans la réaction des gènes. En effet, on observe une grande similarité entre les traitements T2 et T3 avec des réactions réparties de façon quasi-homogène entre les modalités "sous" et "sur" exprimé. Pour sa part, le traitement T1 n'a aucun effet sur la majorité des gènes, qui n'expriment pas de différence particulière par rapport à l'état de référence (81% de "non" exprimé pour ExpT1).
 
 
 ### Variables quantitatives
 
 Nous analysons maintenant les variables quantitatives de notre jeu de données (variables Tt_sh_Rr) individuellement. 
 
-Pour apréhender les différences entre les variables quantitatives et en raison du grand nombre de variables à analyser, nous avons décidé de tracer leurs boxplots respectifs, regroupés par variables d'un même réplicat dans la Figure \ref{fig:boxplots_quantitatives1} et la Figure \ref{fig:boxplots_quantitatives2}. Ceci nous permet de résumer les variables de manière simple et visuelle, d'identifier les valeurs extrêmes, comprendre la répartition des observations et de comparer les deux réplicats ensemble ainsi que les traitements et les heures d'observation. 
+Pour apréhender les différences entre les variables quantitatives et en raison du grand nombre de variables à analyser, nous avons décidé de tracer leurs boxplots respectifs, regroupés par variables d'un même réplicat dans la Figure \ref{fig:boxplots_quantitatives1} et la Figure \ref{fig:boxplots_quantitatives2}. Ceci nous permet de résumer les variables de manière simple et visuelle, d'identifier les valeurs extrêmes, de comprendre la répartition des observations et de comparer les deux réplicats ensemble ainsi que les traitements et les heures d'observation. {\textbf{\textsf{R}}}
 
-Faire tous les codes qu'on utilisera pas dans le rapport (ex histogrammes, moyennes, variances...)
-
-```{r,echo=F, fig.align="center", fig.cap="\\label{fig:boxplots_quantitatives1}Boxplots des variables quantitatives du réplicat R1"}
+```{r,echo=F, fig.align="center", fig.width=15, fig.height = 5, fig.cap="\\label{fig:boxplots_quantitatives1}Boxplots des variables quantitatives du réplicat R1"}
 #On sépare les boxplots des deux réplicats pour avoir des graphiques plus lisibles et comparables
 data1 <- melt(data[, -c(19:39)])
 ggplot(data1, aes(x = variable, y = value)) + geom_boxplot()
 ```
 
-```{r,echo=F, fig.align="center", fig.cap="\\label{fig:boxplots_quantitatives2}Boxplots des variables quantitatives du réplicat R2"}
+```{r,echo=F, fig.align="center", fig.width=15, fig.height = 5, fig.cap="\\label{fig:boxplots_quantitatives2}Boxplots des variables quantitatives du réplicat R2"}
 data2 <- melt(data[, -c(1:18,37:39)])
 ggplot(data2, aes(x = variable, y = value)) + geom_boxplot()
 ```
+Lorsque l'on compare les boxplots obtenus sur les Figures \ref{fig:boxplots_quantitatives1} et \ref{fig:boxplots_quantitatives2}, on peut observer de grandes similitudes entre les résultats obtenus pour le réplicat R1 et ceux du réplicat R2, ce qui prouve une certaine cohérence de l'expérience menée.
 
-Lorsque l'on compare les Figures 2 et 3, on peut observer que les résultats des deux réplicats se ressemblent entre eux
+Nous pouvons par ailleurs comparer les médianes et les écarts interquartiles respectifs des variables pour évaluer la dispersion du jeu de données. On observe alors que les séries statistiques sont très variables. En effet, bien qu'elles soient basées sur des échelles similaires, les variances des variables correspondant aux traitements T2 et T3 sont plus grandes que les variances des variables du traitement T1.
 
-Nous pouvons ainsi comparer les médianes et les écarts interquartiles respectifs des variables pour évaluer la dispertion.
-Cependant, les séries statistiques sont très variables. On observe par exemple la variable ... a une plus grande variance que la variable ...
+Autre interprétation
 
-Résultat pour l'ACP
+```{r, echo=FALSE, eval=FALSE}
+#On compare les indicateurs numériques (variances, médianes, moyennes) pour les variables quantitatives
 
-Valeurs aberrantes/extremes
-comparer des variables basées sur des échelles similaires
+# Calculer les variances pour chaque colonne (variables 1 à 36)
+variances <- apply(data[, 1:36], 2, var)
+
+# Créer un data frame pour ggplot
+variance_data <- data.frame(
+  variable = names(variances), # Noms des colonnes
+  variance = variances         # Variances calculées
+)
+
+# Créer le graphique
+library(ggplot2)
+ggplot(variance_data, aes(x = variable, y = variance)) +
+  geom_point(size = 2, color = "purple") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(
+    title = "Graphique des variances par variable",
+    x = "Variable",
+    y = "Variance"
+  )
+
+#Mettre le logo R
+```
+
+```{r, echo=FALSE, eval=FALSE}
+# Calculer les médianes pour chaque colonne (variables 1 à 36)
+medians <- apply(data[, 1:36], 2, median)
+
+# Créer un data frame pour ggplot
+median_data <- data.frame(
+  variable = names(medians), # Noms des colonnes
+  median = medians           # Médianes calculées
+)
+
+# Créer le graphique
+library(ggplot2)
+ggplot(median_data, aes(x = variable, y = median)) +
+  geom_point(size = 2, color = "blue") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(
+    title = "Graphique des médianes par variable",
+    x = "Variable",
+    y = "Médiane"
+  )
+```
+```{r, echo=FALSE, eval=FALSE}
+# Calculer les moyennes pour chaque colonne (variables 1 à 36)
+means <- colMeans(data[, 1:36])
+
+# Créer un data frame pour ggplot
+mean_data <- data.frame(
+  variable = names(means), # Noms des colonnes
+  mean = means             # Moyennes calculées
+)
+
+# Créer le graphique
+library(ggplot2)
+ggplot(mean_data, aes(x = variable, y = mean)) +
+  geom_point(size = 2, color = "red") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(
+    title = "Graphique des moyennes par variable",
+    x = "Variable",
+    y = "Moyenne"
+  )
+```
 
 
 ## Analyse bi-dimensionnelle
 
-BLALABLA
+Nous nous intéressons maintenant à l'analyse bi-dimensionnelle de toutes les variables du jeu de données.
 
-### Une variable qualitative et une variable quantitative
+### Deux variables quantitatives
 
-BLOBLOBLO
-```{r, fig.align='center', fig.cap="boxplots parallèles"}
-#On a regardé ça avec Tessa, pas sures de son utilité mais y'a moyen de trouver une interprétation logique avec les différences entre les différents boxplots
+Nous commençons par analyser les variables quantitatives entre elles. Afin d'analyser les liaisons entre ces variables, nous affichons en Figure \ref{fig:matricecorrelations} la matrice des corrélations qui représente les coefficients de corrélations des variables deux à deux. La corrélation mesure la dépendance linéaire entre deux variables
 
-plot1<-ggplot(data,aes(x=ExpT1,y=T1_6H_R1 ))+geom_boxplot()
-plot2<-ggplot(data,aes(x=ExpT2,y=T2_6H_R1))+geom_boxplot()
-plot3<-ggplot(data,aes(x=ExpT3,y=T3_6H_R1 ))+geom_boxplot()
-plot4<-ggplot(data,aes(x=ExpT1,y=T1_6H_R2 ))+geom_boxplot()
-plot5<-ggplot(data,aes(x=ExpT2,y=T2_6H_R2))+geom_boxplot()
-plot6<-ggplot(data,aes(x=ExpT3,y=T3_6H_R2 ))+geom_boxplot()
-grid.arrange(plot1,plot2,plot3,plot4,plot5,plot6,ncol=6)
+```{r ,echo=F,fig.align = "center", fig.width=20, fig.height = 10, fig.cap="\\label{fig:matricecorrelations}Matrice des corrélations des variables quantitatives"}
+corrplot(cor(data[, -c(37:39)]), method = "ellipse")
 ```
+D'après la Figure \ref{fig:matricecorrelations}, on observe des corrélations fortes entre les variables des traitement T2 et T3 tandis que les variables du traitement T1 sont globalement peu corrélées aux autres variables.
+
 ### Deux variables qualitatives
 
-```{r,fig.cap="\\label{fig:boxplots} Tableaux de contingence des variables qualitatives"}
+Dans le cas de deux variables qualitatives, on représente les profils-ligne ou profils-colonne dans la Figure \ref{fig:profil_ligne}.
+
+1. Tableau de contingence
+2. Mosaic plot 
+3. Indice de liaison 
+
+```{r, fig.height=5, fig.width=15, fig.cap="\\label{fig:profil_ligne}Profils ligne des variables qualitatives"}
 #prop.table(table(data$ExpT1,data$ExpT2),margin=1)
 g1<-ggplot(data,aes(x=ExpT1,fill=ExpT2))+
 geom_bar(position = "fill")
@@ -248,12 +311,29 @@ grid.arrange(g1,g2,g3,ncol=3)
 #mosaicplot(table(data$ExpT1,data$ExpT2)) #illisible
 #mosaicplot(table(data$ExpT1,data$ExpT3))
 ```
+Analyse des profils lignes-colonne
 
-### Deux variables quantitatives
+### Une variable qualitative et une variable quantitative
 
-BLUBLUBLU
-```{r ,echo=F,fig.align = "center", fig.cap="matrice des corrélations"}
-corrplot(cor(data[, -c(37:39)]), method = "ellipse")
+Enfin, nous nous intéressons à l'analyse du degré de liaison de certaines variables quantitatives avec des variables qualitatives. Figure \ref{fig:boxplots_paralleles}
+On trace la distribution de la variable quantitative 𝑌 en fonction de
+chaque modalité de la variable qualitative 𝑋
+1. Représentation graphique : boxplots parallèles
+Plus les boxplot sont “diférents”, plus X et Y sont liés
+ATTENTION 1 VARIABLE QUALITATIVE ET 1 VARIABLE QUANTITATIVE SONT LIES PAS CORRELEE !!!!!!!
+2. Carré du rapport de corrélation empirique 
+si proche de 0 X et Y ne sont pas liées 
+si proche de 1 X et Y sont liées 
+
+```{r, fig.align='center', fig.cap="\\label{fig:boxplots_paralleles}Boxplots parallèles"}
+
+plot1<-ggplot(data,aes(x=ExpT1,y=T1_6H_R1 ))+geom_boxplot()
+plot2<-ggplot(data,aes(x=ExpT2,y=T2_6H_R1))+geom_boxplot()
+plot3<-ggplot(data,aes(x=ExpT3,y=T3_6H_R1 ))+geom_boxplot()
+plot4<-ggplot(data,aes(x=ExpT1,y=T1_6H_R2 ))+geom_boxplot()
+plot5<-ggplot(data,aes(x=ExpT2,y=T2_6H_R2))+geom_boxplot()
+plot6<-ggplot(data,aes(x=ExpT3,y=T3_6H_R2 ))+geom_boxplot()
+grid.arrange(plot1,plot2,plot3,plot4,plot5,plot6,ncol=6)
 ```
 
 # Analyse des Tt_sh_Rr
