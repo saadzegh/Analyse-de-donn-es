@@ -302,7 +302,9 @@ PARLER DE L'INERTIE
 colors <- rep("red", nrow(dataACPv))
 colors[1:18] <- "blue"
 fviz_pca_ind(respcav, geom = c("point"), col.ind = colors) +
-  scale_color_manual(values = c("red", "blue"))
+  scale_color_manual(values = c("blue" = "blue", "red" = "red"), 
+                     labels = c("R1", "R2")) +
+  labs(color = "Réplicats")
 ```
 Les points bleus et rouges sont répartis equitablement entre Dim1 et Dim2 (autant d'individus de chaque côté des axes)
 Ce mélange/chevauchement indique qu'il y a une part de variabilité entre les 2 réplicats : aucun des réplicats n'est dominant => D'autres facteurs comme le traitement ou les heures.
@@ -311,20 +313,27 @@ Ce mélange/chevauchement indique qu'il y a une part de variabilité entre les 2
 colors <- rep("red", nrow(dataACPv))
 colors[c(1:6,19:25)] <- "blue"
 colors[c(7:12,26:32)] <- "green"
-fviz_pca_ind(respcav, geom = c("point"), col.ind = colors)
+fviz_pca_ind(respcav, geom = c("point"), col.ind = colors) +
+  scale_color_manual(values = c("blue" = "blue", "green" = "green", "red" = "red"), 
+                     labels = c("T1", "T2", "T3")) +
+  labs(color = "Traitements")
 ```
 T(rouge) sont prinipalement à gauche du graphique (avec un léger mélange).
 
 ```{r}
 #en fonction des heures
 colors <- rep("red", nrow(dataACPv))
-colors[c(1,7,13,19,25,31)] <- "blue"
-colors[c(2,8,14,20,26,32)] <- "green"
-colors[c(3,9,15,21,27,33)] <- "purple"
-colors[c(4,10,16,22,28,34)] <- "yellow"
-colors[c(5,11,17,23,29,35)] <- "orange"
-#colors[c(6,12,18,24,30,36)] <- "green"
-fviz_pca_ind(respcav, geom = c("point"), col.ind = colors)
+colors[c(1,7,13,19,25,31)] <- "blue"    # Heure 1
+colors[c(2,8,14,20,26,32)] <- "green"   # Heure 2
+colors[c(3,9,15,21,27,33)] <- "purple"  # Heure 3
+colors[c(4,10,16,22,28,34)] <- "yellow" # Heure 4
+colors[c(5,11,17,23,29,35)] <- "orange" # Heure 5
+
+fviz_pca_ind(respcav, geom = c("point"), col.ind = colors) +
+  scale_color_manual(values = c("blue" = "blue", "green" = "green", "purple" = "purple", 
+                                "yellow" = "yellow", "orange" = "orange", "red" = "red"),
+                     labels = c("Heure 1", "Heure 2", "Heure 3", "Heure 4", "Heure 5", "Heure 6")) +
+  labs(color = "Heures")
 
 ```
 
