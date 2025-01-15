@@ -292,7 +292,11 @@ fviz_pca_var(respcav) #graphique des corrélations entre les variables initiales
 fviz_pca_ind(respcav,col.ind="contrib",geom=c("point"))
 
 ```
--Répartition "structuré" des individus => 
+Graphe variable => Illisible (rien conclure quant aux variables car bcp trop nombreuses)
+=> On fait une analyse séparée (voit graphe du dessous)
+
+Graphe individu => Pas un regroupement spécifique, on a 2/3. On a une variabilité des réaction en fonction des spécifités des individus.
+
 
 PARLER DE L'INERTIE
 ```{r}
@@ -306,8 +310,8 @@ fviz_pca_ind(respcav, geom = c("point"), col.ind = colors) +
                      labels = c("R1", "R2")) +
   labs(color = "Réplicats")
 ```
-Les points bleus et rouges sont répartis equitablement entre Dim1 et Dim2 (autant d'individus de chaque côté des axes)
-Ce mélange/chevauchement indique qu'il y a une part de variabilité entre les 2 réplicats : aucun des réplicats n'est dominant => D'autres facteurs comme le traitement ou les heures.
+Les points R1 et R2 sont répartis equitablement entre Dim1 et Dim2 (autant d'individus de chaque côté des axes)
+Ce mélange/chevauchement indique que la variabilité n'est pas entièrement due aux différents réplicaentre les 2 réplicats : aucun des réplicats n'est dominant => D'autres facteurs comme le traitement ou les heures.
 ```{r}
 #en fonction des traitement 
 colors <- rep("red", nrow(dataACPv))
@@ -318,7 +322,7 @@ fviz_pca_ind(respcav, geom = c("point"), col.ind = colors) +
                      labels = c("T1", "T2", "T3")) +
   labs(color = "Traitements")
 ```
-T(rouge) sont prinipalement à gauche du graphique (avec un léger mélange).
+T1 sont prinipalement à gauche du graphique (avec un léger mélange). T2 et T3 sont beaucoup plus mélangés à droite. Cela appuie que les effets du traitement 1 sont diffrents de ceux de T2 et T3 (qui se ressemblent plus)
 
 ```{r}
 #en fonction des heures
@@ -336,6 +340,8 @@ fviz_pca_ind(respcav, geom = c("point"), col.ind = colors) +
   labs(color = "Heures")
 
 ```
+Heure 1 => Ttes à droites quelque soit le traitement appliqué
+Heure 2 => Tratement 1 à gauche et T2/T3 à droite
 
 ## Clustering
 
@@ -469,6 +475,8 @@ respcag$eig[1:5,]
 fviz_eig(respcag)
 
 ```
+Les deux premieres composantes pricipales regroupent plus de 80% de variances (81,4% avec ACP centrée reduite).
+
 
 ```{r,eval=F}
 fviz_pca_var(respcag) #graphique des corrélations entre les variables initiales et les méta-variables => Illisible
@@ -477,6 +485,7 @@ corrplot(respcag$var$cor,method="ellipse")  #les corrélations des variables ini
 
 fviz_pca_ind(respcag,col.ind="contrib",geom=c("point"))
 ```
+
 
 ## Clustering
 
