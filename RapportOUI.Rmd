@@ -298,12 +298,10 @@ Graphe individu => Pas un regroupement spécifique, on a 2/3. On a une variabili
 
 PARLER DE L'INERTIE
 ```{r}
-#Habillages sur le graphe des individus
-
-#réplicat 1 en bleu et réplicat 2 en rouge 
+# Habillage sur le graphe des individus - Réplicats
 colors <- rep("red", nrow(dataACPv))
 colors[1:18] <- "blue"
-fviz_pca_ind(respcav, geom = c("point"), col.ind = colors) +
+fviz_pca_ind(respcav, mean.point=FALSE, geom = "point", col.ind = colors) +
   scale_color_manual(values = c("blue" = "blue", "red" = "red"), 
                      labels = c("R1", "R2")) +
   labs(color = "Réplicats")
@@ -311,11 +309,11 @@ fviz_pca_ind(respcav, geom = c("point"), col.ind = colors) +
 Les points R1 et R2 sont répartis equitablement entre Dim1 et Dim2 (autant d'individus de chaque côté des axes)
 Ce mélange/chevauchement indique que la variabilité n'est pas entièrement due aux différents réplicaentre les 2 réplicats : aucun des réplicats n'est dominant => D'autres facteurs comme le traitement ou les heures.
 ```{r}
-#en fonction des traitement 
+# Habillage sur le graphe des individus - Traitements
 colors <- rep("red", nrow(dataACPv))
 colors[c(1:6,19:25)] <- "blue"
 colors[c(7:12,26:32)] <- "green"
-fviz_pca_ind(respcav, geom = c("point"), col.ind = colors) +
+fviz_pca_ind(respcav, mean.point=FALSE, geom = "point", col.ind = colors) +
   scale_color_manual(values = c("blue" = "blue", "green" = "green", "red" = "red"), 
                      labels = c("T1", "T2", "T3")) +
   labs(color = "Traitements")
@@ -323,7 +321,7 @@ fviz_pca_ind(respcav, geom = c("point"), col.ind = colors) +
 T1 sont prinipalement à gauche du graphique (avec un léger mélange). T2 et T3 sont beaucoup plus mélangés à droite. Cela appuie que les effets du traitement 1 sont diffrents de ceux de T2 et T3 (qui se ressemblent plus)
 
 ```{r}
-#en fonction des heures
+# Habillage sur le graphe des individus - Heures
 colors <- rep("red", nrow(dataACPv))
 colors[c(1,7,13,19,25,31)] <- "blue"    # Heure 1
 colors[c(2,8,14,20,26,32)] <- "green"   # Heure 2
@@ -331,12 +329,11 @@ colors[c(3,9,15,21,27,33)] <- "purple"  # Heure 3
 colors[c(4,10,16,22,28,34)] <- "yellow" # Heure 4
 colors[c(5,11,17,23,29,35)] <- "orange" # Heure 5
 
-fviz_pca_ind(respcav, geom = c("point"), col.ind = colors) +
+fviz_pca_ind(respcav, mean.point=FALSE, geom = "point", col.ind = colors) +
   scale_color_manual(values = c("blue" = "blue", "green" = "green", "purple" = "purple", 
                                 "yellow" = "yellow", "orange" = "orange", "red" = "red"),
                      labels = c("Heure 1", "Heure 2", "Heure 3", "Heure 4", "Heure 5", "Heure 6")) +
   labs(color = "Heures")
-
 ```
 Heure 2-3-4-5-6 => Tratement 1 à gauche et T2/T3 à droite
 Heure 1 => Ttes à droites quelque soit le traitement appliqué
@@ -352,6 +349,8 @@ Heure 4 : Augmentation notable Dim2, stabilisation (legere baisse) par rapport �
 Heure 5 : Stabilisation dim1 (legere hausse), baisse notable dim2 (atteint min)
 Heure 6 : Stabilisation dim1, augmentation notable dim2
 
+Pour tous les traitements : Constribution oscille à chaque heure entre H2 et 6
+=> Responsable de la variabilité
 ## Clustering
 
 ### Détermination du nombre de classes
