@@ -42,15 +42,17 @@ library(knitr)
 
 Dans ce projet, on s'intéresse à la population des gènes d'une plante modèle. On souhaite analyser un jeu de données représentant les différences d'expression d'un certain nombre de gènes pour plusieurs traitements appliqués et en tirer des conclusions pertinentes à propos l'expérience biologique menée.
 
+Tout au long de ce rapport le symbole {\textbf{\textsf{R}}} indique que des informations dans le code ne sont pas transmises dans le rapport.
+
 # Statistiques descriptives
 
 ## Description du jeu de données
 
 ```{r,eval=T, echo=FALSE}
 #On récupère le jeu de données
-data<-read.table("data.txt",header=T, sep=";", stringsAsFactors = T)
+data<-read.table("DataProjet3MIC-2425.txt",header=T, sep=";", stringsAsFactors = T)
 ```
-
+Afin de décrire l'ensemble du jeu de données, nous avons utilisé quelques commandes {\textbf{\textsf{R}}}.
 ```{r,eval=T, echo=FALSE, results='hide'}
 #commandes utiles pour l'analyse du jeu de données
 head(data)
@@ -78,7 +80,7 @@ Nous commençons par faire quelques statistiques descriptives uni-dimensionnelle
 
 ### Variables qualitatives
 
-Nous avons à notre disposition trois variables qualitatives : ExpT1, ExpT2, ExpT3 comme décrites précédemment. Pour extraire certaines tendances des traitements appliqués, nous analysons les fréquences d'apparition des différentes modalités et nous les représentons sous forme de diagramme en secteur dans la figure 1.
+Nous avons à notre disposition trois variables qualitatives : ExpT1, ExpT2, ExpT3 comme décrites précédemment. Pour extraire certaines tendances des traitements appliqués, nous analysons les fréquences d'apparition des différentes modalités et nous les représentons sous forme de diagramme en secteur dans la Figure \ref{fig:diagsecteurs}.
 
 ```{r echo=FALSE, eval=FALSE}
 #Visualisation des modalités des trois variables qualitatives
@@ -116,7 +118,7 @@ g3 = ggplot(data) + geom_bar(aes(x = ExpT3))
 grid.arrange(g1,g2,g3,ncol=3)
 ```
 
-```{r, echo=FALSE, eval=TRUE, fig.align='center', fig.cap="Diagramme en secteur"}
+```{r, echo=FALSE, eval=TRUE, fig.align='center', fig.cap="\\label{fig:diagsecteurs}Diagramme en secteur"}
 #Diagrammes en secteurs des fréquences pour les variables qualitatives
 
 # Pour ExpT1
@@ -176,7 +178,7 @@ g3pie <- ggplot(df3, aes(x = "", y = value, fill = group)) +
 grid.arrange(g1pie, g2pie, g3pie, ncol = 3)
 
 ```
-D'après la figure 1, on peut déjà remarquer que les traitements diffèrent dans la réaction des gènes. En effet, on observe une grande similarité entre les traitements 2 et 3 avec des réactions réparties de façon homogène entre "sous" et "sur" exprimé. Pour sa part, le traitement 1 n'a aucun effet sur la majorité des gènes, qui n'expriment pas de différence particulière par rapport à l'état de référence (81% de "non" exprimé).
+D'après la Figure \ref{fig:diagsecteurs}, on peut déjà remarquer que les traitements diffèrent dans la réaction des gènes. En effet, on observe une grande similarité entre les traitements 2 et 3 avec des réactions réparties de façon homogène entre "sous" et "sur" exprimé. Pour sa part, le traitement 1 n'a aucun effet sur la majorité des gènes, qui n'expriment pas de différence particulière par rapport à l'état de référence (81% de "non" exprimé).
 
 
 ### Variables quantitatives
