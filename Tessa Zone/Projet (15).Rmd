@@ -41,6 +41,7 @@ library(dbscan)
 library(seriation)
 library(grid)
 library(knitr)
+library(stringr)
 ```
 
 \vspace{1cm}
@@ -277,7 +278,6 @@ corrplot(mcor, method = "ellipse")
 
 ```
 
-pas lisible trouver un moyen de le rendre lisible ( peut etre en resortant les carrés que l'on voit qui sont fortement corrélés )
 
 ```{r,eval=FALSE,fig.show = "hide"}
 data <- data1[,-c(19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39)]
@@ -342,16 +342,12 @@ grid.arrange(g1,g2,g3,ncol=3)
 ## Analyse en composantes principales 
 Menez une analyse en composantes principales où les Tt sH Rr sont les individus décrits par les gènes.
 ACP inversé 
-```{r}
+```{r,results="hide"}
 
 #on retire les variables qalitatives parce que autrement cela rentre dans les variables vu que l'on transpose 
 data1ACP1 <- t(data1[,-c(37,38,39)])
 dim(data1ACP1)
 #36 individus et 542 variables on a bien transposé le dataframe original 
-
-#ACP Centrée
-respca<-PCA(data1ACP1,scale.unit=F,graph=F) #ACP Centrée pour comparer les variances avec ACP centrée réduite et choisir le modèle
-respca$eig[1:2, ]
 
 ```
 
@@ -373,27 +369,27 @@ fviz_eig(respca)
   
 ```{r,fig.cap="\\label{fig:boxplots} Bilan ACP"}
 g1<-fviz_pca_ind(respca,geom=c("point"))
-g2<-fviz_pca_var(respca)
+g2<-fviz_pca_var(respca,geom=c("point"))
 grid.arrange(g1,g2,ncol=2)
-#réplicat 1 en bleu et réplicat 2 en rouge 
-colors <- rep("red", nrow(data1ACP1))
-colors[1:18] <- "blue"
-fviz_pca_ind(respca, geom = c("point"), col.ind = colors) +
-  scale_color_manual(values = c("red", "blue"))
-#en fonction des traitements 
-colors <- rep("red", nrow(data1ACP1))
-colors[c(1:6,19:25)] <- "blue"
-colors[c(7:12,26:32)] <- "green"
-fviz_pca_ind(respca, geom = c("point"), col.ind = colors)
-#en fonction des heures
-colors <- rep("red", nrow(data1ACP1))
-colors[c(1,7,13,19,25,31)] <- "blue"
-colors[c(2,8,14,20,26,32)] <- "green"
-colors[c(3,9,15,21,27,33)] <- "purple"
-colors[c(4,10,16,22,28,34)] <- "yellow"
-colors[c(5,11,17,23,29,35)] <- "orange"
-#colors[c(6,12,18,24,30,36)] <- "green"
-fviz_pca_ind(respca, geom = c("point"), col.ind = colors)
+```
+```{r}
+g1<-fviz_pca_var(respca,geom=c("point"),habillage = as.factor(data1$ExpT1))
+g2<-fviz_pca_var(respca,geom=c("point"),habillage = as.factor(data1$ExpT2))
+g3<-fviz_pca_var(respca,geom=c("point"),habillage = as.factor(data1$ExpT3))
+grid.arrange(g1,g2,g3,ncol=3)
+```
+
+
+
+```{r}
+Aux<-rownames(respca$ind$coord)
+NomR<-str_sub(Aux,7,8)
+g3<-fviz_pca_ind(respca, habillage = as.factor(NomR))
+Heures<-str_sub(Aux,4,5)
+g4<-fviz_pca_ind(respca, col.ind = as.factor(Heures))
+Traitements<-str_sub(Aux,1,2)
+g5<-fviz_pca_ind(respca, col.ind = as.factor(Traitements))
+grid.arrange(g3,g4,g5,ncol=3)
 ```
 
 
@@ -404,8 +400,9 @@ il faut d'abord faire une analyse pour savoir combien de classes prendre
 
 évolution de l'inertie intraclasse
 
-```{r, fig.cap="Recherche de notre K (analyse k means)"}
+```{r, fig.cap="Recherche de notre K (analyse k means)",results="hide"}
 #commenter pourquoi on reduit et centre les données 
+set.seed(40)
 
 data1ACP1C<-scale(x=data1ACP1 ,center=TRUE,scale=TRUE)
 
@@ -471,7 +468,7 @@ Ici Kmeans avec K=3
 
 
 
-```{r, fig.cap="Nuées dynamiques"}
+```{r, fig.cap="Nuées dynamiques",results="hide"}
 #penser à bloquer les données pour le kmeans 
 
 data1ACP1C<-scale(x=data1ACP1 ,center=TRUE,scale=TRUE)
@@ -484,12 +481,11 @@ fviz_cluster(reskmeans,data=data1ACP1C,
 
 ```
 
+```{r}
+#Il faut regarder ce qu'il y a dans reskmeans$cluster pour voir qu'elle variable va dans quelle classe et commenter 
+reskmeans$cluster
 
-
-
-
-
-Il faut regarder ce qu'il y a dans reskmeans$cluster pour voir qu'elle variable va dans quelle classe et commenter 
+```
 
 On ne compare pas avec les variables qualitatives car il n'y en a pas 
 
@@ -498,14 +494,14 @@ Classification hiérarchique
 dist_data1ACP1 = dist(data1ACP1)
 ```
 **Question :** Dans cette question et pour les suivantes, on se focalise sur la mesure d'agrégation de Ward. Ajustez une classification hiérarchique avec la mesure de Ward. Que représentent les hauteurs du dendrogramme dans ce cas ? 
-```{r,fig.height=6,fig.width=15,fig.align = "center", fig.cap="Dendrogramme"}
+```{r,fig.height=6,fig.width=15,results="hide",fig.align = "center", fig.cap="Dendrogramme"}
 # dendogramme
 hward<-hclust(dist_data1ACP1, method = "ward.D2") 
 fviz_dend(hward,show_labels=FALSE)
 ```
 **Question : ** Déterminez le nombre de classes à retenir avec l'indice de Calinski-Harabasz. Vous pouvez vous aider de la fonction `ìndex.G1()` de la librairie `clusterSim`. Tracez la classification obtenue sur le dendrogramme et sur le premier plan factoriel de l'ACP. 
 
-```{r ,fig.cap="A compléter v"}
+```{r ,results="hide",fig.cap="A compléter v"}
 # A completer
 CH<-NULL
 Kmax<-20
@@ -524,7 +520,7 @@ g3<-fviz_pca_ind(respca, geom = c("point"), habillage = as.factor(ClustCH))
 
 grid.arrange(g1,g2,g3,ncol=3)
 ```
-```{r}
+```{r,results="hide"}
 #comparaison entre les 2 clustering 
 clust1<-paste("Cl-K",reskmeans$cluster,sep="")
 clust2<-paste("Cl-hiérarchique",ClustCH,sep="")
@@ -559,8 +555,9 @@ dim(data1ACP2)
 
 ## Analyse en composantes principales 
 Menez une analyse en composantes principales pour les gènes à partir du jeu de données DataExpMoy.
-   
-   
+Il ne faut pas centré reduire les données car les vraiables etudient la même chose.
+sur le clustering
+
    
 ```{r,fig.cap="A compléter b"}
 respca2<-PCA(data1ACP2,quali.sup=c(19,20,21), scale.unit=T,graph=F)
@@ -579,30 +576,38 @@ corrplot(respca2$var$cor,method="ellipse")
 
 
 
-```{r,fig.cap="A compléter g"}
+```{r,fig.cap="A compléter g",results="hide"}
 g1<-fviz_pca_ind(respca2,geom=c("point"))
-g2<-fviz_pca_var(respca2)
+
+
+Aux<-rownames(respca2$var$coord)
+Traitements<-str_sub(Aux,1,2)
+g2<-fviz_pca_var(respca2,habillage=as.factor(Traitements))
 grid.arrange(g1,g2,ncol=2)
-
 ```
-
+Pour commenter mettre les graphes habillages 
 ## Clustering 1 
 Faites une classification non supervisée (clustering) des gènes à partir de leur expression (DataExpMoy) afin d’obtenir des classes de gènes homogènes (ayant la même evolution d’expression).
 (penser a bloquer les données pour les kmeans)
 
-```{r, fig.cap="A compléter r"}
-data1ACP2C<-scale(data1ACP2[,-c(19,20,21)] ,center=TRUE,scale=TRUE)
+Il ne faut pas centré reduire les données car les vraiables etudient la même chose.
+sur le clustering
+
+```{r, fig.cap="A compléter r",results="hide"}
+#on ne reduit pas les données 
+#data1ACP2C<-scale(data1ACP2[,-c(19,20,21)] ,center=TRUE,scale=TRUE)
 
 ```
   
   
   
-```{r, fig.cap="A compléter d"}
+```{r, results="hide",fig.cap="A compléter d"}
+set.seed(80)
 Kmax<-15
 reskmeanscl<-matrix(0,nrow=nrow(data1ACP2),ncol=Kmax-1)
 Iintra<-NULL
 for (k in 2:Kmax){
-  resaux<-kmeans(data1ACP2C,k)
+  resaux<-kmeans(data1ACP2[,-c(19,20,21)],k)
   reskmeanscl[,k-1]<-resaux$cluster
   Iintra<-c(Iintra,resaux$tot.withinss)
 }
@@ -618,7 +623,7 @@ g1<-ggplot(df,aes(x=K,y=Iintra))+
 
 Silhou<-NULL
 for (k in 2:Kmax){
-   aux<-silhouette(reskmeanscl[,k-1], daisy(data1ACP2C))
+   aux<-silhouette(reskmeanscl[,k-1], daisy(data1ACP2[,-c(19,20,21)]))
    Silhou<-c(Silhou,mean(aux[,3]))
 }
 
@@ -632,14 +637,19 @@ g2<-ggplot(df,aes(x=K,y=Silhouette))+
     
     
 
-```{r, fig.cap="A compléter h"}
-aux<-silhouette(reskmeanscl[,3],daisy(data1ACP2C))
+```{r,results="hide", fig.cap="A compléter h"}
+aux<-silhouette(reskmeanscl[,3],daisy(data1ACP2[,-c(19,20,21)]))
 g3<-fviz_silhouette(aux)+
   theme(plot.title = element_text(size =9))
 rm(df,Silhou,aux)
 
+aux<-silhouette(reskmeanscl[,2],daisy(data1ACP2[,-c(19,20,21)]))
+g4<-fviz_silhouette(aux)+
+  theme(plot.title = element_text(size =9))
+rm(df,Silhou,aux)
 
-grid.arrange(g1,g2,g3,ncol=3)
+grid.arrange(g1,g2,ncol=2)
+grid.arrange(g3,g4,ncol=2)
 ```
 
 
@@ -647,8 +657,9 @@ On peut observer un coude à K=3
 
 Faire d'autres méthodes de determination du nombre de classes pour vérifier K=3 
 
-```{r, fig.cap="A compléter e"}
-reskmeans<-kmeans(data1ACP2C,3)
+```{r, results="hide",fig.cap="A compléter e"}
+#bloquer les données avec sed.seed
+reskmeans<-kmeans(data1ACP2[,-c(19,20,21)],3)
 #fviz_pca_ind(respca2,habillage=as.factor(reskmeans$cluster) ,geom=c("point"))
 #table(reskmeans$cluster)
 fviz_cluster(reskmeans,data=data1ACP2C,
@@ -660,7 +671,7 @@ fviz_cluster(reskmeans,data=data1ACP2C,
 
 
 Classification hiérarchique
-```{r, fig.cap="A compléter e"}
+```{r,results="hide", fig.cap="A compléter e"}
 dist_data1ACP2 = dist(data1ACP2)
 #hclustsingle<-hclust(dist_data1ACP2, method = "single")
 #hclustcomplete<-hclust(dist_data1ACP2, method = "complete")
@@ -675,16 +686,16 @@ dist_data1ACP2 = dist(data1ACP2)
 
 
 
-```{r,fig.align = "center"}
+```{r,results="hide",fig.align = "center"}
 hward<-hclust(dist_data1ACP2, method = "ward.D2") 
 fviz_dend(hward,show_labels=FALSE)
 ```
 
-```{r}
+```{r,results="hide"}
 CH<-NULL
 Kmax<-20
 for (k in 2:Kmax){
-  CH<-c(CH,index.G1(data1ACP2C, cl= cutree(hward,k)))
+  CH<-c(CH,index.G1(data1ACP2[,-c(19,20,21)], cl= cutree(hward,k)))
 }
 #On prend k = 3
 daux<-data.frame(NbClust=2:Kmax,CH=CH)
@@ -700,7 +711,7 @@ grid.arrange(g1,g2,g3,ncol=3)
 ```
 
 
-```{r}
+```{r,results="hide"}
 clust1<-paste("Cl-K",reskmeans$cluster,sep="")
 clust2<-paste("Cl-hiérarchique",ClustCH,sep="")
 Tab<-melt(table(clust1,clust2))
@@ -715,7 +726,7 @@ ggplot(Tab,aes(y=value,axis1=clust1,axis2=clust2))+
 ## Comparaison clustering avec variable qualitatives 
 Faites une classification non supervisée (clustering) des gènes à partir des variables ExpT1, ExpT2 et ExpT3. Comparez avec les résultats de la question précédente
 
-```{r}
+```{r,results="hide"}
 g1<-fviz_pca_ind(respca2,habillage="ExpT1",geom=c("point"))
 g2<-fviz_pca_ind(respca2,habillage="ExpT2",geom=c("point"))
 g3<-fviz_pca_ind(respca2,habillage="ExpT3",geom=c("point"))
@@ -723,7 +734,7 @@ grid.arrange(g1,g2,g3,ncol=3)
 
 ```
 
-```{r, fig.cap="A compléter y"}
+```{r,results="hide", fig.cap="A compléter y"}
 clust<-paste("Cl-K",reskmeans$cluster,sep="")
 Tab<-melt(table(clust,data1ACP2[,19]))
 g1<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
@@ -737,7 +748,7 @@ g1<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
 ```
 
 
-```{r, fig.cap="A compléter h"}
+```{r,results="hide", fig.cap="A compléter h"}
 clust<-paste("Cl-K",reskmeans$cluster,sep="")
 Tab<-melt(table(clust,data1ACP2[,20]))
 g2<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
@@ -749,7 +760,7 @@ g2<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
 
 ```
 
-```{r, fig.cap="A compléter k"}
+```{r,results="hide", fig.cap="A compléter k"}
 clust<-paste("Cl-K",reskmeans$cluster,sep="")
 Tab<-melt(table(clust,data1ACP2[,21]))
 g3<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
@@ -763,7 +774,7 @@ g3<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
 grid.arrange(g1,g2,g3,ncol=3)
 
 ```
-```{r, fig.cap="A compléter y"}
+```{r,results="hide", fig.cap="A compléter y"}
 clust<-paste("Cl-hiérarchique",ClustCH,sep="")
 Tab<-melt(table(clust,data1ACP2[,19]))
 g1<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
@@ -777,7 +788,7 @@ g1<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
 ```
 
 
-```{r, fig.cap="A compléter h"}
+```{r,results="hide",fig.cap="A compléter h"}
 clust<-paste("Cl-hiérarchique",ClustCH,sep="")
 Tab<-melt(table(clust,data1ACP2[,20]))
 g2<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
@@ -789,7 +800,7 @@ g2<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
 
 ```
 
-```{r, fig.cap="A compléter k"}
+```{r,results="hide", fig.cap="A compléter k"}
 clust<-paste("Cl-hiérarchique",ClustCH,sep="")
 Tab<-melt(table(clust,data1ACP2[,21]))
 g3<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
