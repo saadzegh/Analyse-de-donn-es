@@ -36,7 +36,7 @@ library(ggalluvial)
 library(clusterSim)
 library(seriation)
 library(knitr)
-
+library(stringr)
 ```
 # Introduction
 
@@ -364,45 +364,57 @@ Les deux premières composantes principales (Dim1 et Dim2) capturent 71,1 % et 1
 AAAAAAAAAAAAAAAAA qui va permettre de récupérer plus d'information que l'ACP centréé (variances cumulées à 81,6% contre 80,5%) AAAAAAAAAAAAAAAAAAAAA
 
 ```{r,eval=T}
-#graphe des variables
-fviz_pca_var(respcav) #graphique des corrélations entre les variables initiales et les méta-variables => Illisible
 
 #graphe des individus
-fviz_pca_ind(respcav,col.ind="contrib",geom=c("point"))
+g1<-fviz_pca_ind(respcav,geom=c("point"))
 
+#graphe des variables
+g2<-fviz_pca_var(respcav,geom=c("point"))
+grid.arrange(g1,g2,ncol=2)
 ```
-Graphe variable => Illisible (rien conclure quant aux variables car bcp trop nombreuses)
-=> On fait une analyse séparée (voit graphe du dessous)
+Le graphique des individus projetés sur les deux premières composantes principales.Nous identifions deux à trois groupes principaux dans cet espace, ce qui souligne des différences claires dans les comportements d'expression des gènes sous les différents traitements.
 
-Graphe individu => Pas un regroupement spécifique, on a 2/3. On a une variabilité des réaction en fonction des spécifités des individus.
+Le graphique des variables est difficilement interprétable en raison sa densité. Le nombre très élevé des variables. On ne peut pas tirer des conclusions claires sur la contribution des variables ou sur les regroupements entre elles.
 
+```{r}
+g1<-fviz_pca_var(respcav,geom=c("point"),habillage = as.factor(data$ExpT1))
+g2<-fviz_pca_var(respcav,geom=c("point"),habillage = as.factor(data$ExpT2))
+g3<-fviz_pca_var(respcav,geom=c("point"),habillage = as.factor(data$ExpT3))
+grid.arrange(g1,g2,g3,ncol=3)
+```
+ExpT1:
+Les variables "Sous" se situent principalement dans la partie supérieure du graphe, indiquant une contribution positive et significative à Dim2.
+Les variables "Sur" apparaissent en bas, ce qui reflète une contribution négative à Dim2.
+Ainsi lorsqu'on constate des effets sur l'experience EXPT1, ils se manifestent le long de la deuxième composante principale (Dim2).
 
-PARLER DE L'INERTIE
+EXPT2/T3:
+Les variables "Sous" sont situées principalement à gauche du graphe, on a donc contribution négative à Dim1.
+Les variables "Sur" se trouvent à droite, on a une contribution positive à Dim1.
+La première composante principale (Dim1), qui explique 71,1 % de la variance, est fortement influencée par les experiences EXPT2 et EXPT3. Cette dimension distingue clairement les gènes sous-exprimés ("Sous") et surexprimés ("Sur") sous l’effet de ce traitement.
+
+Pour expliquer ces changements, on effectue une analyse qui compare chacune des caractéristiques (replicat, traitement, heures) des 3 experiences.
 ```{r}
 # Habillage sur le graphe des individus - Réplicats
 colors <- rep("red", nrow(dataACPv))
 colors[1:18] <- "blue"
-fviz_pca_ind(respcav, mean.point=FALSE, geom = "point", col.ind = colors) +
+g1<-fviz_pca_ind(respcav, mean.point=FALSE, geom = "point", col.ind = colors) +
   scale_color_manual(values = c("blue" = "blue", "red" = "red"), 
                      labels = c("R1", "R2")) +
   labs(color = "Réplicats")
 ```
-Les individus issus des réplicats R1 et R2 sont distribués de manière équilibrée le long des deux dimensions. la variabilité n'est pas entièrement due aux différents réplicas. 
-On peut en conclure que les facteurs des traitements et des heures contribuent de manière significative à la structure des données.
+
 
 ```{r}
 # Habillage sur le graphe des individus - Traitements
 colors <- rep("red", nrow(dataACPv))
 colors[c(1:6,19:25)] <- "blue"
 colors[c(7:12,26:32)] <- "green"
-fviz_pca_ind(respcav, mean.point=FALSE, geom = "point", col.ind = colors) +
+g2<-fviz_pca_ind(respcav, mean.point=FALSE, geom = "point", col.ind = colors) +
   scale_color_manual(values = c("blue" = "blue", "green" = "green", "red" = "red"), 
                      labels = c("T1", "T2", "T3")) +
   labs(color = "Traitements")
 ```
-Les observations associées au traitement T1 se situent principalement sur la gauche du graphique, tandis que celles des traitements T2 et T3 sont davantage mélangées à droite.
 
-Cela reflète une différenciation claire entre les effets du traitement T1 et ceux des traitements T2 et T3, ce qui appuie l'observation déjà faite lors de l'analyse bi-dimensionnelle.
 
 ```{r}
 # Habillage sur le graphe des individus - Heures
@@ -413,12 +425,23 @@ colors[c(3,9,15,21,27,33)] <- "purple"  # Heure 3
 colors[c(4,10,16,22,28,34)] <- "yellow" # Heure 4
 colors[c(5,11,17,23,29,35)] <- "orange" # Heure 5
 
-fviz_pca_ind(respcav, mean.point=FALSE, geom = "point", col.ind = colors) +
+g3<-fviz_pca_ind(respcav, mean.point=FALSE, geom = "point", col.ind = colors) +
   scale_color_manual(values = c("blue" = "blue", "green" = "green", "purple" = "purple", 
                                 "yellow" = "yellow", "orange" = "orange", "red" = "red"),
                      labels = c("Heure 1", "Heure 2", "Heure 3", "Heure 4", "Heure 5", "Heure 6")) +
-  labs(color = "Heures")
+  labs(color = "Heures") #Mean point sont les points donnant les moyennes
+
+grid.arrange(g1,g2,g3,ncol=3)
 ```
+Graphe Réplicats :
+Les individus issus des réplicats R1 et R2 sont distribués de manière équilibrée le long des deux dimensions. la variabilité n'est pas entièrement due aux différents réplicas. 
+On peut en conclure que les facteurs des traitements et des heures contribuent de manière significative à la structure des données.
+
+Graphe Traitements:
+Les observations associées au traitement T1 se situent principalement sur la gauche du graphique, tandis que celles des traitements T2 et T3 sont davantage mélangées à droite.
+Cela reflète une différenciation claire entre les effets du traitement T1 et ceux des traitements T2 et T3, ce qui appuie l'observation déjà faite lors de l'analyse bi-dimensionnelle.
+
+Graphes heures :
 A l’heure 1, toutes les observations, quel que soit le traitement, se regroupent sur la gauche du graphique. On a une faible contribution de la dim1 et une dynamique plus heterogène sur la contribution de la composante dim2. 
 
 Au bout de 2h, on observe que la séparation se fait au bout de la deuxième heure.
@@ -434,7 +457,7 @@ Après cette séparation, la variabilité des dimensions oscille principalement 
 
 ```{r}
 #Inertie intraclasse
-
+set.seed(2)
 Kmax<-15
 reskmeanscl<-matrix(0,nrow=nrow(dataACPv),ncol=Kmax-1)
 Iintra<-NULL
@@ -469,7 +492,7 @@ g2<-ggplot(df,aes(x=K,y=Silhouette))+
   geom_line()+theme(legend.position = "bottom")
 # ggtitle("Figure 10 : Coefficients silhouette")
 
-aux<-silhouette(reskmeanscl[,3],daisy(dataACPv))
+aux<-silhouette(reskmeanscl[,2],daisy(dataACPv))
 g3<-fviz_silhouette(aux)+
   theme(plot.title = element_text(size =9)) 
 #+ ggtitle("Figure 11 : Visualisation des silhouettes")
@@ -482,22 +505,23 @@ g3 <- g3 + ggtitle("Figure 9.3 : Visualisation des silhouettes") + theme(plot.ti
 grid.arrange(g1,g2,g3,ncol=3)
 ```
 
-Blablabla on choisi 3/4 classes parce que...
+Blablabla on choisi 3 classes parce que...
 
 ### Kmeans
 
 ```{r,echo=F,eval=T}
+set.seed(25)
 reskmeans<-kmeans(dataACPv,3) 
 ```
 
 
-```{r,eval=F}
+```{r,eval=T}
 fviz_cluster(reskmeans,data=dataACPv,
              ellipse.type="norm",labelsize=8,
              geom=c("point"))+ggtitle("")
 
-fviz_pca_ind(respcav,col.ind=as.factor(reskmeans$cluster),
-             geom = c("point"),axes=c(1,2))
+#fviz_pca_ind(respcav,col.ind=as.factor(reskmeans$cluster), geom = c("point"),axes=c(1,2))
+reskmeans$cluster
 ```
 Interprétation Kmeans
 
@@ -563,26 +587,32 @@ fviz_eig(respcag)
 Les deux premières composantes principales (Dim1 et Dim2) capturent 59,2 % et 22,2 % de la variance totale, soit un total cumulé de 81,4%. Cela signifie que l’essentiel de l’information contenue dans les données peut être visualisé dans un espace bidimensionnel.
 
 ```{r,eval=F}
-fviz_pca_var(respcag) #graphique des corrélations entre les variables initiales et les méta-variables => Illisible
+Aux<-rownames(respcag$var$coord)
+Traitements<-str_sub(Aux,1,2)
+g1<-fviz_pca_var(respcag,habillage=as.factor(Traitements))  #graphique des corrélations entre les variables initiales et les méta-variables => Illisible
 
 corrplot(respcag$var$cor,method="ellipse")  #les corrélations des variables initiales avec toutes les méta-variables => Plus lisible (même si c pas ouf)
 
-fviz_pca_ind(respcag,col.ind="contrib",geom=c("point"))
+g2<-fviz_pca_ind(respcag,col.ind="contrib",geom=c("point"))
+grid.arrange(g1,g2,ncol=2)
 ```
+DIM 1 ET 2 représentent le premier plan factoriel (avec DIM 1 et 2 qui sont des métavariables)
+
 Cercle des correlations:
-Les variables liées aux traitements T2 et T3 sont fortement corrélées et influencées par Dim2, tandis que celles de T1 sont davantage associées à Dim1. On note une exception pour les gènes associé à l’expérience T3_1H_R1, qui semble influencé à la fois par Dim1 et Dim2.
+La première composante principale (Dim1) est portée par T2 et T3 qui sont fortement colérées.
+La seconde composante principale (dim2) est davantage portée par T1. On remarque que plus les heures avance, plus le traitement 1 se rapproche de l'axe de dim2.
+On note une exception pour les gènes associé à l’expérience T3_1H_R1, qui semble influencé à la fois par les deux composantes principales.
 
-Graph des individus:
-Les points sont en majorités éloignés de l’origine. La majorité des gènes présentent donc des variations marquées.
-Ceux qui sont proches de l'origine, montrent une variation faible, ce qui peut correspondre aux gènes du traitement 1.
-
-Gènes qui influencent dim1 contribue majoritairement de façon uniforme à dim2 (faiblement)
-Pour les gènes avec une faible contribution de dim1, plus de répartition sur la contribution de dim2
+Graphe des individus:
+La majorité des points sont éloignés de l’origine, ce qui indique que la plupart des gènes présentent des variations marquées dans leurs niveaux d’expression. À l’inverse, les points proches de l’origine montrent des variations faibles, ce qui pourrait correspondre aux gènes influencés par le traitement T1. Les gènes qui contribuent fortement à Dim1 montrent une contribution relativement uniforme à Dim2, mais de faible intensité. En revanche, pour les gènes ayant une faible contribution à Dim1, on observe une répartition plus marquée de leurs contributions le long de Dim2.
 
 ## Clustering
 
+Puisqu'on analyse sur tous les gènes car les variables étudient la même chose => On fait le clustering sur les données brutes. Le fait de centrer réduire ferait perdre de l'information
+
 ```{r}
-dataACPgC<-scale(dataACPg[,-c(19,20,21)] ,center=TRUE,scale=TRUE)
+set.seed(25)
+dataACPgC <- dataACPg[,-c(19,20,21)]
 
 Kmax<-15
 reskmeanscl<-matrix(0,nrow=nrow(dataACPg),ncol=Kmax-1)
@@ -616,29 +646,38 @@ g2<-ggplot(df,aes(x=K,y=Silhouette))+
   geom_point()+
   geom_line()+theme(legend.position = "bottom")
 
-aux<-silhouette(reskmeanscl[,3],daisy(dataACPgC))
+aux<-silhouette(reskmeanscl[,2],daisy(dataACPgC))
 g3<-fviz_silhouette(aux)+
   theme(plot.title = element_text(size =9))
 rm(df,Silhou,aux)
 
+aux<-silhouette(reskmeanscl[,3],daisy(dataACPgC))
+g4<-fviz_silhouette(aux)+
+  theme(plot.title = element_text(size =9))
+rm(df,Silhou,aux)
 
-grid.arrange(g1,g2,g3,ncol=3)
+
+grid.arrange(g1,g2,g3,g4,ncol=4)
 ```
+En observant le graphique de l'inertie intra-classe, le "coude" apparaît autour de 4 classes. On décide donc d'en créer 4, ce qui devrait permettre de capturer une quantité significative de variance.
+
+Le coefficient de silhouette moyen pour 4 classes est légèrement plus élevé que pour d'autres choix de nombre de clusters, ce qui indique une meilleure séparation et cohésion des classes. 
+
 
 ### Kmeans
 
 ```{r,echo=F,eval=T}
-reskmeans<-kmeans(dataACPgC,3) 
+set.seed(1)
+reskmeans<-kmeans(dataACPgC,4) 
 ```
 
 
-```{r,eval=F}
+```{r, echo=F,eval=T}
 fviz_cluster(reskmeans,data=dataACPgC,
              ellipse.type="norm",labelsize=8,
              geom=c("point"))+ggtitle("")
 
-fviz_pca_ind(respcag,col.ind=as.factor(reskmeans$cluster),
-             geom = c("point"),axes=c(1,2))
+#fviz_pca_ind(respcag,col.ind=as.factor(reskmeans$cluster), geom = c("point"),axes=c(1,2))
 ```
 
 
@@ -656,7 +695,6 @@ fviz_dend(hward,show_labels=FALSE)
 
 
 ```{r}
-# A COMPLETER
 CH<-NULL
 Kmax<-20
 for (k in 2:Kmax){
@@ -687,14 +725,6 @@ ggplot(Tab,aes(y=value,axis1=clust1,axis2=clust2))+
   theme(legend.position = "none")
 ```
 
-## Clustering 2 (comparaison avec variable qualitatives) 
-
-```{r, echo=FALSE, eval=FALSE}
-A<-pam(data[37:39], 3, metric = "euclidean")
-A$medoids
-#adjustedRandIndex(A$clustering,data$ExpT1,data$ExpT2,data$ExpT3)
-#table(data$ExpT1,data$ExpT2,data$ExpT3,A$clustering)
-```
 
 
 ### Partie de comparaison
