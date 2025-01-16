@@ -441,14 +441,10 @@ Graphe Traitements:
 Les observations associées au traitement T1 se situent principalement sur la gauche du graphique, tandis que celles des traitements T2 et T3 sont davantage mélangées à droite.
 Cela reflète une différenciation claire entre les effets du traitement T1 et ceux des traitements T2 et T3, ce qui appuie l'observation déjà faite lors de l'analyse bi-dimensionnelle.
 
-Graphes heures :
-A l’heure 1, toutes les observations, quel que soit le traitement, se regroupent sur la gauche du graphique. On a une faible contribution de la dim1 et une dynamique plus heterogène sur la contribution de la composante dim2. 
-
-Au bout de 2h, on observe que la séparation se fait au bout de la deuxième heure.
-La contribution par rapport à dim1 est opposée entre le premier traitement les 2 autres traitements.
-
-Après cette séparation, la variabilité des dimensions oscille principalement à la contribution de dim2 entre chaque heure.
-
+Graphes Heures :
+Au bout de la première heure 1, toutes les observations, quel que soit le traitement, se regroupent sur la gauche du graphique. On a donc une faible contribution de Dim1, accompagnée d’une dynamique plus hétérogène sur Dim2.
+Dès la deuxième heure, une séparation claire (Alix) apparaît : la contribution par rapport à Dim1 devient opposée entre le premier traitement et les deux autres traitements.
+Après cette séparation, la variabilité entre les heures oscille principalement autour de la contribution de Dim2, reflétant une évolution distincte dans les réponses des gènes au fil du temps.
 
 ## Clustering
 
@@ -505,7 +501,9 @@ g3 <- g3 + ggtitle("Figure 9.3 : Visualisation des silhouettes") + theme(plot.ti
 grid.arrange(g1,g2,g3,ncol=3)
 ```
 
-Blablabla on choisi 3 classes parce que...
+En observant le graphique de l'inertie intra-classe, le "coude" apparaît au bout de 3 classes. On décide donc d'en créer 3, ce qui devrait permettre de capturer une quantité significative de variance.
+
+Le graphe de silhouette connait sa chute significative au bour de 3 classes. Ansi les deux graphiques convergent vers l'hypothèse de créer 3 classes différentes dans notre clusering.
 
 ### Kmeans
 
@@ -678,6 +676,7 @@ fviz_cluster(reskmeans,data=dataACPgC,
              geom=c("point"))+ggtitle("")
 
 #fviz_pca_ind(respcag,col.ind=as.factor(reskmeans$cluster), geom = c("point"),axes=c(1,2))
+reskmeans$cluster
 ```
 
 
