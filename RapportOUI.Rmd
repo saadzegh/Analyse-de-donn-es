@@ -16,7 +16,7 @@ header-includes:
 ---
 
 ```{r setup, include=FALSE }
-knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning=FALSE,fig.align="center",fig.width=15,fig.height = 6, dpi=300)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning=FALSE,fig.align="center",fig.width=15,fig.height = 5, dpi=300)
 
 #importation des packages utiles au projet
 library(reticulate)
@@ -274,34 +274,24 @@ Nous commençons par analyser les variables quantitatives entre elles. Afin d'an
 ```{r ,echo=F,fig.align = "center", fig.width=20, fig.height = 10, fig.cap="\\label{fig:matricecorrelations}Matrice des corrélations des variables quantitatives"}
 corrplot(cor(data[, -c(37:39)]), method = "ellipse")
 ```
-D'après la Figure \ref{fig:matricecorrelations},
+D'après la Figure \ref{fig:matricecorrelations}, les corrélations sont fortes entre les variables des traitement T2 et T3, tandis que les variables du traitement T1 sont globalement peu corrélées aux autres variables, peu importe le réplicat considéré. De plus, la majorité des corrélations sont positives.
 
 On observe une forte corrélation entre des variables équivalentes des réplicats R1 et R2 (par exemple les variables T2_6h_R1 et T2_6h_R2), ce qui indique à nouveau que les réplicats sont reproductibles.
 
-La majorité des corrélations sont positives
+Puisque T3 est une combinaison des traitements T1 et T2, nous devrions voir apparaitre des corrélations significatives entre T3 et les variables de T1 et T2. Or ce n'ets le cas que pout T2, ce qui indique que le traitement T1 ne contribue qu'à une faible échelle au résultats du traitement T3.
 
-on observe des corrélations fortes entre les variables des traitement T2 et T3 tandis que les variables du traitement T1 sont globalement peu corrélées aux autres variables.
-
-Les variables mesurant le même traitement (T1, T2, ou T3) à des heures différentes ou pour des réplicats différents devraient présenter des corrélations positives, surtout si les mesures sont cohérentes.
-
-
-Si certaines variables montrent des corrélations faibles ou négatives inattendues, cela peut indiquer une variabilité importante ou des effets expérimentaux particuliers.
-
-
-Puisque T3 est une combinaison des traitements T1 et T2, 
-
-on peut s'attendre à des corrélations significatives entre T3 et les variables de T1 et T2.
+Enfin, Les variables mesurant le même traitement (T1, T2, ou T3) à des heures différentes ou pour des réplicats différents  présentent des corrélations positives, les mesures sont donc probablement cohérentes.
 
 
 ### Deux variables qualitatives
 
 Dans le cas de deux variables qualitatives, on représente les profils-ligne ou profils-colonne dans la Figure \ref{fig:profils_lignes}.
 
-1. Tableau de contingence
-2. Mosaic plot 
 3. Indice de liaison
 
 ```{r, fig.height=5, fig.width=15, fig.cap="\\label{fig:profils_lignes}Profils-lignes des variables qualitatives"}
+#Tableaux de contingence et profils-lignes des variables qualitatives
+
 #prop.table(table(data$ExpT1,data$ExpT2),margin=1)
 g1<-ggplot(data,aes(x=ExpT1,fill=ExpT2))+
 geom_bar(position = "fill")
@@ -315,12 +305,9 @@ g3<-ggplot(data,aes(x=ExpT2,fill=ExpT3))+
 geom_bar(position = "fill")
 
 grid.arrange(g1,g2,g3,ncol=3)
-
-#mosaicplot(table(data$ExpT1,data$ExpT2)) #illisible
-#mosaicplot(table(data$ExpT1,data$ExpT3))
 ```
-Analyse des profils-lignes
-montrent la répartition des modalités des variables qualitatives (ExpT1, ExpT2, ExpT3)
+Les profils-lignes montrent la répartition des modalités des variables qualitatives (ExpT1, ExpT2, ExpT3) et permet de comparer les résultats biologiques de décision obtenus par les trois traitements. L'analyse de la Figure \ref{fig:profils_lignes} 
+
 ExpT1 : La majorité des gènes (81,4 %) sont "Non" exprimés, ce qui montre que le traitement T1 a un effet limité sur l'expression des gènes. Seulement une petite fraction des gènes est "Sur" (10,5 %) ou "Sous" (8,1 %) exprimée.
 ExpT2 et ExpT3 : Ces deux traitements ont des profils très similaires, avec une distribution équilibrée entre les gènes "Sur" et "Sous" exprimés (~45-53 %). Cela indique que T2 et T3 déclenchent des réponses significatives pour presque tous les gènes.
 Les traitements T2 et T3 montrent une dynamique très similaire, ce qui concorde avec le fait que T3 est une combinaison des effets de T1 et T2. La similarité pourrait indiquer que l'effet de T2 domine dans la combinaison.
@@ -332,6 +319,7 @@ Enfin, nous nous intéressons à l'analyse du degré de liaison de certaines var
 
 Boxplots parallèles On trace la distribution de la variable quantitative Y en fonction de chaque modalité de la variable qualitative X
 
+Ces graphiques permettent d’explorer comment les valeurs des variables quantitatives diffèrent en fonction des catégories des variables qualitatives.
 Plus les boxplot sont “diférents”, plus X et Y sont liés (pas corrélées)
 
 2. Carré du rapport de corrélation empirique 
@@ -348,25 +336,39 @@ plot5<-ggplot(data,aes(x=ExpT2,y=T2_6H_R2))+geom_boxplot()
 plot6<-ggplot(data,aes(x=ExpT3,y=T3_6H_R2 ))+geom_boxplot()
 grid.arrange(plot1,plot2,plot3,plot4,plot5,plot6,ncol=6)
 ```
+Modalité "Non" :
+
+    Pour cette catégorie, les valeurs des boxplots (médiane et dispersion) se regroupent généralement autour de zéro ou restent proches de l’absence de variation. Cela indique une faible différence d’expression pour les gènes non-exprimés.
+
+Modalité "Sous" :
+
+    Les valeurs des boxplots sont souvent négatives, ce qui est attendu puisque ces gènes sont sous-exprimés par définition. Les médianes plus basses et les moustaches vers les valeurs négatives illustrent clairement cet effet.
+
+Modalité "Sur" :
+
+    Les valeurs des boxplots sont généralement positives, avec des médianes plus élevées et une dispersion qui reflète une surexpression des gènes.
 
 # Analyse des Tt_sh_Rr
 
+Nous souhaitons mainteant analyser les variables Tt_sh_Rr en tant qu'individus.
+
 ## Analyse en composantes principales
 
-Nous menons ici une analyse en composantes principales où les variables Tt_sH_Rr sont les individus décrits par les
+Nous menons tout d'abord une analyse en composantes principales où les variables Tt_sH_Rr sont les individus décrits par les
 gènes.
 
-A enlever : Pour savoir si utilise l'ACP centrée ou l'ACP centrée reduite, on compare les pourcentages des variances cumulées sur les deux ACP. Car on ne peut pas utiliser des boxplots pour le déterminer (trop de variables)
+Au vu du nombre de variables très élevé (les 542 gènes) pour cette partie, nous ne pouvons pas constater des dispersions et des échelles différentes entre les variables. Nous avons donc décidé d'appliquer une analyse en composantes principales sur les données centrées et réduites afin de donner un poids équivalent à chacune des variables et éviter ainsi que les variables à grande variance ne dominent l'analyse.
 
 ```{r,echo=FALSE, eval=T}
+#ACP, création du tableau de données
 dataACPv<-t(data[c(1:36)]) #on retire les variables qualitatives et on transpose le dataframe 
 dim(dataACPv) #on vérifie les bonnes dimensions du jeu de données
 
 #ACP centrée
-resacpa<-PCA((dataACPv),scale.unit = F,graph=F)
-resacpa$eig[1:3,]
+#resacpa<-PCA((dataACPv),scale.unit = F,graph=F)
+#resacpa$eig[1:3,]
 ```
-Au vu du nombre de variables très élevé, on ne peut pas s'assurer que l'odre de grandeur des variances est similaire? On fait donc une ACP centrée réduite.
+
 ```{r, echo=FALSE, eval=TRUE}
 #ACP centrée réduite
 respcav<-PCA((dataACPv),scale.unit = T,graph=F)
