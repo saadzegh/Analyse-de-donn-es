@@ -546,9 +546,13 @@ fviz_cluster(reskmeans,data=dataACPv,
              ellipse.type="norm",labelsize=8,
              geom=c("point"))+ggtitle("")
 
-#fviz_pca_ind(respcav,col.ind=as.factor(reskmeans$cluster), geom = c("point"),axes=c(1,2))
+```
+
+```{r,eval=F}
 reskmeans$cluster
 ```
+On applique la méthode des Kmeans qui permet d'obtenir les 3 clusters: {\textbf{\textsf{R}}} 
+
 Cluster 1 : Réponse homogène aux traitements T2 et T3
 Ce cluster regroupe principalement les observations des traitements T2 et T3, en particulier pour les heures de ces derniers. On peut en déduire que les premiers effets de ces présentent une faible variabilité.
 
@@ -620,7 +624,7 @@ fviz_eig(respcag)
 ```
 Les deux premières composantes principales (Dim1 et Dim2) capturent 59,2 % et 22,2 % de la variance totale, soit un total cumulé de 81,4%. Cela signifie que l’essentiel de l’information contenue dans les données peut être visualisé dans un espace bidimensionnel.
 
-```{r,eval=F}
+```{r,eval=T, echo=F}
 Aux<-rownames(respcag$var$coord)
 Traitements<-str_sub(Aux,1,2)
 g1<-fviz_pca_var(respcag,habillage=as.factor(Traitements))  #graphique des corrélations entre les variables initiales et les méta-variables => Illisible
@@ -642,7 +646,7 @@ La majorité des points sont éloignés de l’origine, ce qui indique que la pl
 
 ## Clustering
 
-Puisqu'on analyse sur tous les gènes car les variables étudient la même chose => On fait le clustering sur les données brutes. Le fait de centrer réduire ferait perdre de l'information
+On décide de faire un clustering sur les données brutes car, quelques soit le gènes, on étudie les même composantes. Le fait de centrer réduire ferait perdre de l'information.
 
 ```{r}
 set.seed(25)
@@ -710,10 +714,14 @@ reskmeans<-kmeans(dataACPgC,4)
 fviz_cluster(reskmeans,data=dataACPgC,
              ellipse.type="norm",labelsize=8,
              geom=c("point"))+ggtitle("")
+```
 
+```{r, echo=F,eval=F}
 #fviz_pca_ind(respcag,col.ind=as.factor(reskmeans$cluster), geom = c("point"),axes=c(1,2))
 reskmeans$cluster
 ```
+
+On applique la méthode des Kmeans qui permet d'obtenir les 4 clusters: {\textbf{\textsf{R}}} 
 
 Cluster 1 : Gènes faiblement influencés par les traitements
 Ce cluster regroupe des gènes dont les variations d’expression sont faibles, quel que soit le traitement ou l’heure d’observation. On les retrouve prêt de l’origine du repère. 
