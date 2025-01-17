@@ -458,22 +458,22 @@ grid.arrange(g1,g2,g3,ncol=3)
 ```
 
 
-```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:indiv_hab}Habillage sur le graphe des individus en fonction du réplicat (gauche), du traitement (centre) et de l'heure (droite)"}
-Aux <- rownames(respca$ind$coord)
+```{r, echo=FALSE, eval=TRUE}
+Aux <- rownames(respcav$ind$coord)
 #On choisit de ne pas afficher les points de moyenne, malgré leurs apports d'information, pour garder le même graph des individus que l'ACP
 #Habillage sur le graphe des individus - Réplicats
 replicats <- str_sub(Aux, 7, 8)
-g3 <- fviz_pca_ind(respca, habillage = as.factor(replicats), label = "none", mean.point=FALSE)
+g1 <- fviz_pca_ind(respcav, habillage = as.factor(replicats), label = "none", mean.point=FALSE)
 
 #Habillage sur le graphe des individus - Traitements
 traitements <- str_sub(Aux, 1, 2)
-g4 <- fviz_pca_ind(respca, col.ind = as.factor(traitements), label = "none", mean.point=FALSE)
+g2 <- fviz_pca_ind(respcav, col.ind = as.factor(traitements), label = "none", mean.point=FALSE)
 
 #Habillage sur le graphe des individus - Heures
 heures <- str_sub(Aux, 4, 5)
-g5 <- fviz_pca_ind(respca, col.ind = as.factor(heures), label = "none", mean.point=FALSE) 
+g3 <- fviz_pca_ind(respcav, col.ind = as.factor(heures), label = "none", mean.point=FALSE) 
 
-grid.arrange(g3, g4, g5, ncol = 3)
+grid.arrange(g1,g2,g3,ncol=3)
 ```
 
 Graphe Réplicats :
