@@ -308,6 +308,7 @@ grid.arrange(g1,g2,g3,ncol=3)
 ```
 Les profils-lignes montrent la répartition des modalités des variables qualitatives (ExpT1, ExpT2, ExpT3) et permet de comparer les résultats biologiques de décision obtenus par les trois traitements. L'analyse de la Figure \ref{fig:profils_lignes} 
 
+Revoir :
 ExpT1 : La majorité des gènes (81,4 %) sont "Non" exprimés, ce qui montre que le traitement T1 a un effet limité sur l'expression des gènes. Seulement une petite fraction des gènes est "Sur" (10,5 %) ou "Sous" (8,1 %) exprimée.
 ExpT2 et ExpT3 : Ces deux traitements ont des profils très similaires, avec une distribution équilibrée entre les gènes "Sur" et "Sous" exprimés (~45-53 %). Cela indique que T2 et T3 déclenchent des réponses significatives pour presque tous les gènes.
 Les traitements T2 et T3 montrent une dynamique très similaire, ce qui concorde avec le fait que T3 est une combinaison des effets de T1 et T2. La similarité pourrait indiquer que l'effet de T2 domine dans la combinaison.
@@ -315,6 +316,7 @@ Les profils ligne illustrent des tendances qualitatives cohérentes avec les box
 
 ### Une variable qualitative et une variable quantitative
 
+Revoir :
 Enfin, nous nous intéressons à l'analyse du degré de liaison de certaines variables quantitatives avec des variables qualitatives. Figure \ref{fig:boxplots_paralleles}
 
 Boxplots parallèles On trace la distribution de la variable quantitative Y en fonction de chaque modalité de la variable qualitative X
@@ -336,6 +338,8 @@ plot5<-ggplot(data,aes(x=ExpT2,y=T2_6H_R2))+geom_boxplot()
 plot6<-ggplot(data,aes(x=ExpT3,y=T3_6H_R2 ))+geom_boxplot()
 grid.arrange(plot1,plot2,plot3,plot4,plot5,plot6,ncol=6)
 ```
+
+Revoir :
 Modalité "Non" :
 
     Pour cette catégorie, les valeurs des boxplots (médiane et dispersion) se regroupent généralement autour de zéro ou restent proches de l’absence de variation. Cela indique une faible différence d’expression pour les gènes non-exprimés.
@@ -359,7 +363,7 @@ gènes.
 
 Au vu du nombre de variables très élevé (les 542 gènes) pour cette partie, nous ne pouvons pas constater des dispersions et des échelles différentes entre les variables. Nous avons donc décidé d'appliquer une analyse en composantes principales sur les données centrées et réduites afin de donner un poids équivalent à chacune des variables et éviter ainsi que les variables à grande variance ne dominent l'analyse.
 
-```{r,echo=FALSE, eval=T}
+```{r,echo=FALSE, eval=T, results='hide'}
 #ACP, création du tableau de données
 dataACPv<-t(data[c(1:36)]) #on retire les variables qualitatives et on transpose le dataframe 
 dim(dataACPv) #on vérifie les bonnes dimensions du jeu de données
@@ -369,18 +373,17 @@ dim(dataACPv) #on vérifie les bonnes dimensions du jeu de données
 #resacpa$eig[1:3,]
 ```
 
-```{r, echo=FALSE, eval=TRUE}
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:ACP1}Evolution de l'inertie portée par les axes factoriels"}
 #ACP centrée réduite
 respcav<-PCA((dataACPv),scale.unit = T,graph=F)
-respcav$eig[1:3,]
+#respcav$eig[1:3,]
 fviz_eig(respcav)
 ```
-Les deux premières composantes principales (Dim1 et Dim2) capturent 71,1 % et 10,5 % de la variance totale, soit un total cumulé de 81,6%. Cela signifie que l’essentiel de l’information contenue dans les données peut être visualisé dans un espace bidimensionnel.
+D'après les résultats de l'analyse en composantes principales en Figure \ref{fig:ACP1}, les deux premières composantes principales (Dim1 et Dim2) capturent 71,1 % et 10,5 % de l'inertie, soit un total cumulé de 81,6%. Cela signifie que l’essentiel de l’information contenue dans les données peut être visualisé dans un espace bidimensionnel, en ne conservant que les deux premiers plans factoriels.
 
-AAAAAAAAAAAAAAAAA qui va permettre de récupérer plus d'information que l'ACP centréé (variances cumulées à 81,6% contre 80,5%) AAAAAAAAAAAAAAAAAAAAA
+Nous affichons la projection des individus sur les plans factoriels ainsi que le cercle des corrélations en Figure \ref{fig:figuresACP} afin d'identifier les individus et les variables importants.
 
-```{r,eval=T}
-
+```{r,eval=T, echo=FALSE, fig.cap="\\label{fig:figuresACP}Graphe des individus (gauche) et graphe des variables (droite"}
 #graphe des individus
 g1<-fviz_pca_ind(respcav,geom=c("point"))
 
@@ -388,18 +391,27 @@ g1<-fviz_pca_ind(respcav,geom=c("point"))
 g2<-fviz_pca_var(respcav,geom=c("point"))
 grid.arrange(g1,g2,ncol=2)
 ```
-Le graphique des individus projetés sur les deux premières composantes principales.Nous identifions deux à trois groupes principaux dans cet espace, ce qui souligne des différences claires dans les comportements d'expression des gènes sous les différents traitements.
+On identifie deux à trois groupes distincts dans l'espace des individus, ce qui souligne des différences claires dans les comportements d'expression des gènes sous les trois traitements différents. En revanche, le graphe des variables est difficilement interprétable en raison sa densité. On ne peut pas tirer de conclusions claires sur la contribution des variables ou sur les regroupements possibles entre elles.
 
-Le graphique des variables est difficilement interprétable en raison sa densité. Le nombre très élevé des variables. On ne peut pas tirer des conclusions claires sur la contribution des variables ou sur les regroupements entre elles.
+Pour évaluer l'impact des traitements, on habille le graphe des variables par les résultats de décision (variables ExpT1, ExpT2 et ExpT3) en Figure \ref{fig:graph_var_hab}
 
-```{r}
-g1<-fviz_pca_var(respcav,geom=c("point"),habillage = as.factor(data$ExpT1))
-g2<-fviz_pca_var(respcav,geom=c("point"),habillage = as.factor(data$ExpT2))
-g3<-fviz_pca_var(respcav,geom=c("point"),habillage = as.factor(data$ExpT3))
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:contributions}Contribution relative des individus à l'inertie sur les axes factoriels"}
+#Contribution relative des individus à l'inertie sur les axes factoriels
+cont1<-fviz_contrib(respcav, choice = "ind", axes = 1)
+cont2<-fviz_contrib(respcav, choice = "ind", axes = 2)
+grid.arrange(cont1,cont2,nrow=2)
+```
+Maybe trouver une explication (demander de l'aide à un ami chat)
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:graph_var_hab}Graphe des variables expliqué en fonction des modalités des variables qualitatives"}
+
+g1<-fviz_pca_var(respcav,geom=c("point"),habillage = as.factor(data$ExpT1))+ggtitle("ExpT1")
+g2<-fviz_pca_var(respcav,geom=c("point"),habillage = as.factor(data$ExpT2))+ggtitle("ExpT2")
+g3<-fviz_pca_var(respcav,geom=c("point"),habillage = as.factor(data$ExpT3))+ggtitle("ExpT3")
+
 grid.arrange(g1,g2,g3,ncol=3)
 ```
 ExpT1:
-Les variables "Sous" se situent principalement dans la partie supérieure du graphe, indiquant une contribution positive et significative à Dim2.
+Les variables "Sous" se situent principalement dans la partie supérieure gauche du graphe, indiquant une contribution positive et significative à Dim2.
 Les variables "Sur" apparaissent en bas, ce qui reflète une contribution négative à Dim2.
 Ainsi lorsqu'on constate des effets sur l'experience EXPT1, ils se manifestent le long de la deuxième composante principale (Dim2).
 
@@ -410,7 +422,7 @@ La première composante principale (Dim1), qui explique 71,1 % de la variance, e
 
 Pour expliquer ces changements, on effectue une analyse qui compare chacune des caractéristiques (replicat, traitement, heures) des 3 experiences.
 ```{r}
-# Habillage sur le graphe des individus - Réplicats
+#Habillage sur le graphe des individus - Réplicats
 colors <- rep("red", nrow(dataACPv))
 colors[1:18] <- "blue"
 g1<-fviz_pca_ind(respcav, mean.point=FALSE, geom = "point", col.ind = colors) +
@@ -419,9 +431,8 @@ g1<-fviz_pca_ind(respcav, mean.point=FALSE, geom = "point", col.ind = colors) +
   labs(color = "Réplicats")
 ```
 
-
 ```{r}
-# Habillage sur le graphe des individus - Traitements
+#Habillage sur le graphe des individus - Traitements
 colors <- rep("red", nrow(dataACPv))
 colors[c(1:6,19:25)] <- "blue"
 colors[c(7:12,26:32)] <- "green"
@@ -431,9 +442,8 @@ g2<-fviz_pca_ind(respcav, mean.point=FALSE, geom = "point", col.ind = colors) +
   labs(color = "Traitements")
 ```
 
-
-```{r}
-# Habillage sur le graphe des individus - Heures
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:indiv_hab}Habillage sur le graphe des individus en fonction du réplicat (gauche), du traitement (centre) et de l'heure (droite)"}
+#Habillage sur le graphe des individus - Heures
 colors <- rep("red", nrow(dataACPv))
 colors[c(1,7,13,19,25,31)] <- "blue"    # Heure 1
 colors[c(2,8,14,20,26,32)] <- "green"   # Heure 2
@@ -449,6 +459,8 @@ g3<-fviz_pca_ind(respcav, mean.point=FALSE, geom = "point", col.ind = colors) +
 
 grid.arrange(g1,g2,g3,ncol=3)
 ```
+
+Il faut demander à chatgpt si il peut enlever les légendes qui servent à rien sur ces graphes
 Graphe Réplicats :
 Les individus issus des réplicats R1 et R2 sont distribués de manière équilibrée le long des deux dimensions. la variabilité n'est pas entièrement due aux différents réplicas. 
 On peut en conclure que les facteurs des traitements et des heures contribuent de manière significative à la structure des données.
@@ -574,9 +586,11 @@ grid.arrange(g1,g2,g3,ncol=3)
 
 # Analyse des gènes
 
-Construisez un jeu de données DataExpMoy contenant la moyenne des expressions sur les réplicats de chaque gène, pour chaque traitement et chaque heure. DataExpMoy est donc une matrice de taille G × 18. Vous pourrez utiliser les variables ExpT1, ExpT2 et ExpT3 pour commenter vos résultats des questions suivantes.
+Nous nous intéressons enfin à l'analyse des gènes du jeu de données.
 
 ## Analyse en composantes principales
+
+Pour commencer, nous menons une analyse en composantes principales du jeu de données "DataExpMoy" contenant la moyenne des expressions sur les réplicats de chaque gène, pour chaque traitement et chaque heure. {\textbf{\textsf{R}}}
 
 ```{r}
 #Création du jeu de données DataExpMoy
@@ -590,6 +604,7 @@ dataACPg<-cbind(dataACPg, ExpT1=data$ExpT1, ExpT2=data$ExpT2, ExpT3=data$ExpT3)
 dim(dataACPg)
 ```
 On fait une ACP centrée réduite car on a des variances de différentes échelles. Voir outlier figure X.
+Voir boxplots figure \ref{fig:boxplotsquantitatives}.
 
 ```{r,eval=T}
 #ACP Centrée réduite
