@@ -644,7 +644,7 @@ Aux<-rownames(respcag$var$coord)
 Traitements<-str_sub(Aux,1,2)
 g1<-fviz_pca_var(respcag,habillage=as.factor(Traitements))  #graphique des corrélations entre les variables initiales et les méta-variables => Illisible
 
-corrplot(respcag$var$cor,method="ellipse")  #les corrélations des variables initiales avec toutes les méta-variables => Plus lisible (même si c pas ouf)
+#corrplot(respcag$var$cor,method="ellipse")  #les corrélations des variables initiales avec toutes les méta-variables => Plus lisible (mais pas top)
 
 g2<-fviz_pca_ind(respcag,col.ind="contrib",geom=c("point"))
 grid.arrange(g1,g2,ncol=2)
