@@ -742,12 +742,18 @@ Ce cluster regroupe des gènes dont les variations d’expression sont faibles, 
 Ces gènes pourraient correspondre au traitement 1, qui ne déclenche majoritairement pas de changement majeur.
 Ils peuvent cependant servir de référence pour analyser les gènes plus « dynamiques » aux traitements 2 et 3.
 
-Cluster 2 : 
+Cluster 2 : Gènes avec une dynamique intermédiaire dans les variations d’expression
+Ce cluster regroupe des gènes présentant des réponses modérées aux traitements. Les variations d’expression observées dans ce groupe ne sont ni faibles ni fortement marquées.
+Ces gènes pourraient refléter l'etape intermédiaire de la progression.
+Ainsi on peut voir les transitions entre des gènes peu réactifs et ceux fortement influencés, particulièrement sous l’effet des traitements T2 et T3.
 
-Cluster 3 : 
+Cluster 3 : Gènes avec des réactions génétiques marquées aux traitements avancés
+Ce cluster se distingue par des variations génétiques importantes, associées principalement aux heures avancées des traitements T2 et T3. 
+L'évolution de ces gènes sont déclenchés dans la durée par les traitements T2 et T3.
 
-Cluster 4 : 
-
+Cluster 4 :Gènes fortement influencés par les traitements T2 et T3 aux premières heures
+Ce cluster regroupe des gènes dont les variations d’expression sont rapides et marquées, observées principalement dans les premières heures des traitements T2 et T3.
+Ces gènes traduisent une réponse précoce aux traitements.
 
 ### Classification hiérarchique
 
