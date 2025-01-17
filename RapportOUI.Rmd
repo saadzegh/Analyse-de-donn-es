@@ -421,7 +421,8 @@ Les variables "Sur" se trouvent à droite, on a une contribution positive à Dim
 La première composante principale (Dim1), qui explique 71,1 % de la variance, est fortement influencée par les experiences EXPT2 et EXPT3. Cette dimension distingue clairement les gènes sous-exprimés ("Sous") et surexprimés ("Sur") sous l’effet de ce traitement.
 
 Pour expliquer ces changements, on effectue une analyse qui compare chacune des caractéristiques (replicat, traitement, heures) des 3 experiences.
-```{r}
+
+```{r, echo=FALSE, eval=F}
 #Habillage sur le graphe des individus - Réplicats
 colors <- rep("red", nrow(dataACPv))
 colors[1:18] <- "blue"
@@ -429,9 +430,7 @@ g1<-fviz_pca_ind(respcav, mean.point=FALSE, geom = "point", col.ind = colors) +
   scale_color_manual(values = c("blue" = "blue", "red" = "red"), 
                      labels = c("R1", "R2")) +
   labs(color = "Réplicats")
-```
 
-```{r}
 #Habillage sur le graphe des individus - Traitements
 colors <- rep("red", nrow(dataACPv))
 colors[c(1:6,19:25)] <- "blue"
@@ -440,9 +439,7 @@ g2<-fviz_pca_ind(respcav, mean.point=FALSE, geom = "point", col.ind = colors) +
   scale_color_manual(values = c("blue" = "blue", "green" = "green", "red" = "red"), 
                      labels = c("T1", "T2", "T3")) +
   labs(color = "Traitements")
-```
 
-```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:indiv_hab}Habillage sur le graphe des individus en fonction du réplicat (gauche), du traitement (centre) et de l'heure (droite)"}
 #Habillage sur le graphe des individus - Heures
 colors <- rep("red", nrow(dataACPv))
 colors[c(1,7,13,19,25,31)] <- "blue"    # Heure 1
@@ -460,7 +457,25 @@ g3<-fviz_pca_ind(respcav, mean.point=FALSE, geom = "point", col.ind = colors) +
 grid.arrange(g1,g2,g3,ncol=3)
 ```
 
-Il faut demander à chatgpt si il peut enlever les légendes qui servent à rien sur ces graphes
+
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:indiv_hab}Habillage sur le graphe des individus en fonction du réplicat (gauche), du traitement (centre) et de l'heure (droite)"}
+Aux <- rownames(respca$ind$coord)
+#On choisit de ne pas afficher les points de moyenne, malgré leurs apports d'information, pour garder le même graph des individus que l'ACP
+#Habillage sur le graphe des individus - Réplicats
+replicats <- str_sub(Aux, 7, 8)
+g3 <- fviz_pca_ind(respca, habillage = as.factor(replicats), label = "none", mean.point=FALSE)
+
+#Habillage sur le graphe des individus - Traitements
+traitements <- str_sub(Aux, 1, 2)
+g4 <- fviz_pca_ind(respca, col.ind = as.factor(traitements), label = "none", mean.point=FALSE)
+
+#Habillage sur le graphe des individus - Heures
+heures <- str_sub(Aux, 4, 5)
+g5 <- fviz_pca_ind(respca, col.ind = as.factor(heures), label = "none", mean.point=FALSE) 
+
+grid.arrange(g3, g4, g5, ncol = 3)
+```
+
 Graphe Réplicats :
 Les individus issus des réplicats R1 et R2 sont distribués de manière équilibrée le long des deux dimensions. la variabilité n'est pas entièrement due aux différents réplicas. 
 On peut en conclure que les facteurs des traitements et des heures contribuent de manière significative à la structure des données.
@@ -634,15 +649,14 @@ corrplot(respcag$var$cor,method="ellipse")  #les corrélations des variables ini
 g2<-fviz_pca_ind(respcag,col.ind="contrib",geom=c("point"))
 grid.arrange(g1,g2,ncol=2)
 ```
-DIM 1 ET 2 représentent le premier plan factoriel (avec DIM 1 et 2 qui sont des métavariables)
 
 Cercle des correlations:
-La première composante principale (Dim1) est portée par T2 et T3 qui sont fortement colérées.
-La seconde composante principale (dim2) est davantage portée par T1. On remarque que plus les heures avance, plus le traitement 1 se rapproche de l'axe de dim2.
-On note une exception pour les gènes associé à l’expérience T3_1H_R1, qui semble influencé à la fois par les deux composantes principales.
+La première composante principale (métavariable Dim1) est portée par T2 et T3 qui sont fortement colérées.
+La seconde composante principale (métavriable dim2) est davantage portée par T1. On remarque que plus les heures avance, plus le traitement 1 se rapproche de l'axe de dim2.
+On note que la projection sur le premier plan factoriel de l’expérience T3_1H_R1 est influencé par les deux composantes principales.
 
 Graphe des individus:
-La majorité des points sont éloignés de l’origine, ce qui indique que la plupart des gènes présentent des variations marquées dans leurs niveaux d’expression. À l’inverse, les points proches de l’origine montrent des variations faibles, ce qui pourrait correspondre aux gènes influencés par le traitement T1. Les gènes qui contribuent fortement à Dim1 montrent une contribution relativement uniforme à Dim2, mais de faible intensité. En revanche, pour les gènes ayant une faible contribution à Dim1, on observe une répartition plus marquée de leurs contributions le long de Dim2.
+La majorité des points sont éloignés de l’origine, ce qui indique que la plupart des gènes présentent des variations marquées dans leurs niveaux d’expression. À l’inverse, les points proches de l’origine montrent des variations faibles, ce qui pourrait correspondre aux gènes influencés par le traitement T1. Les gènes qui contribuent fortement à la composante principale Dim1 montrent une contribution relativement uniforme à Dim2, mais de faible intensité. En revanche, pour les gènes ayant une faible contribution à Dim1, on observe une répartition plus marquée de leurs contributions le long de Dim2.
 
 ## Clustering
 
