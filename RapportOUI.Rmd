@@ -5,7 +5,7 @@ institute : "INSA Toulouse"
 date: "`r Sys.Date()`"
 output: 
   pdf_document :
-    toc : TRUE
+    toc : FALSE
     toc_depth : 3
     number_section : TRUE
 geometry: margin=0.7in
@@ -354,14 +354,14 @@ Modalité "Sur" :
 
 # Analyse des Tt_sh_Rr
 
-Nous souhaitons mainteant analyser les variables Tt_sh_Rr en tant qu'individus.
+Nous souhaitons maintenant analyser les variables quantitatives Tt_sh_Rr en tant qu'individus.
 
 ## Analyse en composantes principales
 
-Nous menons tout d'abord une analyse en composantes principales où les variables Tt_sH_Rr sont les individus décrits par les
+Nous menons tout d'abord une analyse en composantes principales où les variables Tt_sh_Rr sont les individus décrits par les
 gènes.
 
-Au vu du nombre de variables très élevé (les 542 gènes) pour cette partie, nous ne pouvons pas constater des dispersions et des échelles différentes entre les variables. Nous avons donc décidé d'appliquer une analyse en composantes principales sur les données centrées et réduites afin de donner un poids équivalent à chacune des variables et éviter ainsi que les variables à grande variance ne dominent l'analyse.
+Au vu du nombre de variables très élevé pour cette partie (les 542 gènes), nous ne pouvons pas constater des dispersions et des échelles différentes entre les variables. Nous avons donc décidé d'appliquer une analyse en composantes principales sur les données centrées et réduites afin de donner un poids équivalent à chacune des variables et éviter ainsi que les variables à grande variance ne dominent l'analyse.
 
 ```{r,echo=FALSE, eval=T, results='hide'}
 #ACP, création du tableau de données
@@ -383,7 +383,7 @@ D'après les résultats de l'analyse en composantes principales en Figure \ref{f
 
 Nous affichons la projection des individus sur les plans factoriels ainsi que le cercle des corrélations en Figure \ref{fig:figuresACP} afin d'identifier les individus et les variables importants.
 
-```{r,eval=T, echo=FALSE, fig.cap="\\label{fig:figuresACP}Graphe des individus (gauche) et graphe des variables (droite"}
+```{r,eval=T, echo=FALSE, fig.cap="\\label{fig:figuresACP}Graphe des individus (gauche) et graphe des variables (droite)"}
 #graphe des individus
 g1<-fviz_pca_ind(respcav,geom=c("point"))
 
@@ -393,9 +393,9 @@ grid.arrange(g1,g2,ncol=2)
 ```
 On identifie deux à trois groupes distincts dans l'espace des individus, ce qui souligne des différences claires dans les comportements d'expression des gènes sous les trois traitements différents. En revanche, le graphe des variables est difficilement interprétable en raison sa densité. On ne peut pas tirer de conclusions claires sur la contribution des variables ou sur les regroupements possibles entre elles.
 
-Pour évaluer l'impact des traitements, on habille le graphe des variables par les résultats de décision (variables ExpT1, ExpT2 et ExpT3) en Figure \ref{fig:graph_var_hab}
+Pour évaluer l'impact des traitements, on habille le graphe des variables par les résultats de décision (variables ExpT1, ExpT2 et ExpT3) en Figure \ref{fig:graph_var_hab}. {\textbf{\textsf{R}}}
 
-```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:contributions}Contribution relative des individus à l'inertie sur les axes factoriels"}
+```{r, echo=FALSE, eval=FALSE, fig.cap="\\label{fig:contributions}Contribution relative des individus à l'inertie sur les axes factoriels"}
 #Contribution relative des individus à l'inertie sur les axes factoriels
 cont1<-fviz_contrib(respcav, choice = "ind", axes = 1)
 cont2<-fviz_contrib(respcav, choice = "ind", axes = 2)
@@ -410,19 +410,19 @@ g3<-fviz_pca_var(respcav,geom=c("point"),habillage = as.factor(data$ExpT3))+ggti
 
 grid.arrange(g1,g2,g3,ncol=3)
 ```
-ExpT1:
-Les variables "Sous" se situent principalement dans la partie supérieure gauche du graphe, indiquant une contribution positive et significative à Dim2.
-Les variables "Sur" apparaissent en bas, ce qui reflète une contribution négative à Dim2.
+D'après la Figure \ref{fig:graph_var_hab}, pour la variable ExpT1, les gènes qui prennent la modalitité "sous" se situent principalement dans la partie supérieure gauche du graphe, indiquant une contribution positive et significative à Dim2.
+Les gènes "sur" apparaissent en bas, ce qui reflète une contribution négative à Dim2.
 Ainsi lorsqu'on constate des effets sur l'experience EXPT1, ils se manifestent le long de la deuxième composante principale (Dim2).
 
-EXPT2/T3:
-Les variables "Sous" sont situées principalement à gauche du graphe, on a donc contribution négative à Dim1.
-Les variables "Sur" se trouvent à droite, on a une contribution positive à Dim1.
-La première composante principale (Dim1), qui explique 71,1 % de la variance, est fortement influencée par les experiences EXPT2 et EXPT3. Cette dimension distingue clairement les gènes sous-exprimés ("Sous") et surexprimés ("Sur") sous l’effet de ce traitement.
+En ce qui concerne les variables ExpT2 et ExpT3, les gènes prennant la modalité "sous" sont situées principalement à gauche du graphe, on a donc contribution négative à Dim1.
+Les variables "sur" se trouvent à droite, on a, au contraire une contribution positive à Dim1.
+La première composante principale (Dim1), qui explique 71,1 % de la variance, est fortement influencée par les expériences EXPT2 et EXPT3. Cette dimension distingue clairement les gènes sous-exprimés ("Sous") et surexprimés ("Sur") sous l’effet de ce traitement.
 
-Pour expliquer ces changements, on effectue une analyse qui compare chacune des caractéristiques (replicat, traitement, heures) des 3 experiences.
+Pour expliquer ces changements, on effectue une analyse qui compare chacune des caractéristiques (replicat, traitement, heures) des 3 experiences, retranscrite dans la Figure \ref{fig:graph_ind_hab}.
 
 ```{r, echo=FALSE, eval=F}
+#Version test à enlever ?
+
 #Habillage sur le graphe des individus - Réplicats
 colors <- rep("red", nrow(dataACPv))
 colors[1:18] <- "blue"
@@ -457,42 +457,37 @@ g3<-fviz_pca_ind(respcav, mean.point=FALSE, geom = "point", col.ind = colors) +
 grid.arrange(g1,g2,g3,ncol=3)
 ```
 
-
-```{r, echo=FALSE, eval=TRUE}
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:graph_ind_hab}Habillage du graphe des individus par réplicats, traitements et heures"}
 Aux <- rownames(respcav$ind$coord)
-#On choisit de ne pas afficher les points de moyenne, malgré leurs apports d'information, pour garder le même graph des individus que l'ACP
+#On choisit de ne pas afficher les individus de référence, malgré leurs apports d'information, pour garder le même graphe des individus que l'ACP
+
 #Habillage sur le graphe des individus - Réplicats
 replicats <- str_sub(Aux, 7, 8)
-g1 <- fviz_pca_ind(respcav, habillage = as.factor(replicats), label = "none", mean.point=FALSE)
+g1 <- fviz_pca_ind(respcav, habillage = as.factor(replicats), label = "none", mean.point=FALSE)+ggtitle("Réplicats")
 
 #Habillage sur le graphe des individus - Traitements
 traitements <- str_sub(Aux, 1, 2)
-g2 <- fviz_pca_ind(respcav, col.ind = as.factor(traitements), label = "none", mean.point=FALSE)
+g2 <- fviz_pca_ind(respcav, habillage = as.factor(traitements), label = "none", mean.point=FALSE)+ggtitle("Traitements")
 
 #Habillage sur le graphe des individus - Heures
 heures <- str_sub(Aux, 4, 5)
-g3 <- fviz_pca_ind(respcav, col.ind = as.factor(heures), label = "none", mean.point=FALSE) 
+g3 <- fviz_pca_ind(respcav, habillage = as.factor(heures), label = "none", mean.point=FALSE)+ggtitle("Heures")
 
 grid.arrange(g1,g2,g3,ncol=3)
 ```
+On observe que les individus issus des réplicats R1 et R2 sont distribués de manière équilibrée le long des deux dimensions, ainsi la variabilité n'est pas entièrement due à l'appartenance aux différents réplicats. 
+On peut en conclure que les facteurs des traitements et des heures contribuent de manière plus significative à la structure des données.
 
-Graphe Réplicats :
-Les individus issus des réplicats R1 et R2 sont distribués de manière équilibrée le long des deux dimensions. la variabilité n'est pas entièrement due aux différents réplicas. 
-On peut en conclure que les facteurs des traitements et des heures contribuent de manière significative à la structure des données.
-
-Graphe Traitements:
-Les observations associées au traitement T1 se situent principalement sur la gauche du graphique, tandis que celles des traitements T2 et T3 sont davantage mélangées à droite.
+Par ailleurs, les observations associées au traitement T1 se situent principalement sur la partie gauche du graphique, tandis que celles des traitements T2 et T3 sont davantage mélangées de façon homogène à droite.
 Cela reflète une différenciation claire entre les effets du traitement T1 et ceux des traitements T2 et T3, ce qui appuie l'observation déjà faite lors de l'analyse bi-dimensionnelle.
 
-Graphes Heures :
-Au bout de la première heure 1, toutes les observations, quel que soit le traitement, se regroupent sur la gauche du graphique. On a donc une faible contribution de Dim1, accompagnée d’une dynamique plus hétérogène sur Dim2.
-Dès la deuxième heure, une séparation claire apparaît : la contribution par rapport à Dim1 devient opposée entre le premier traitement et les deux autres traitements.
+Enfin, à l'issue de la première heure, toutes les observations, quel que soit le traitement, se regroupent sur la gauche du graphique. On a donc une faible contribution de Dim1, accompagnée d’une dynamique plus hétérogène sur Dim2.
+Dès la deuxième heure, une séparation claire apparaît : la contribution par rapport à Dim1 devient opposée entre le traitement T1 et les deux autres traitements.
 Après cette séparation, la variabilité entre les heures oscille principalement autour de la contribution de Dim2, reflétant une évolution distincte dans les réponses des gènes au fil du temps.
 
 ## Clustering
 
-### Détermination du nombre de classes
-
+### Détermination du nombre de classes nécéssaires
 
 ```{r}
 #Inertie intraclasse
@@ -610,13 +605,13 @@ grid.arrange(g1,g2,g3,ncol=3)
 
 # Analyse des gènes
 
-Nous nous intéressons enfin à l'analyse des gènes du jeu de données.
+Nous nous intéressons enfin à l'analyse des gènes du jeu de données en tant qu'individus.
 
 ## Analyse en composantes principales
 
-Pour commencer, nous menons une analyse en composantes principales du jeu de données "DataExpMoy" contenant la moyenne des expressions sur les réplicats de chaque gène, pour chaque traitement et chaque heure. {\textbf{\textsf{R}}}
+Pour commencer, nous menons une analyse en composantes principales du jeu de données "DataExpMoy" contenant la moyenne des expressions sur les réplicats de chaque gène, pour chaque traitement et chaque heure. Nous avons donc un jeu de données composé de 542 individus et caractérisé par 18 variables quantitatives, auquel on ajoute les variables qualitatives. {\textbf{\textsf{R}}}
 
-```{r}
+```{r, echo=FALSE, eval=TRUE, results='hide'}
 #Création du jeu de données DataExpMoy
 dataR1<-data[,1:18]
 dataR2<-data[,19:36]
@@ -627,10 +622,10 @@ dim(dataACPg) #on a bien Gx18
 dataACPg<-cbind(dataACPg, ExpT1=data$ExpT1, ExpT2=data$ExpT2, ExpT3=data$ExpT3)
 dim(dataACPg)
 ```
-On fait une ACP centrée réduite car on a des variances de différentes échelles. Voir outlier figure X.
-Voir boxplots figure \ref{fig:boxplotsquantitatives}.
+Les variables sont ici les moyennes deux à deux des variables correspondant à un même traitement, à la même heure pour les deux réplicats (par exemple T1_1h_R1 et T1_1h_R2 donnent la variable nommée T1_1h_R1 dans le nouveau jeu de données). D'après la Figure \ref{fig:boxplots_quantitatives1} et la Figure \ref{fig:boxplots_quantitatives2} de l'analyse uni-dimensionnelle, les deux réplicats présentent de grandes similitudes dans les résultats. Toutefois, les variables du traitement T1 présentent des écarts de variances importants avec les variables des traitements T2 et T3, comme on peut le voir sur les boxplots présentés précédemment.
+On décide donc d'appliquer une analyse en composantes principales sur les données centrées et réduites afin d'éviter que les variables à grande variance ne dominent l'analyse.
 
-```{r,eval=T}
+```{r,echo=FALSE, eval=T, results='hide', fig.cap="\\label{fig:ACP2}Evolution de l'inertie portée par les axes factoriels"}
 #ACP Centrée réduite
 respcag<-PCA(dataACPg,quali.sup=c(19,20,21),scale.unit = TRUE,graph=F)
 respcag$eig[1:5,]
@@ -639,21 +634,27 @@ fviz_eig(respcag)
 ```
 Les deux premières composantes principales (Dim1 et Dim2) capturent 59,2 % et 22,2 % de la variance totale, soit un total cumulé de 81,4%. Cela signifie que l’essentiel de l’information contenue dans les données peut être visualisé dans un espace bidimensionnel.
 
-```{r,eval=T, echo=F}
-Aux<-rownames(respcag$var$coord)
-Traitements<-str_sub(Aux,1,2)
-g1<-fviz_pca_var(respcag,habillage=as.factor(Traitements))  #graphique des corrélations entre les variables initiales et les méta-variables => Illisible
+Nous affichons la projection des individus sur les plans factoriels ainsi que le cercle des corrélations des variables initiales avec les méta-variables en Figure \ref{fig:figuresACP2} afin d’identifier les individus et les variables importants. Nous complétons avec la matrice des corrélations en Figure \ref{fig:corrACP2}.
 
-#corrplot(respcag$var$cor,method="ellipse")  #les corrélations des variables initiales avec toutes les méta-variables => Plus lisible (mais pas top)
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:figuresACP2}Graphe des variables (gauche) et graphe des individus (droite)"}
+Aux<-rownames(respcag$var$coord)
+#Aux
+Traitements<-str_sub(Aux,1,2)
+#Traitements
+
+g1<-fviz_pca_var(respcag,habillage=as.factor(Traitements)) #graphique des corrélations entre les variables initiales et les méta-variables => Illisible
 
 g2<-fviz_pca_ind(respcag,col.ind="contrib",geom=c("point"))
 grid.arrange(g1,g2,ncol=2)
+```
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:corrACP2}Matrice des corrélations des variables initiales avec les méta-variables"}
+corrplot(t(respcag$var$cor),method="ellipse")  #les corrélations des variables initiales avec toutes les méta-variables => Plus lisible
 ```
 
 Cercle des correlations:
 La première composante principale (métavariable Dim1) est portée par T2 et T3 qui sont fortement colérées.
 La seconde composante principale (métavriable dim2) est davantage portée par T1. On remarque que plus les heures avance, plus le traitement 1 se rapproche de l'axe de dim2.
-On note que la projection sur le premier plan factoriel de l’expérience T3_1H_R1 est influencé par les deux composantes principales.
+On note que la projection sur le premier plan factoriel de l’expérience T3_1h_R1 est influencé par les deux composantes principales.
 
 Graphe des individus:
 La majorité des points sont éloignés de l’origine, ce qui indique que la plupart des gènes présentent des variations marquées dans leurs niveaux d’expression. À l’inverse, les points proches de l’origine montrent des variations faibles, ce qui pourrait correspondre aux gènes influencés par le traitement T1. Les gènes qui contribuent fortement à la composante principale Dim1 montrent une contribution relativement uniforme à Dim2, mais de faible intensité. En revanche, pour les gènes ayant une faible contribution à Dim1, on observe une répartition plus marquée de leurs contributions le long de Dim2.
