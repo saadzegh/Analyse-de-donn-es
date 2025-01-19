@@ -5,7 +5,7 @@ institute : "INSA Toulouse"
 date: "`r Sys.Date()`"
 output: 
   pdf_document :
-    toc : FALSE
+    toc : TRUE
     toc_depth : 3
     number_section : TRUE
 geometry: margin=0.7in
@@ -42,7 +42,7 @@ library(stringr)
 
 Dans ce projet, on s'intéresse à la population des gènes d'une plante modèle. On souhaite analyser un jeu de données représentant les différences d'expression d'un certain nombre de gènes pour plusieurs traitements appliqués et en tirer des conclusions pertinentes à propos l'expérience biologique menée.
 
-Tout au long de ce rapport, le symbole {\textbf{\textsf{R}}} indique que des informations dans le code ne sont pas transmises dans le rapport.
+Tout au long de ce rapport, le symbole {\textbf{\textsf{R}}} indique que des informations disponibles dans le code ne sont pas transmises dans le rapport.
 
 # Statistiques descriptives
 
@@ -313,16 +313,9 @@ Les profils ligne illustrent des tendances qualitatives cohérentes avec les box
 
 ### Une variable qualitative et une variable quantitative
 
-Enfin, nous nous intéressons à l'analyse du degré de liaison de certaines variables quantitatives avec des variables qualitatives. Figure \ref{fig:boxplots_paralleles}
+Enfin, nous nous intéressons à l'analyse du degré de liaison de certaines variables quantitatives avec des variables qualitatives. Figure \ref{fig:boxplots_paralleles} présente quelques boxplots parallèles. On trace la distribution des variables quantitatives à 6 heures pour chaque traitement et chaque réplicat en fonction de chaque modalité d'une variable qualitative ExpT1, ExpT2 ou ExpT3 correspondante.
 
-Boxplots parallèles On trace la distribution de la variable quantitative Y en fonction de chaque modalité de la variable qualitative X
-
-Ces graphiques permettent d’explorer comment les valeurs des variables quantitatives diffèrent en fonction des catégories des variables qualitatives.
-Plus les boxplot sont “diférents”, plus X et Y sont liés (pas corrélées)
-
-2. Carré du rapport de corrélation empirique 
-si proche de 0 X et Y ne sont pas liées 
-si proche de 1 X et Y sont liées 
+Ces boxplots parallèles permettent d’explorer comment les valeurs des variables quantitatives diffèrent en fonction des catégories des variables qualitatives.
 
 ```{r, fig.align='center', fig.cap="\\label{fig:boxplots_paralleles}Boxplots parallèles"}
 
@@ -332,10 +325,12 @@ plot3<-ggplot(data,aes(x=ExpT3,y=T3_6H_R1 ))+geom_boxplot()
 plot4<-ggplot(data,aes(x=ExpT1,y=T1_6H_R2 ))+geom_boxplot()
 plot5<-ggplot(data,aes(x=ExpT2,y=T2_6H_R2))+geom_boxplot()
 plot6<-ggplot(data,aes(x=ExpT3,y=T3_6H_R2 ))+geom_boxplot()
+
 grid.arrange(plot1,plot2,plot3,plot4,plot5,plot6,ncol=6)
 ```
+Tout d'abord, on remarque que les graphiques correspondant à la même variable qualitative se ressemblent fortement deux à deux, ce qui indique que les résultats d'expression des gènes à 6 heures des deux réplicats sont sensiblement les mêmes.
+On observe égalament qu'au sein d'un même graphe, les boxplots parallèles sont très différents, ce qui indique que les variables quantitatives sont très liées aux variables qualitatives correspondantes, ce qui est cohérent avec les associations de variables choisies.
 
-Revoir :
 Modalité "Non" :
 
     Pour cette catégorie, les valeurs des boxplots (médiane et dispersion) se regroupent généralement autour de zéro ou restent proches de l’absence de variation. Cela indique une faible différence d’expression pour les gènes non-exprimés.
