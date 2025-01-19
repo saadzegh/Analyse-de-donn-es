@@ -313,7 +313,7 @@ Les profils ligne illustrent des tendances qualitatives cohérentes avec les box
 
 ### Une variable qualitative et une variable quantitative
 
-Enfin, nous nous intéressons à l'analyse du degré de liaison de certaines variables quantitatives avec des variables qualitatives. Figure \ref{fig:boxplots_paralleles} présente quelques boxplots parallèles. On trace la distribution des variables quantitatives à 6 heures pour chaque traitement et chaque réplicat en fonction de chaque modalité d'une variable qualitative ExpT1, ExpT2 ou ExpT3 correspondante.
+Enfin, nous nous intéressons à l'analyse du degré de liaison de certaines variables quantitatives avec des variables qualitatives. La Figure \ref{fig:boxplots_paralleles} présente quelques boxplots parallèles. On trace la distribution des variables quantitatives à 6 heures pour chaque traitement et chaque réplicat en fonction de chaque modalité d'une variable qualitative ExpT1, ExpT2 ou ExpT3 correspondante.
 
 Ces boxplots parallèles permettent d’explorer comment les valeurs des variables quantitatives diffèrent en fonction des catégories des variables qualitatives.
 
@@ -332,6 +332,7 @@ Tout d'abord, on remarque que les graphiques correspondant à la même variable 
 On observe égalament qu'au sein d'un même graphe, les boxplots parallèles sont très différents, ce qui indique que les variables quantitatives sont très liées aux variables qualitatives correspondantes, ce qui est cohérent avec les associations de variables choisies.
 
 On peut également analyser les boxplots selon les différentes modalités des variables qualitatives :
+
 Pour la modalité "non", les valeurs des boxplots (médiane et dispersion) se regroupent généralement autour de zéro ou restent proches de l’absence de variation (exception pour T1_6H_R2 pour lequel la médiane est plus basse et la varaince plus large). Cela indique une faible différence d’expression pour les gènes non-exprimés.
 
 Pour la modalité "sous", les valeurs des boxplots sont toujours négatives, ce qui est attendu puisque ces gènes sont sous-exprimés par définition. Au contraire, pour la modalité "sur", les valeurs des boxplots sont toujours positives, avec des médianes plus élevées et une dispersion qui reflète une surexpression des gènes.
@@ -402,7 +403,7 @@ En ce qui concerne les variables ExpT2 et ExpT3, les gènes prennant la modalit�
 Les variables "sur" se trouvent à droite, on a, au contraire une contribution positive à Dim1.
 La première composante principale (Dim1), qui explique 71,1 % de la variance, est fortement influencée par les expériences ExpT2 et ExpT3. Cette dimension distingue clairement les gènes sous-exprimés ("sous") et surexprimés ("sur") sous l’effet de ce traitement.
 
-Pour expliquer ces changements, on effectue une analyse qui compare chacune des caractéristiques (replicat, traitement, heures) des 3 experiences, retranscrite dans la Figure \ref{fig:graph_ind_hab}.
+Pour expliquer ces changements, on effectue une analyse qui compare chacune des caractéristiques (replicat, traitement, heures) des trois experiences, retranscrite dans la Figure \ref{fig:graph_ind_hab}.
 
 ```{r, echo=FALSE, eval=F}
 #Version test à enlever ?
@@ -473,11 +474,13 @@ Après cette séparation, la variabilité entre les heures oscille principalemen
 
 Nous souhaitons maintenant faire une classification non supervisée des données afin de regrouper les Tt_sH_Rr en plusieurs calsses homogènes.
 
-### Détermination du nombre de classes nécéssaires
+### Détermination du nombre de classes nécessaires
 
-Tout d'abord, nous déterminons le nombre de classes nécéssaires au clustering à l'aide de deux critères distincts : l'étude de l'évolution de l'inertie intra-classe et l'étude de silhouette, pour lesquels nous affichons les résultats en Figure \ref{fig:nb_classes}.
-```{r}
+Tout d'abord, nous déterminons le nombre de classes nécéssaires au clustering à l'aide de deux critères distincts : l'étude de l'évolution de l'inertie intra-classe et l'étude de silhouette, pour lesquels nous affichons les résultats en Figure \ref{fig:nb_classes1}.
+
+```{r, echo=FALSE, eval=TRUE, results='hide'}
 #Inertie intraclasse
+
 set.seed(2)
 Kmax<-15
 reskmeanscl<-matrix(0,nrow=nrow(dataACPv),ncol=Kmax-1)
@@ -497,7 +500,7 @@ g1<-ggplot(df,aes(x=K,y=Iintra))+
   #ggtitle("Figure 9.1: Inertie intraclasse")
 ```
 
-```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:nb_classes}Evolution de l'inertie intra-classe et silhouette"}
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:nb_classes1}Evolution de l'inertie intra-classe et silhouette", results='hide'}
 #silhouette
 
 Silhou<-NULL
@@ -524,30 +527,32 @@ g3 <- g3 + ggtitle("Figure 9.3 : Visualisation des silhouettes") + theme(plot.ti
 
 grid.arrange(g1,g2,g3,ncol=3)
 ```
-En observant le graphique de l'inertie intra-classe, le "coude" apparaît au bout de 3 classes. On décide donc d'en créer 3, ce qui devrait permettre de capturer une quantité significative de variance.
+En observant le graphique de l'inertie intra-classe, le "coude" apparaît au bout de trois classes. On décide donc d'en créer trois, ce qui devrait permettre de capturer une quantité significative de variance.
 
 Le graphe de silhouette connait sa chute significative au bout de 3 classes. Ainsi les deux graphiques convergent vers l'hypothèse de créer 3 classes différentes dans notre clusering.
 
-### Kmeans
+### Méthode des Kmeans
 
-On applique dans un premier temps la méthode des Kmeans qui permet d'obtenir les 3 clusters: {\textbf{\textsf{R}}} 
+On applique dans un premier temps la méthode des Kmeans qui permet d'obtenir les trois clusters : {\textbf{\textsf{R}}} 
+Figure \ref{fig:kmeans1}
 
-```{r,echo=F,eval=T}
+Grace à la commande reskmeans$cluster on visualise les appartenances aux différents clusters
+```{r,echo=F,eval=T,results='hide'}
 set.seed(25)
 reskmeans<-kmeans(dataACPv,3) 
 ```
 
-```{r,eval=T}
+```{r, ehco=F, eval=T, fig.cap="\\label{fig:kmeans1}A completer"}
 fviz_cluster(reskmeans,data=dataACPv,
              ellipse.type="norm",labelsize=8,
              geom=c("point"))+ggtitle("")
 
 ```
 
-```{r,eval=T,results='hide'}
+```{r,eval=T}
+#Visualisation des variables et de leur cluster d'appartenance
 reskmeans$cluster
 ```
-
 
 Cluster 1 : Réponse homogène aux traitements T2 et T3
 Ce cluster regroupe principalement les observations des traitements T2 et T3, en particulier pour les heures de ces derniers. On peut en déduire que les premiers effets de ces présentent une faible variabilité.
@@ -562,6 +567,8 @@ Les observations du cluster 3 sont principalement liées au traitement T1. Cela 
 
 ### Classification hiérarchique
 
+Nous souhaitons maintenant mettre en place un classification hiérarchique des Tt_sH_Rr.
+
 ```{r, echo=F, eval=T}
 # dendogramme
 dist_dataACPv = dist(dataACPv)
@@ -570,7 +577,7 @@ hward<-hclust(dist_dataACPv, method = "ward.D2")
 #fviz_dend(hward,show_labels=FALSE)
 ```
 
-```{r ,fig.cap="A compléter v"}
+```{r ,fig.cap="\\label{fig:CAH1}A compléter v"}
 # A COMPLETER
 CH<-NULL
 Kmax<-20
@@ -589,7 +596,7 @@ g3<-fviz_pca_ind(respcav, geom = c("point"), habillage = as.factor(ClustCH))
 
 grid.arrange(g1,g2,g3,ncol=3)
 ```
-Le choix du nombre de cluster n'est pas évident en voyant le pic du critère de Calinski-Harabasz. L'hyopthèse de 3 clusters faite lors des Kmeans n'est donc pas incohérente et peut être gardée pour la classification hierarchique.
+Le choix du nombre de cluster n'est pas évident en voyant le pic du critère de Calinski-Harabasz. L'hyopthèse de trois clusters faite lors des Kmeans n'est donc pas incohérente et peut être gardée pour la classification hierarchique.
 
 Sur le dendrogramme, l’axe vertical représente la distance/différences entre les observations, ici les gènes selon leur d'expression sous différents traitements.
 Les gènes exposés au traitement T1 forment un groupe distinct (cluster rouge). Ce cluster se regroupe avec les autres seulement à une grande hauteur (environ 200), ce qui indique qu’il est très différent des groupes correspondant aux traitements T2 et T3.
@@ -617,7 +624,7 @@ dim(dataACPg) #on a bien Gx18
 dataACPg<-cbind(dataACPg, ExpT1=data$ExpT1, ExpT2=data$ExpT2, ExpT3=data$ExpT3)
 dim(dataACPg)
 ```
-Les variables sont ici les moyennes deux à deux des variables correspondant à un même traitement, à la même heure pour les deux réplicats (par exemple T1_1h_R1 et T1_1h_R2 donnent la variable nommée T1_1h_R1 dans le nouveau jeu de données). D'après la Figure \ref{fig:boxplots_quantitatives1} et la Figure \ref{fig:boxplots_quantitatives2} de l'analyse uni-dimensionnelle, les deux réplicats présentent de grandes similitudes dans les résultats. Toutefois, les boxplots des variables du traitement T1 montrent des dispersions très différentes des boxplots des variables des traitements T2 et T3.
+Les variables sont ici les moyennes deux à deux des variables correspondant à un même traitement, à la même heure pour les deux réplicats (par exemple T1_1H_R1 et T1_1H_R2 donnent la variable nommée T1_1H_R1 dans le nouveau jeu de données). D'après la Figure \ref{fig:boxplots_quantitatives1} et la Figure \ref{fig:boxplots_quantitatives2} de l'analyse uni-dimensionnelle, les deux réplicats présentent de grandes similitudes dans les résultats. Toutefois, les boxplots des variables du traitement T1 montrent des dispersions très différentes des boxplots des variables des traitements T2 et T3.
 Comme les échelles des variables diffèrent, on décide d'appliquer une analyse en composantes principales sur les données centrées et réduites afin d'éviter que les variables à grande variance ne dominent l'analyse.
 
 ```{r,echo=FALSE, eval=T, results='hide', fig.cap="\\label{fig:ACP2}Evolution de l'inertie portée par les axes factoriels"}
@@ -653,9 +660,13 @@ D'après le graphe des individus en Figure \ref{fig:figuresACP2}, la majorité d
 
 ## Clustering
 
-On décide de faire un clustering sur les données brutes car, quelques soit le gènes, on étudie les même composantes. Le fait de centrer réduire ferait perdre de l'information.
+On décide de faire un clustering sur les données brutes car, quelque soit le gène considéré, on étudie les mêmes composantes. Le fait de centrer et réduire les données nous ferait perdre de l'information.
 
-```{r}
+### Détermination du nombre de classes nécessaires
+
+On observe les resultats en Figure \ref{fig:nb_classes2}
+
+```{r, echo=FALSE, eval=TRUE, results='hide'}
 set.seed(25)
 dataACPgC <- dataACPg[,-c(19,20,21)]
 
@@ -677,7 +688,7 @@ g1<-ggplot(df,aes(x=K,y=Iintra))+
 
 ```
 
-```{r}
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:nb_classes2}Evolution de l'inertie intra-classe et silhouette", results='hide'}
 # Silhouette 
 
 Silhou<-NULL
@@ -704,31 +715,28 @@ rm(df,Silhou,aux)
 
 grid.arrange(g1,g2,g3,g4,ncol=4)
 ```
-En observant le graphique de l'inertie intra-classe, le "coude" apparaît autour de 4 classes. On décide donc d'en créer 4, ce qui devrait permettre de capturer une quantité significative de variance.
+En observant le graphique de l'inertie intra-classe, le "coude" apparaît autour de quatre classes. On décide donc d'en créer quatre, ce qui devrait permettre de capturer une quantité significative de variance.
 
-Le coefficient de silhouette moyen pour 4 classes est légèrement plus élevé que pour d'autres choix de nombre de clusters, ce qui indique une meilleure séparation et cohésion des classes. 
+Le coefficient de silhouette moyen pour quatre classes est légèrement plus élevé que pour d'autres choix de nombre de clusters, ce qui indique une meilleure séparation et cohésion des classes. 
 
+### Méthode des Kmeans
 
-### Kmeans
-
-```{r,echo=F,eval=T}
+On applique la méthode des Kmeans qui permet d'obtenir les quatre clusters : {\textbf{\textsf{R}}} 
+```{r, echo=F, eval=T}
 set.seed(1)
 reskmeans<-kmeans(dataACPgC,4) 
 ```
 
-
-```{r, echo=F,eval=T}
+```{r, echo=F, eval=T, fig.cap="\\label{fig:Kmeans2}à compléter"}
 fviz_cluster(reskmeans,data=dataACPgC,
              ellipse.type="norm",labelsize=8,
              geom=c("point"))+ggtitle("")
 ```
 
-```{r, echo=F,eval=F}
+```{r, echo=F, eval=T, results='hide'}
 #fviz_pca_ind(respcag,col.ind=as.factor(reskmeans$cluster), geom = c("point"),axes=c(1,2))
 reskmeans$cluster
 ```
-
-On applique la méthode des Kmeans qui permet d'obtenir les 4 clusters: {\textbf{\textsf{R}}} 
 
 Cluster 1 : Gènes faiblement influencés par les traitements
 Ce cluster regroupe des gènes dont les variations d’expression sont faibles, quel que soit le traitement ou l’heure d’observation. On les retrouve prêt de l’origine du repère. 
@@ -750,17 +758,19 @@ Ces gènes traduisent une réponse précoce aux traitements.
 
 ### Classification hiérarchique
 
-```{r}
-# dendogramme
+Expliquer qu'on fait ward !!
+
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:dendrogramme}à compléter"}
+# dendrogramme
 dist_dataACPg = dist(dataACPgC)
 
 hward<-hclust(dist_dataACPg, method = "ward.D2") 
 fviz_dend(hward,show_labels=FALSE)
 ```
 
-Au vu du nombre important de gènes, on ne peut pas faire une conjecture du nombre de cluster à vu d'œil grâce au dendrogramme.
+Au vu du nombre important de gènes considérés ici, on ne peut pas faire une conjecture du nombre de clusters grâce à la lecture du dendrogramme.
 
-```{r}
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:à completer}à completer"}
 CH<-NULL
 Kmax<-20
 for (k in 2:Kmax){
@@ -779,11 +789,11 @@ g3<-fviz_pca_ind(respcag, geom = c("point"), habillage = as.factor(ClustCH))
 grid.arrange(g1,g2,g3,ncol=3)
 ```
 
-Sur le  graphe du critère de Calinski-Harabasz, on observe une forte diminution du critère CH au début (entre 1 et 5 clusters), suivie d'une diminution plus progressive pour un nombre de clusters supérieur.
-Le point de "coude" semble être autour de 4 clusters, où la pente change notablement avant de devenir plus linéaire.
-Sur la base de ce graphique et des Kmeans fait précédemment, 4 clusters ont choisis pour la classification hiérarchique. Ils maximisent le critère CH tout en évitant une complexité inutile liée à un trop grand nombre de clusters.
+Sur le  graphe du critère de Calinski-Harabasz, on observe une forte diminution du critère CH au début (entre un et cinq clusters), suivie d'une diminution plus progressive pour un nombre de clusters supérieur.
+Le point de "coude" semble être autour de quatre clusters, où la pente change notablement avant de devenir plus linéaire.
+Sur la base de ce graphique et des Kmeans fait précédemment, quatre clusters ont choisis pour la classification hiérarchique. Ils maximisent le critère CH tout en évitant une complexité inutile liée à un trop grand nombre de clusters.
 
-La hauteur où le dendrogramme présente 4 grandes branches, les gènes sont donc classés en 4 clusters.
+La hauteur où le dendrogramme présente quatre grandes branches, les gènes sont donc classés en quatre clusters.
 Ces derniers sont interprétés à l'aide du graphe des individus:
 
 Cluster 1 : Gènes faiblement influencés par les traitements (variations faibles, proches de l'origine du repère). Ils pourraient être associés principalement au traitement T1.
@@ -791,7 +801,7 @@ Cluster 2 : Gènes avec une réponse modérée aux traitements.
 Cluster 3 : Gènes fortement influencés par les traitements aux heures avancées, principalement T2 et T3. Ces gènes montrent de grandes variations après plusieurs heures de traitement.
 Cluster 4 : Gènes avec des variations marquées tôt dans le traitement, surtout pour T2 et T3, montrant une réponse rapide aux traitements.
 
-```{r}
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:a completer}à completer", results='hide'}
 clust1<-paste("Cl-K",reskmeans$cluster,sep="")
 clust2<-paste("Cl-hiérarchique",ClustCH,sep="")
 Tab<-melt(table(clust1,clust2))
@@ -803,12 +813,12 @@ ggplot(Tab,aes(y=value,axis1=clust1,axis2=clust2))+
   theme(legend.position = "none")
 ```
 
-Les deux méthodes (Kmeans et classification hiérarchique) ont identifié 4 clusters optimaux.
-On observe que le 4eme clusters des Kmeans présente des gènes qui sont plus éparpillés dans la classification hiérarchique. On en conclut que la classification hiérarchique donne un résultat légèrement plus précis sur la classification des gènes? Excepté cela, on remarque que les clusters sont presque identiques, quelque soit la méthode utilisée.
+Les deux méthodes (Kmeans et classification hiérarchique) ont identifié quatre clusters optimaux.
+On observe que le quatrième clusters des Kmeans présente des gènes qui sont plus éparpillés dans la classification hiérarchique. On en conclut que la classification hiérarchique donne un résultat légèrement plus précis sur la classification des gènes? Excepté cela, on remarque que les clusters sont presque identiques, quelque soit la méthode utilisée.
 
-### Partie de comparaison
+### Comparaison des différentes méthodes de clustering
 
-```{r}
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig: completer}àcompleter"}
 g1<-fviz_pca_ind(respcag,habillage="ExpT1",geom=c("point"))
 g2<-fviz_pca_ind(respcag,habillage="ExpT2",geom=c("point"))
 g3<-fviz_pca_ind(respcag,habillage="ExpT3",geom=c("point"))
@@ -826,7 +836,7 @@ g1<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
   ggtitle("Figure 15.3")+
   theme(legend.position = "none")
 ```
-Les graphiques d'individus obtenus suite à l'ACP permettent de montrer:
+Les graphiques d'individus obtenus suite à l'ACP permettent de montrer :
 
 Figure 15.1 (ExpT1) :
 
@@ -844,7 +854,7 @@ La distribution est similaire à T2 mais avec une augmentation du groupe "Sur" e
 Cela confirme que T3, étant une combinaison de T1 et T2, amplifie les effets de T2 tout en masquant en grande partie l’effet de T1.
 
 
-```{r}
+```{r, echo=FALSE, eval=TRUE, results='hide'}
 clust<-paste("Cl-K",reskmeans$cluster,sep="")
 Tab<-melt(table(clust,dataACPg[,20]))
 g2<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
@@ -856,7 +866,7 @@ g2<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
 
 ```
 
-```{r}
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:completer}à completer", results='hide'}
 clust<-paste("Cl-K",reskmeans$cluster,sep="")
 Tab<-melt(table(clust,dataACPg[,21]))
 g3<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
@@ -880,8 +890,7 @@ g1<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
   theme(legend.position = "none")
 ```
 
-
-```{r}
+```{r, echo=FALSE, eval=TRUE, results='hide'}
 clust<-paste("Cl-hiérarchique",ClustCH,sep="")
 Tab<-melt(table(clust,dataACPg[,20]))
 g2<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
@@ -893,7 +902,7 @@ g2<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
 
 ```
 
-```{r}
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:completer}à completer", results='hide'}
 clust<-paste("Cl-hiérarchique",ClustCH,sep="")
 Tab<-melt(table(clust,dataACPg[,21]))
 g3<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
@@ -907,3 +916,7 @@ grid.arrange(g1,g2,g3,ncol=3)
 ```
 
 Les résultats des clustering suite aux Kmeans et de la classification hiérarchique permettent d'en arriver aux mêmes conclusions: Les gènes répondent de manière distincte aux traitements. EXPT1 génère une faible réponse, avec des gènes sans réaction notables dans tous les clusters et en grand nombre. EXPT2 et EXPT3 induisent des réponses plus variées, avec une minorité quasimet négligeable de gène "Non".
+
+# Conclusion
+
+LALALALA
