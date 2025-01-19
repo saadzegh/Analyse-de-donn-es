@@ -287,8 +287,6 @@ Enfin, Les variables mesurant le même traitement (T1, T2, ou T3) à des heures 
 
 Dans le cas de deux variables qualitatives, on représente les profils-ligne ou profils-colonne dans la Figure \ref{fig:profils_lignes}.
 
-3. Indice de liaison
-
 ```{r, fig.height=5, fig.width=15, fig.cap="\\label{fig:profils_lignes}Profils-lignes des variables qualitatives"}
 #Tableaux de contingence et profils-lignes des variables qualitatives
 
@@ -306,17 +304,15 @@ geom_bar(position = "fill")
 
 grid.arrange(g1,g2,g3,ncol=3)
 ```
-Les profils-lignes montrent la répartition des modalités des variables qualitatives (ExpT1, ExpT2, ExpT3) et permet de comparer les résultats biologiques de décision obtenus par les trois traitements. L'analyse de la Figure \ref{fig:profils_lignes} 
+Les profils-lignes montrent la répartition des modalités des variables qualitatives (ExpT1, ExpT2, ExpT3) et permet de comparer les résultats biologiques de décision obtenus par les trois traitements. L'analyse de la Figure \ref{fig:profils_lignes} montre à nouveau que les réponses des traitements T2 et T3 sont similaires avce une légère prépondérence de "sur" exprimé pour T3 et moins de "non" exprimé. De plus, T3 déclenche des réponses significatives sur plus de gènes que T2 ce qui concorde avec le fait que T3 est une combinaison des effets de T1 et T2. La similarité pourrait indiquer que l'effet de T2 domine dans la combinaison.
 
-Revoir :
-ExpT1 : La majorité des gènes (81,4 %) sont "Non" exprimés, ce qui montre que le traitement T1 a un effet limité sur l'expression des gènes. Seulement une petite fraction des gènes est "Sur" (10,5 %) ou "Sous" (8,1 %) exprimée.
-ExpT2 et ExpT3 : Ces deux traitements ont des profils très similaires, avec une distribution équilibrée entre les gènes "Sur" et "Sous" exprimés (~45-53 %). Cela indique que T2 et T3 déclenchent des réponses significatives pour presque tous les gènes.
-Les traitements T2 et T3 montrent une dynamique très similaire, ce qui concorde avec le fait que T3 est une combinaison des effets de T1 et T2. La similarité pourrait indiquer que l'effet de T2 domine dans la combinaison.
-Les profils ligne illustrent des tendances qualitatives cohérentes avec les boxplots. Par exemple, les distributions équilibrées des modalités "Sur" et "Sous" pour T2 et T3 sont en accord avec les variances plus importantes observées dans les boxplots.
+On peut également observer que les réponses des gènes au traitement T1 sont très différentes des réponses aux traitements T2 et T3. La majorité des gènes "sous" exprimés par le traitement T1 le restent avec les deux autres traitements mais les gènes "non" exprimé deviennent "sur" et "sous" exprimés par les traitements T2 et T3 avec des proportions similaires. De même, les gènes "sur" exprimés avec T1 se divisent dans les trois modalités pour les deux traitements restants.
+
+Les profils ligne illustrent des tendances qualitatives cohérentes avec les boxplots de l'analyse uni-dimensionnelle. Par exemple, les distributions équilibrées des modalités "Sur" et "Sous" pour T2 et T3 sont en accord avec les variances plus importantes observées dans les boxplots.
+
 
 ### Une variable qualitative et une variable quantitative
 
-Revoir :
 Enfin, nous nous intéressons à l'analyse du degré de liaison de certaines variables quantitatives avec des variables qualitatives. Figure \ref{fig:boxplots_paralleles}
 
 Boxplots parallèles On trace la distribution de la variable quantitative Y en fonction de chaque modalité de la variable qualitative X
@@ -416,7 +412,7 @@ Ainsi lorsqu'on constate des effets sur l'experience EXPT1, ils se manifestent l
 
 En ce qui concerne les variables ExpT2 et ExpT3, les gènes prennant la modalité "sous" sont situées principalement à gauche du graphe, on a donc contribution négative à Dim1.
 Les variables "sur" se trouvent à droite, on a, au contraire une contribution positive à Dim1.
-La première composante principale (Dim1), qui explique 71,1 % de la variance, est fortement influencée par les expériences EXPT2 et EXPT3. Cette dimension distingue clairement les gènes sous-exprimés ("Sous") et surexprimés ("Sur") sous l’effet de ce traitement.
+La première composante principale (Dim1), qui explique 71,1 % de la variance, est fortement influencée par les expériences ExpT2 et ExpT3. Cette dimension distingue clairement les gènes sous-exprimés ("sous") et surexprimés ("sur") sous l’effet de ce traitement.
 
 Pour expliquer ces changements, on effectue une analyse qui compare chacune des caractéristiques (replicat, traitement, heures) des 3 experiences, retranscrite dans la Figure \ref{fig:graph_ind_hab}.
 
@@ -631,8 +627,8 @@ dim(dataACPg) #on a bien Gx18
 dataACPg<-cbind(dataACPg, ExpT1=data$ExpT1, ExpT2=data$ExpT2, ExpT3=data$ExpT3)
 dim(dataACPg)
 ```
-Les variables sont ici les moyennes deux à deux des variables correspondant à un même traitement, à la même heure pour les deux réplicats (par exemple T1_1h_R1 et T1_1h_R2 donnent la variable nommée T1_1h_R1 dans le nouveau jeu de données). D'après la Figure \ref{fig:boxplots_quantitatives1} et la Figure \ref{fig:boxplots_quantitatives2} de l'analyse uni-dimensionnelle, les deux réplicats présentent de grandes similitudes dans les résultats. Toutefois, les variables du traitement T1 présentent des écarts de variances importants avec les variables des traitements T2 et T3, comme on peut le voir sur les boxplots présentés précédemment.
-On décide donc d'appliquer une analyse en composantes principales sur les données centrées et réduites afin d'éviter que les variables à grande variance ne dominent l'analyse.
+Les variables sont ici les moyennes deux à deux des variables correspondant à un même traitement, à la même heure pour les deux réplicats (par exemple T1_1h_R1 et T1_1h_R2 donnent la variable nommée T1_1h_R1 dans le nouveau jeu de données). D'après la Figure \ref{fig:boxplots_quantitatives1} et la Figure \ref{fig:boxplots_quantitatives2} de l'analyse uni-dimensionnelle, les deux réplicats présentent de grandes similitudes dans les résultats. Toutefois, les boxplots des variables du traitement T1 montrent des dispersions très différentes des boxplots des variables des traitements T2 et T3.
+Comme les échelles des variables diffèrent, on décide d'appliquer une analyse en composantes principales sur les données centrées et réduites afin d'éviter que les variables à grande variance ne dominent l'analyse.
 
 ```{r,echo=FALSE, eval=T, results='hide', fig.cap="\\label{fig:ACP2}Evolution de l'inertie portée par les axes factoriels"}
 #ACP Centrée réduite
@@ -659,14 +655,11 @@ grid.arrange(g1,g2,ncol=2)
 ```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:corrACP2}Matrice des corrélations des variables initiales avec les méta-variables"}
 corrplot(t(respcag$var$cor),method="ellipse")  #les corrélations des variables initiales avec toutes les méta-variables => Plus lisible
 ```
-
-Cercle des correlations:
-La première composante principale (métavariable Dim1) est portée par T2 et T3 qui sont fortement colérées.
-La seconde composante principale (métavriable dim2) est davantage portée par T1. On remarque que plus les heures avance, plus le traitement 1 se rapproche de l'axe de dim2.
+D'après la Figure \ref{fig:figuresACP2} (graphe des variables) et la Figure \ref{fig:corrACP2}, la première composante principale (métavariable Dim1) est portée en majorité par T2 et T3 qui sont fortement corrélées.
+La seconde composante principale (métavariable Dim2) est davantage portée par T1. On remarque que plus les heures avance, plus le traitement 1 se rapproche de l'axe de dim2. En revanche, T2 et T3 influencent la seconde composante principale de façon majoritairement négative bien que la corrélation soit faible.
 On note que la projection sur le premier plan factoriel de l’expérience T3_1h_R1 est influencé par les deux composantes principales.
 
-Graphe des individus:
-La majorité des points sont éloignés de l’origine, ce qui indique que la plupart des gènes présentent des variations marquées dans leurs niveaux d’expression. À l’inverse, les points proches de l’origine montrent des variations faibles, ce qui pourrait correspondre aux gènes influencés par le traitement T1. Les gènes qui contribuent fortement à la composante principale Dim1 montrent une contribution relativement uniforme à Dim2, mais de faible intensité. En revanche, pour les gènes ayant une faible contribution à Dim1, on observe une répartition plus marquée de leurs contributions le long de Dim2.
+D'après le graphe des individus en Figure \ref{fig:figuresACP2}, la majorité des points sont éloignés de l’origine, ce qui indique que la plupart des gènes présentent des variations marquées dans leurs niveaux d’expression. À l’inverse, les points proches de l’origine montrent des variations faibles, ce qui pourrait correspondre aux gènes influencés par le traitement T1. Les gènes qui contribuent fortement à la composante principale Dim1 montrent une contribution relativement uniforme à Dim2, mais de faible intensité. En revanche, pour les gènes ayant une faible contribution à Dim1, on observe une répartition plus marquée de leurs contributions le long de Dim2.
 
 ## Clustering
 
