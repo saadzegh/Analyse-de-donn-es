@@ -576,13 +576,14 @@ Les observations du cluster 3 sont principalement liées au traitement T1. Cela 
 
 ### Classification hiérarchique
 
-```{r}
+```{r, echo=F, eval=T}
 # dendogramme
 dist_dataACPv = dist(dataACPv)
 
 hward<-hclust(dist_dataACPv, method = "ward.D2") 
-fviz_dend(hward,show_labels=FALSE)
+#fviz_dend(hward,show_labels=FALSE)
 ```
+
 ```{r ,fig.cap="A compléter v"}
 # A COMPLETER
 CH<-NULL
@@ -602,6 +603,14 @@ g3<-fviz_pca_ind(respcav, geom = c("point"), habillage = as.factor(ClustCH))
 
 grid.arrange(g1,g2,g3,ncol=3)
 ```
+Le choix du nombre de cluster n'est pas évident en voyant le pic du critère de Calinski-Harabasz. L'hyopthèse de 3 clusters faite lors des Kmeans n'est donc pas incohérente et peut être gardée pour la classification hierarchique.
+
+Sur le dendrogramme, l’axe vertical représente la distance/différences entre les observations, ici les gènes selon leur d'expression sous différents traitements.
+Les gènes exposés au traitement T1 forment un groupe distinct (cluster rouge). Ce cluster se regroupe avec les autres seulement à une grande hauteur (environ 200), ce qui indique qu’il est très différent des groupes correspondant aux traitements T2 et T3.
+Les gènes des traitements T2 et T3 se regroupent à des hauteurs plus faibles (inférieures à 100), indiquant une plus grande similarité dans leurs réponses aux traitements. Cela reflète que T2 et T3 induisent des expressions génétiques similaires.
+
+Sur le graphiques des individus, les clusters projetés sur le premier plan factoriel montrent une bonne séparation dans les deux premières composantes principales (Dim1 et Dim2). On a bien des différences significatives entre les groupes. On observe que les gènes classés dans un même cluster partagent des comportements similaires en termes d'expression génétique sous l'effet de différents traitements. 
+
 
 # Analyse des gènes
 
@@ -846,6 +855,7 @@ g3<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
 grid.arrange(g1,g2,g3,ncol=3)
 
 ```
+
 ```{r}
 clust<-paste("Cl-hiérarchique",ClustCH,sep="")
 Tab<-melt(table(clust,dataACPg[,19]))
