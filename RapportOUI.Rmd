@@ -791,7 +791,6 @@ Cluster 2 : Gènes avec une réponse modérée aux traitements.
 Cluster 3 : Gènes fortement influencés par les traitements aux heures avancées, principalement T2 et T3. Ces gènes montrent de grandes variations après plusieurs heures de traitement.
 Cluster 4 : Gènes avec des variations marquées tôt dans le traitement, surtout pour T2 et T3, montrant une réponse rapide aux traitements.
 
-
 ```{r}
 clust1<-paste("Cl-K",reskmeans$cluster,sep="")
 clust2<-paste("Cl-hiérarchique",ClustCH,sep="")
@@ -827,6 +826,22 @@ g1<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
   ggtitle("Figure 15.3")+
   theme(legend.position = "none")
 ```
+Les graphiques d'individus obtenus suite à l'ACP permettent de montrer:
+
+Figure 15.1 (ExpT1) :
+
+La majorité des gènes sous T1 sont sans évolution “Non”, ce qui reflète une faible réponse des gènes à ce traitement.
+Les groupes "Sous" et "Sur" sont très peu représentés, ce qui prouve l'idée que le traitement T1 a un effet limité sur l'expression génétique.
+
+Figure 15.2 (ExpT2) :
+
+Les gènes “Sous” et “Sur” sont mieux représentés et se distribuent de manière plus large, marquant une plus forte réponse au traitement T2 par rapport à T1.
+Les gènes "Non" exprimés sont significativement moins nombreux qu’avec T1.
+
+Figure 15.3 (ExpT3) :
+
+La distribution est similaire à T2 mais avec une augmentation du groupe "Sur" exprimé.
+Cela confirme que T3, étant une combinaison de T1 et T2, amplifie les effets de T2 tout en masquant en grande partie l’effet de T1.
 
 
 ```{r}
@@ -890,3 +905,5 @@ g3<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
 grid.arrange(g1,g2,g3,ncol=3)
 
 ```
+
+Les résultats des clustering suite aux Kmeans et de la classification hiérarchique permettent d'en arriver aux mêmes conclusions: Les gènes répondent de manière distincte aux traitements. EXPT1 génère une faible réponse, avec des gènes sans réaction notables dans tous les clusters et en grand nombre. EXPT2 et EXPT3 induisent des réponses plus variées, avec une minorité quasimet négligeable de gène "Non".
