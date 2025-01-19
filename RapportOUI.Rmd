@@ -908,7 +908,7 @@ Les résultats des clustering suite aux Kmeans et de la classification hiérarch
 
 # Conclusion
 
-Les analyses descriptives ont montré des disparités marquées entre les traitements. T1 s’est révélé peu efficace, avec une majorité de gènes ne présentant pas de variation notable d’expression. En revanche, T2 a induit des changements significatifs, avec une répartition équilibrée entre les gènes surexprimés et sous-exprimés. Le traitement T3, conçu comme une combinaison des effets de T1 et T2, s’est distingué par ses effets légèrement amplifié par rapport au second traitement. On retrouve des résultats similaires à ceux observées avec T2 tout en masquant en grande partie l’effet limité de T1. Ainsi on peut en conclure que T2 constitue le facteur dominant dans la combinaison.
+Les analyses descriptives ont montré des disparités marquées entre les traitements. T1 s’est révélé peu efficace, avec une majorité de gènes ne présentant pas de variation notable d’expression. En revanche, T2 a induit des changements significatifs, avec une répartition équilibrée entre les gènes surexprimés et sous-exprimés. Le traitement T3, conçu comme une combinaison des effets de T1 et T2, s’est distingué par ses effets légèrement amplifiés par rapport au second traitement. On retrouve des résultats similaires à ceux observées avec T2 tout en masquant en grande partie l’effet limité de T1. Ainsi on peut en conclure que T2 constitue le facteur dominant dans la combinaison.
 
 L’ACP a confirmé cette observation en identifiant deux composantes principales où les effets de T2 et T3 se regroupent, tandis que T1 se positionne à part, avec des réponses globalement faibles.
 
