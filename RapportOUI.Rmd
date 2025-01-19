@@ -38,6 +38,7 @@ library(seriation)
 library(knitr)
 library(stringr)
 ```
+\newpage
 # Introduction
 
 Dans ce projet, on s'intéresse à la population des gènes d'une plante modèle. On souhaite analyser un jeu de données représentant les différences d'expression d'un certain nombre de gènes pour plusieurs traitements appliqués et en tirer des conclusions pertinentes à propos l'expérience biologique menée.
@@ -543,7 +544,7 @@ set.seed(25)
 reskmeans<-kmeans(dataACPv,3) 
 ```
 
-```{r, ehco=F, eval=T, fig.cap="\\label{fig:kmeans1}A completer"}
+```{r, ehco=F, eval=T, fig.cap="\\label{fig:kmeans1}Graphe des individus avec représentation des clusters après K-Means"}
 fviz_cluster(reskmeans,data=dataACPv,
              ellipse.type="norm",labelsize=8,
              geom=c("point"))+ggtitle("")
@@ -667,8 +668,6 @@ On décide de faire un clustering sur les données brutes car, quelque soit le g
 
 ### Détermination du nombre de classes nécessaires
 
-On observe les resultats en Figure \ref{fig:nb_classes2}
-
 ```{r, echo=FALSE, eval=TRUE, results='hide'}
 set.seed(25)
 dataACPgC <- dataACPg[,-c(19,20,21)]
@@ -718,9 +717,9 @@ rm(df,Silhou,aux)
 
 grid.arrange(g1,g2,g3,g4,ncol=4)
 ```
-En observant le graphique de l'inertie intra-classe, le "coude" apparaît autour de quatre classes. On décide donc d'en créer quatre, ce qui devrait permettre de capturer une quantité significative de variance.
+En observant le graphique de l'inertie intra-classe sur la Figure \ref{fig:nb_classes2}, le "coude" apparaît autour de quatre classes. On décide donc d'en créer quatre, ce qui devrait permettre de capturer une quantité significative de variance.
 
-Le coefficient de silhouette moyen pour quatre classes est légèrement plus élevé que pour d'autres choix de nombre de clusters, ce qui indique une meilleure séparation et cohésion des classes. 
+On observe de "chute" sur le graphique de silhouette au point trois et cinq. On prend le coefficient de silhouette moyen de quatre classes qui est légèrement plus élevé que pour d'autres choix de nombre de clusters.
 
 ### Méthode des Kmeans
 
@@ -730,7 +729,7 @@ set.seed(1)
 reskmeans<-kmeans(dataACPgC,4) 
 ```
 
-```{r, echo=F, eval=T, fig.cap="\\label{fig:Kmeans2}à compléter"}
+```{r, echo=F, eval=T, fig.cap="\\label{fig:Kmeans2}Graphe des individus avec représentation des clusters après K-Means"}
 fviz_cluster(reskmeans,data=dataACPgC,
              ellipse.type="norm",labelsize=8,
              geom=c("point"))+ggtitle("")
@@ -763,7 +762,7 @@ Ces gènes traduisent une réponse précoce aux traitements.
 
 Expliquer qu'on fait ward !!
 
-```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:dendrogramme}à compléter"}
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:dendrogramme}Dendrogramme des gènes"}
 # dendrogramme
 dist_dataACPg = dist(dataACPgC)
 
@@ -804,7 +803,7 @@ Cluster 2 : Gènes avec une réponse modérée aux traitements.
 Cluster 3 : Gènes fortement influencés par les traitements aux heures avancées, principalement T2 et T3. Ces gènes montrent de grandes variations après plusieurs heures de traitement.
 Cluster 4 : Gènes avec des variations marquées tôt dans le traitement, surtout pour T2 et T3, montrant une réponse rapide aux traitements.
 
-```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:a completer}à completer", results='hide'}
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:a completer}Diagramme d'alluvions des correspondances entre les clusters des K-means et de la classification hiérarchique", results='hide'}
 clust1<-paste("Cl-K",reskmeans$cluster,sep="")
 clust2<-paste("Cl-hiérarchique",ClustCH,sep="")
 Tab<-melt(table(clust1,clust2))
@@ -818,9 +817,9 @@ ggplot(Tab,aes(y=value,axis1=clust1,axis2=clust2))+
 Les deux méthodes (Kmeans et classification hiérarchique) ont identifié quatre clusters optimaux.
 On observe que le quatrième clusters des Kmeans présente des gènes qui sont plus éparpillés dans la classification hiérarchique. On en conclut que la classification hiérarchique donne un résultat légèrement plus précis sur la classification des gènes? Excepté cela, on remarque que les clusters sont presque identiques, quelque soit la méthode utilisée.
 
-### Comparaison des différentes méthodes de clustering
+### Comparaison des différentes méthodes d'ACP et de clustering des différentes experiences
 
-```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig: completer}àcompleter"}
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig: completer}Habillage du graphe des individus par expression des gènes sur chaque experience"}
 g1<-fviz_pca_ind(respcag,habillage="ExpT1",geom=c("point"))
 g2<-fviz_pca_ind(respcag,habillage="ExpT2",geom=c("point"))
 g3<-fviz_pca_ind(respcag,habillage="ExpT3",geom=c("point"))
@@ -834,7 +833,6 @@ Enfin, la Figure (ExpT3) présente une distribution similaire à celle de T2, ma
 
 On retrouve les mêmes conclusions que la première ACP faite précédemment.
 
-\newpage
 ```{r}
 clust<-paste("Cl-K",reskmeans$cluster,sep="")
 Tab<-melt(table(clust,dataACPg[,19]))
@@ -859,7 +857,7 @@ g2<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
 
 ```
 
-```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:completer}à completer", results='hide', fig.height=2.5}
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:completer}Diagramme d'alluvions des expressions génétiques dans les clusters du K-means", results='hide', fig.height=2.5}
 clust<-paste("Cl-K",reskmeans$cluster,sep="")
 Tab<-melt(table(clust,dataACPg[,21]))
 g3<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
@@ -895,7 +893,7 @@ g2<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
 
 ```
 
-```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:completer}à completer", results='hide', fig.height=2.5}
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:completer}Diagramme d'alluvions des expressions génétiques dans les clusters de la classification hiérarchique", results='hide', fig.height=2.5}
 clust<-paste("Cl-hiérarchique",ClustCH,sep="")
 Tab<-melt(table(clust,dataACPg[,21]))
 g3<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
