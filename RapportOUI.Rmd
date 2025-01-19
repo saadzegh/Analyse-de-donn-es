@@ -826,6 +826,12 @@ grid.arrange(g1,g2,g3,ncol=3)
 
 ```
 
+Les graphiques des individus révèlent des différences marquées entre les traitements T1, T2, et T3 en termes de réponse génétique. D’après la Figure (ExpT1), la majorité des gènes sous le traitement T1 restent dans la modalité "Non", indiquant une absence d'évolution significative de leur expression. Les groupes "Sous" et "Sur" sont peu représentés, soulignant l’effet limité de T1 sur l'expression génétique. 
+En revanche, la Figure (ExpT2) montre une répartition plus large des gènes dans les modalités "Sous" et "Sur", ce qui traduit une réponse génétique plus forte au traitement T2, avec un nombre significativement réduit de gènes dans la modalité "Non" par rapport à T1.
+Enfin, la Figure (ExpT3) présente une distribution similaire à celle de T2, mais avec une augmentation notable du groupe "Sur" exprimé. Cela confirme que le traitement T3, issu d'une combinaison des traitements T1 et T2, amplifie les effets de T2 tout en masquant en grande partie l’impact limité de T1.
+
+On retrouve les mêmes conclusions que la première ACP faite précédemment.
+
 ```{r}
 clust<-paste("Cl-K",reskmeans$cluster,sep="")
 Tab<-melt(table(clust,dataACPg[,19]))
@@ -836,22 +842,6 @@ g1<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
   ggtitle("Figure 15.3")+
   theme(legend.position = "none")
 ```
-Les graphiques d'individus obtenus suite à l'ACP permettent de montrer :
-
-Figure 15.1 (ExpT1) :
-
-La majorité des gènes sous T1 sont sans évolution “Non”, ce qui reflète une faible réponse des gènes à ce traitement.
-Les groupes "Sous" et "Sur" sont très peu représentés, ce qui prouve l'idée que le traitement T1 a un effet limité sur l'expression génétique.
-
-Figure 15.2 (ExpT2) :
-
-Les gènes “Sous” et “Sur” sont mieux représentés et se distribuent de manière plus large, marquant une plus forte réponse au traitement T2 par rapport à T1.
-Les gènes "Non" exprimés sont significativement moins nombreux qu’avec T1.
-
-Figure 15.3 (ExpT3) :
-
-La distribution est similaire à T2 mais avec une augmentation du groupe "Sur" exprimé.
-Cela confirme que T3, étant une combinaison de T1 et T2, amplifie les effets de T2 tout en masquant en grande partie l’effet de T1.
 
 
 ```{r, echo=FALSE, eval=TRUE, results='hide'}
