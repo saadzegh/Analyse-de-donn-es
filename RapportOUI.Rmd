@@ -768,6 +768,7 @@ hward<-hclust(dist_dataACPg, method = "ward.D2")
 fviz_dend(hward,show_labels=FALSE)
 ```
 
+Au vu du nombre important de gènes, on ne peut pas faire une conjecture du nombre de cluster à vu d'œil grâce au dendrogramme.
 
 ```{r}
 CH<-NULL
@@ -781,12 +782,25 @@ g1<-ggplot(daux,aes(x=NbClust,y=CH))+
   geom_line()+
   geom_point()
 
-ClustCH<-cutree(hward,k=3)
-g2<-fviz_dend(hward, show_labels = FALSE, k = 3)
+ClustCH<-cutree(hward,k=4)
+g2<-fviz_dend(hward, show_labels = FALSE, k = 4)
 g3<-fviz_pca_ind(respcag, geom = c("point"), habillage = as.factor(ClustCH)) 
 
 grid.arrange(g1,g2,g3,ncol=3)
 ```
+
+Sur le  graphe du critère de Calinski-Harabasz, on observe une forte diminution du critère CH au début (entre 1 et 5 clusters), suivie d'une diminution plus progressive pour un nombre de clusters supérieur.
+Le point de "coude" semble être autour de 4 clusters, où la pente change notablement avant de devenir plus linéaire.
+Sur la base de ce graphique et des Kmeans fait précédemment, 4 clusters ont choisis pour la classification hiérarchique. Ils maximisent le critère CH tout en évitant une complexité inutile liée à un trop grand nombre de clusters.
+
+La hauteur où le dendrogramme présente 4 grandes branches, les gènes sont donc classés en 4 clusters.
+Ces derniers sont interprétés à l'aide du graphe des individus:
+
+Cluster 1 : Gènes faiblement influencés par les traitements (variations faibles, proches de l'origine du repère). Ils pourraient être associés principalement au traitement T1.
+Cluster 2 : Gènes avec une réponse modérée aux traitements.
+Cluster 3 : Gènes fortement influencés par les traitements aux heures avancées, principalement T2 et T3. Ces gènes montrent de grandes variations après plusieurs heures de traitement.
+Cluster 4 : Gènes avec des variations marquées tôt dans le traitement, surtout pour T2 et T3, montrant une réponse rapide aux traitements.
+
 
 ```{r}
 clust1<-paste("Cl-K",reskmeans$cluster,sep="")
@@ -800,7 +814,8 @@ ggplot(Tab,aes(y=value,axis1=clust1,axis2=clust2))+
   theme(legend.position = "none")
 ```
 
-
+Les deux méthodes (Kmeans et classification hiérarchique) ont identifié 4 clusters optimaux.
+On observe que le 4eme clusters des Kmeans présente des gènes qui sont plus éparpillés dans la classification hiérarchique. On en conclut que la classification hiérarchique donne un résultat légèrement plus précis sur la classification des gènes? Excepté cela, on remarque que les clusters sont presque identiques, quelque soit la méthode utilisée.
 
 ### Partie de comparaison
 
