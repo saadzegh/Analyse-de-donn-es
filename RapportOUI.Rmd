@@ -337,6 +337,7 @@ Pour la modalité "non", les valeurs des boxplots (médiane et dispersion) se re
 
 Pour la modalité "sous", les valeurs des boxplots sont toujours négatives, ce qui est attendu puisque ces gènes sont sous-exprimés par définition. Au contraire, pour la modalité "sur", les valeurs des boxplots sont toujours positives, avec des médianes plus élevées et une dispersion qui reflète une surexpression des gènes.
 
+\newpage
 # Analyse des Tt_sH_Rr
 
 Nous souhaitons maintenant analyser les variables quantitatives Tt_sH_Rr en tant qu'individus.
@@ -604,7 +605,6 @@ Les gènes des traitements T2 et T3 se regroupent à des hauteurs plus faibles (
 
 Sur le graphiques des individus, les clusters projetés sur le premier plan factoriel montrent une bonne séparation dans les deux premières composantes principales (Dim1 et Dim2). On a bien des différences significatives entre les groupes. On observe que les gènes classés dans un même cluster partagent des comportements similaires en termes d'expression génétique sous l'effet de différents traitements. 
 
-
 # Analyse des gènes
 
 Nous nous intéressons enfin à l'analyse des gènes du jeu de données en tant qu'individus.
@@ -624,6 +624,7 @@ dim(dataACPg) #on a bien Gx18
 dataACPg<-cbind(dataACPg, ExpT1=data$ExpT1, ExpT2=data$ExpT2, ExpT3=data$ExpT3)
 dim(dataACPg)
 ```
+
 Les variables sont ici les moyennes deux à deux des variables correspondant à un même traitement, à la même heure pour les deux réplicats (par exemple T1_1H_R1 et T1_1H_R2 donnent la variable nommée T1_1H_R1 dans le nouveau jeu de données). D'après la Figure \ref{fig:boxplots_quantitatives1} et la Figure \ref{fig:boxplots_quantitatives2} de l'analyse uni-dimensionnelle, les deux réplicats présentent de grandes similitudes dans les résultats. Toutefois, les boxplots des variables du traitement T1 montrent des dispersions très différentes des boxplots des variables des traitements T2 et T3.
 Comme les échelles des variables diffèrent, on décide d'appliquer une analyse en composantes principales sur les données centrées et réduites afin d'éviter que les variables à grande variance ne dominent l'analyse.
 
@@ -637,6 +638,8 @@ fviz_eig(respcag)
 Les deux premières composantes principales (Dim1 et Dim2) capturent 59,2 % et 22,2 % de la variance totale, soit un total cumulé de 81,4%. Cela signifie que l’essentiel de l’information contenue dans les données peut être visualisé dans un espace bidimensionnel.
 
 Nous affichons la projection des individus sur les plans factoriels ainsi que le cercle des corrélations des variables initiales avec les méta-variables en Figure \ref{fig:figuresACP2} afin d’identifier les individus et les variables importants. Nous complétons avec la matrice des corrélations en Figure \ref{fig:corrACP2}.
+
+\newpage
 
 ```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:figuresACP2}Graphe des variables (gauche) et graphe des individus (droite)"}
 Aux<-rownames(respcag$var$coord)
@@ -831,6 +834,7 @@ Enfin, la Figure (ExpT3) présente une distribution similaire à celle de T2, ma
 
 On retrouve les mêmes conclusions que la première ACP faite précédemment.
 
+\newpage
 ```{r}
 clust<-paste("Cl-K",reskmeans$cluster,sep="")
 Tab<-melt(table(clust,dataACPg[,19]))
@@ -855,7 +859,7 @@ g2<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
 
 ```
 
-```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:completer}à completer", results='hide'}
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:completer}à completer", results='hide', fig.height=2.5}
 clust<-paste("Cl-K",reskmeans$cluster,sep="")
 Tab<-melt(table(clust,dataACPg[,21]))
 g3<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
@@ -864,7 +868,7 @@ g3<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
   geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
   ggtitle("EXPT3")
   theme(legend.position = "none")
-grid.arrange(g1,g2,g3,ncol=3)
+grid.arrange(g1, g2, g3, ncol=3)
 
 ```
 
@@ -891,7 +895,7 @@ g2<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
 
 ```
 
-```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:completer}à completer", results='hide'}
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:completer}à completer", results='hide', fig.height=2.5}
 clust<-paste("Cl-hiérarchique",ClustCH,sep="")
 Tab<-melt(table(clust,dataACPg[,21]))
 g3<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
@@ -904,11 +908,13 @@ grid.arrange(g1,g2,g3,ncol=3)
 
 ```
 
-Les résultats des clustering suite aux Kmeans et de la classification hiérarchique permettent d'en arriver aux mêmes conclusions: Les gènes répondent de manière distincte aux traitements. EXPT1 génère une faible réponse, avec des gènes sans réaction notables dans tous les clusters et en grand nombre. EXPT2 et EXPT3 induisent des réponses plus variées, avec une minorité quasimet négligeable de gène "Non".
+
+
+Les résultats des clustering suite aux Kmeans (Figure 23) et de la classification hiérarchique (Figure 24) permettent d'en arriver aux mêmes conclusions: Les gènes répondent de manière distincte aux traitements. EXPT1 génère une faible réponse, avec des gènes sans réaction notables dans tous les clusters et en grand nombre. EXPT2 et EXPT3 induisent des réponses plus variées, avec une minorité quasimet négligeable de gène "Non".
 
 # Conclusion
 
-Les analyses descriptives ont montré des disparités marquées entre les traitements. T1 s’est révélé peu efficace, avec une majorité de gènes ne présentant pas de variation notable d’expression. En revanche, T2 a induit des changements significatifs, avec une répartition équilibrée entre les gènes surexprimés et sous-exprimés. Le traitement T3, conçu comme une combinaison des effets de T1 et T2, s’est distingué par ses effets légèrement amplifiés par rapport au second traitement. On retrouve des résultats similaires à ceux observées avec T2 tout en masquant en grande partie l’effet limité de T1. Ainsi on peut en conclure que T2 constitue le facteur dominant dans la combinaison.
+Les analyses descriptives ont montré des disparités marquées entre les traitements. T1 s’est révélé peu efficace, avec une majorité de gènes ne présentant pas de variation notable d’expression. En revanche, T2 a induit des changements significatifs, avec une répartition équilibrée entre les gènes surexprimés et sous-exprimés. Le traitement T3, conçu comme une combinaison des effets de T1 et T2, s’est distingué par ses effets légèrement amplifié par rapport au second traitement. On retrouve des résultats similaires à ceux observées avec T2 tout en masquant en grande partie l’effet limité de T1. Ainsi on peut en conclure que T2 constitue le facteur dominant dans la combinaison.
 
 L’ACP a confirmé cette observation en identifiant deux composantes principales où les effets de T2 et T3 se regroupent, tandis que T1 se positionne à part, avec des réponses globalement faibles.
 
