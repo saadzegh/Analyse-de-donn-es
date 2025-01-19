@@ -809,7 +809,6 @@ ggplot(Tab,aes(y=value,axis1=clust1,axis2=clust2))+
   geom_alluvium(aes(fill=clust1))+
   geom_stratum(width = 1/12)+   
   geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
-  ggtitle("figure 15.2")
   theme(legend.position = "none")
 ```
 
@@ -839,7 +838,7 @@ g1<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
   geom_alluvium(aes(fill=clust))+
   geom_stratum(width = 1/12)+   
   geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
-  ggtitle("Figure 15.3")+
+  ggtitle("EXPT1")+
   theme(legend.position = "none")
 ```
 
@@ -851,7 +850,7 @@ g2<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
   geom_alluvium(aes(fill=clust))+
   geom_stratum(width = 1/12)+   
   geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
-  ggtitle("figure15.1 a completer")
+  ggtitle("EXPT2")
   theme(legend.position = "none")
 
 ```
@@ -863,7 +862,7 @@ g3<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
   geom_alluvium(aes(fill=clust))+
   geom_stratum(width = 1/12)+   
   geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
-  ggtitle("figure 15.2")
+  ggtitle("EXPT3")
   theme(legend.position = "none")
 grid.arrange(g1,g2,g3,ncol=3)
 
@@ -876,7 +875,7 @@ g1<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
   geom_alluvium(aes(fill=clust))+
   geom_stratum(width = 1/12)+   
   geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
-  ggtitle("Figure 15.3")+
+  ggtitle("EXPT1")+
   theme(legend.position = "none")
 ```
 
@@ -887,7 +886,7 @@ g2<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
   geom_alluvium(aes(fill=clust))+
   geom_stratum(width = 1/12)+   
   geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
-  ggtitle("figure15.1 a completer")
+  ggtitle("EXPT2")
   theme(legend.position = "none")
 
 ```
@@ -899,7 +898,7 @@ g3<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
   geom_alluvium(aes(fill=clust))+
   geom_stratum(width = 1/12)+   
   geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
-  ggtitle("figure 15.2")
+  ggtitle("EXPT3")
   theme(legend.position = "none")
 grid.arrange(g1,g2,g3,ncol=3)
 
@@ -909,4 +908,8 @@ Les résultats des clustering suite aux Kmeans et de la classification hiérarch
 
 # Conclusion
 
-LALALALA
+Les analyses descriptives ont montré des disparités marquées entre les traitements. T1 s’est révélé peu efficace, avec une majorité de gènes ne présentant pas de variation notable d’expression. En revanche, T2 a induit des changements significatifs, avec une répartition équilibrée entre les gènes surexprimés et sous-exprimés. Le traitement T3, conçu comme une combinaison des effets de T1 et T2, s’est distingué par ses effets légèrement amplifié par rapport au second traitement. On retrouve des résultats similaires à ceux observées avec T2 tout en masquant en grande partie l’effet limité de T1. Ainsi on peut en conclure que T2 constitue le facteur dominant dans la combinaison.
+
+L’ACP a confirmé cette observation en identifiant deux composantes principales où les effets de T2 et T3 se regroupent, tandis que T1 se positionne à part, avec des réponses globalement faibles.
+
+Le clustering a renforcé ces conclusions en identifiant des groupes de gènes différenciés par leurs réponses aux traitements, notamment par rapport au temps. Ces résultats ont mis en évidence des gènes réagissant rapidement (notamment aux premières heures de T2 et T3), ainsi que des gènes montrant des variations plus marquées sur une période prolongée.
