@@ -63,12 +63,12 @@ attributes(data)
 ```
 Le jeu de données fourni est composé d'un échantillon de 542 individus qui correspondent aux gènes de la plante modèle et comporte 39 variables statistiques qui caractérisent les individus. 
 
-Grace à la commande `str(data)`, on observe que les 36 premières variables sont des variables quantitatives continues (variables nommées Tt_sh_Rr). Ces variables permettent d'évaluer les divergences d'expression des gènes pour trois traitements appliqués (T1, T2 et T3) par rapport à un état sans traitement de référence. Les données de chaque traitement ont été relevées durant 6 heures et ceci pour deux réplicats biologiques (R1 et R2).
+Grace à la commande `str(data)`, on observe que les 36 premières variables sont des variables quantitatives continues (variables nommées Tt_sH_Rr). Ces variables permettent d'évaluer les divergences d'expression des gènes pour trois traitements appliqués (T1, T2 et T3) par rapport à un état sans traitement de référence. Les données de chaque traitement ont été relevées durant 6 heures et ceci pour deux réplicats biologiques (R1 et R2).
 
 Les trois dernières variables (nommées ExpT1, ExpT2 et ExpT3) sont des variables qualitatives nominales dont les trois modalités sont : "Non", "Sous" et "Sur". Ces dernières représentent la décision si le gène est sur-exprimé, sous-exprimé ou non-exprimé à 6 heures par rapport à l'état de référence, pour chaque traitement.
 
 Afin de visualiser les données, les premières lignes du jeu de données sont affichées dans la Table \ref{tab:tabdata}. 
-En raison de la grande quantité de données, nous avons choisi de représenter seulement les variables T1_1h_R1 à T1_6h_R1 et ExpT1 qui donnent un aperçu de la structure du jeu de données pour le réplicat R1.
+En raison de la grande quantité de données, nous avons choisi de représenter seulement les variables T1_1H_R1 à T1_6H_R1 et ExpT1 qui donnent un aperçu de la structure du jeu de données pour le réplicat R1.
 
 ```{r, echo=FALSE, eval=TRUE}
 kable(head(data[,c(1:6,37)]),caption="\\label{tab:tabdata}Les premières lignes du jeu de données.")
@@ -182,7 +182,7 @@ D'après la Figure \ref{fig:diagsecteurs}, on peut déjà remarquer que les trai
 
 ### Variables quantitatives
 
-Nous analysons maintenant les variables quantitatives de notre jeu de données (variables Tt_sh_Rr) individuellement. 
+Nous analysons maintenant les variables quantitatives de notre jeu de données (variables Tt_sH_Rr) individuellement. 
 
 Pour apréhender les différences entre les variables quantitatives et en raison du grand nombre de variables à analyser, nous avons décidé de tracer leurs boxplots respectifs, regroupés par variables d'un même réplicat dans la Figure \ref{fig:boxplots_quantitatives1} et la Figure \ref{fig:boxplots_quantitatives2}. Ceci nous permet de résumer les variables de manière simple et visuelle, d'identifier les valeurs extrêmes, de comprendre la répartition des observations et de comparer les deux réplicats. {\textbf{\textsf{R}}}
 
@@ -276,9 +276,9 @@ corrplot(cor(data[, -c(37:39)]), method = "ellipse")
 ```
 D'après la Figure \ref{fig:matricecorrelations}, les corrélations sont fortes entre les variables des traitement T2 et T3, tandis que les variables du traitement T1 sont globalement peu corrélées aux autres variables, peu importe le réplicat considéré. De plus, la majorité des corrélations sont positives.
 
-On observe une forte corrélation entre des variables équivalentes des réplicats R1 et R2 (par exemple les variables T2_6h_R1 et T2_6h_R2), ce qui indique à nouveau que les réplicats sont reproductibles.
+On observe une forte corrélation entre des variables équivalentes des réplicats R1 et R2 (par exemple les variables T2_6H_R1 et T2_6H_R2), ce qui indique à nouveau que les réplicats sont reproductibles.
 
-Puisque T3 est une combinaison des traitements T1 et T2, nous devrions voir apparaitre des corrélations significatives entre T3 et les variables de T1 et T2. Or ce n'ets le cas que pout T2, ce qui indique que le traitement T1 ne contribue qu'à une faible échelle au résultats du traitement T3.
+Puisque T3 est une combinaison des traitements T1 et T2, nous devrions voir apparaitre des corrélations significatives entre T3 et les variables de T1 et T2. Or ce n'est le cas que pour T2, ce qui indique que le traitement T1 ne contribue qu'à une faible échelle au résultats du traitement T3.
 
 Enfin, Les variables mesurant le même traitement (T1, T2, ou T3) à des heures différentes ou pour des réplicats différents  présentent des corrélations positives, les mesures sont donc probablement cohérentes.
 
@@ -317,7 +317,7 @@ Enfin, nous nous intéressons à l'analyse du degré de liaison de certaines var
 
 Ces boxplots parallèles permettent d’explorer comment les valeurs des variables quantitatives diffèrent en fonction des catégories des variables qualitatives.
 
-```{r, fig.align='center', fig.cap="\\label{fig:boxplots_paralleles}Boxplots parallèles"}
+```{r, fig.align='center', fig.cap="\\label{fig:boxplots_paralleles}Boxplots parallèles de variables quantitatives en fonctiond des modalités des variables qualitatives"}
 
 plot1<-ggplot(data,aes(x=ExpT1,y=T1_6H_R1 ))+geom_boxplot()
 plot2<-ggplot(data,aes(x=ExpT2,y=T2_6H_R1))+geom_boxplot()
@@ -331,25 +331,18 @@ grid.arrange(plot1,plot2,plot3,plot4,plot5,plot6,ncol=6)
 Tout d'abord, on remarque que les graphiques correspondant à la même variable qualitative se ressemblent fortement deux à deux, ce qui indique que les résultats d'expression des gènes à 6 heures des deux réplicats sont sensiblement les mêmes.
 On observe égalament qu'au sein d'un même graphe, les boxplots parallèles sont très différents, ce qui indique que les variables quantitatives sont très liées aux variables qualitatives correspondantes, ce qui est cohérent avec les associations de variables choisies.
 
-Modalité "Non" :
+On peut également analyser les boxplots selon les différentes modalités des variables qualitatives :
+Pour la modalité "non", les valeurs des boxplots (médiane et dispersion) se regroupent généralement autour de zéro ou restent proches de l’absence de variation (exception pour T1_6H_R2 pour lequel la médiane est plus basse et la varaince plus large). Cela indique une faible différence d’expression pour les gènes non-exprimés.
 
-    Pour cette catégorie, les valeurs des boxplots (médiane et dispersion) se regroupent généralement autour de zéro ou restent proches de l’absence de variation. Cela indique une faible différence d’expression pour les gènes non-exprimés.
+Pour la modalité "sous", les valeurs des boxplots sont toujours négatives, ce qui est attendu puisque ces gènes sont sous-exprimés par définition. Au contraire, pour la modalité "sur", les valeurs des boxplots sont toujours positives, avec des médianes plus élevées et une dispersion qui reflète une surexpression des gènes.
 
-Modalité "Sous" :
+# Analyse des Tt_sH_Rr
 
-    Les valeurs des boxplots sont souvent négatives, ce qui est attendu puisque ces gènes sont sous-exprimés par définition. Les médianes plus basses et les moustaches vers les valeurs négatives illustrent clairement cet effet.
-
-Modalité "Sur" :
-
-    Les valeurs des boxplots sont généralement positives, avec des médianes plus élevées et une dispersion qui reflète une surexpression des gènes.
-
-# Analyse des Tt_sh_Rr
-
-Nous souhaitons maintenant analyser les variables quantitatives Tt_sh_Rr en tant qu'individus.
+Nous souhaitons maintenant analyser les variables quantitatives Tt_sH_Rr en tant qu'individus.
 
 ## Analyse en composantes principales
 
-Nous menons tout d'abord une analyse en composantes principales où les variables Tt_sh_Rr sont les individus décrits par les
+Nous menons tout d'abord une analyse en composantes principales où les variables Tt_sH_Rr sont les individus décrits par les
 gènes.
 
 Au vu du nombre de variables très élevé pour cette partie (les 542 gènes), nous ne pouvons pas constater des dispersions et des échelles différentes entre les variables. Nous avons donc décidé d'appliquer une analyse en composantes principales sur les données centrées et réduites afin de donner un poids équivalent à chacune des variables et éviter ainsi que les variables à grande variance ne dominent l'analyse.
@@ -392,7 +385,7 @@ cont1<-fviz_contrib(respcav, choice = "ind", axes = 1)
 cont2<-fviz_contrib(respcav, choice = "ind", axes = 2)
 grid.arrange(cont1,cont2,nrow=2)
 ```
-Maybe trouver une explication (demander de l'aide à un ami chat)
+
 ```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:graph_var_hab}Graphe des variables expliqué en fonction des modalités des variables qualitatives"}
 
 g1<-fviz_pca_var(respcav,geom=c("point"),habillage = as.factor(data$ExpT1))+ggtitle("ExpT1")
@@ -403,7 +396,7 @@ grid.arrange(g1,g2,g3,ncol=3)
 ```
 D'après la Figure \ref{fig:graph_var_hab}, pour la variable ExpT1, les gènes qui prennent la modalitité "sous" se situent principalement dans la partie supérieure gauche du graphe, indiquant une contribution positive et significative à Dim2.
 Les gènes "sur" apparaissent en bas, ce qui reflète une contribution négative à Dim2.
-Ainsi lorsqu'on constate des effets sur l'experience EXPT1, ils se manifestent le long de la deuxième composante principale (Dim2).
+Ainsi lorsqu'on constate des effets sur l'experience ExpT1, ils se manifestent le long de la deuxième composante principale (Dim2).
 
 En ce qui concerne les variables ExpT2 et ExpT3, les gènes prennant la modalité "sous" sont situées principalement à gauche du graphe, on a donc contribution négative à Dim1.
 Les variables "sur" se trouvent à droite, on a, au contraire une contribution positive à Dim1.
@@ -478,8 +471,11 @@ Après cette séparation, la variabilité entre les heures oscille principalemen
 
 ## Clustering
 
+Nous souhaitons maintenant faire une classification non supervisée des données afin de regrouper les Tt_sH_Rr en plusieurs calsses homogènes.
+
 ### Détermination du nombre de classes nécéssaires
 
+Tout d'abord, nous déterminons le nombre de classes nécéssaires au clustering à l'aide de deux critères distincts : l'étude de l'évolution de l'inertie intra-classe et l'étude de silhouette, pour lesquels nous affichons les résultats en Figure \ref{fig:nb_classes}.
 ```{r}
 #Inertie intraclasse
 set.seed(2)
@@ -501,8 +497,7 @@ g1<-ggplot(df,aes(x=K,y=Iintra))+
   #ggtitle("Figure 9.1: Inertie intraclasse")
 ```
 
-
-```{r}
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:nb_classes}Evolution de l'inertie intra-classe et silhouette"}
 #silhouette
 
 Silhou<-NULL
@@ -529,18 +524,18 @@ g3 <- g3 + ggtitle("Figure 9.3 : Visualisation des silhouettes") + theme(plot.ti
 
 grid.arrange(g1,g2,g3,ncol=3)
 ```
-
 En observant le graphique de l'inertie intra-classe, le "coude" apparaît au bout de 3 classes. On décide donc d'en créer 3, ce qui devrait permettre de capturer une quantité significative de variance.
 
-Le graphe de silhouette connait sa chute significative au bour de 3 classes. Ansi les deux graphiques convergent vers l'hypothèse de créer 3 classes différentes dans notre clusering.
+Le graphe de silhouette connait sa chute significative au bout de 3 classes. Ainsi les deux graphiques convergent vers l'hypothèse de créer 3 classes différentes dans notre clusering.
 
 ### Kmeans
+
+On applique dans un premier temps la méthode des Kmeans qui permet d'obtenir les 3 clusters: {\textbf{\textsf{R}}} 
 
 ```{r,echo=F,eval=T}
 set.seed(25)
 reskmeans<-kmeans(dataACPv,3) 
 ```
-
 
 ```{r,eval=T}
 fviz_cluster(reskmeans,data=dataACPv,
@@ -549,10 +544,10 @@ fviz_cluster(reskmeans,data=dataACPv,
 
 ```
 
-```{r,eval=F}
+```{r,eval=T,results='hide'}
 reskmeans$cluster
 ```
-On applique la méthode des Kmeans qui permet d'obtenir les 3 clusters: {\textbf{\textsf{R}}} 
+
 
 Cluster 1 : Réponse homogène aux traitements T2 et T3
 Ce cluster regroupe principalement les observations des traitements T2 et T3, en particulier pour les heures de ces derniers. On peut en déduire que les premiers effets de ces présentent une faible variabilité.
