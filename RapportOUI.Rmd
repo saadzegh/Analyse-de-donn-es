@@ -760,7 +760,7 @@ Ces gènes traduisent une réponse précoce aux traitements.
 
 ### Classification hiérarchique
 
-Puisqu'on analyse un même nombre de gènes entre chaque experiece, on  utilise Ward comme mesure d'agrégation. Au vu de l'analyse avec les K-means, on cherche à former des classes sphériques avec des effectifs équivalents. 
+Puisqu'on analyse un même nombre de gènes entre chaque experience, on  utilise Ward comme mesure d'agrégation. Au vu de l'analyse des composantes principales, on cherche à former des classes sphériques avec des effectifs équivalents. 
 
 ```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:dendrogramme}Dendrogramme des gènes"}
 # dendrogramme
