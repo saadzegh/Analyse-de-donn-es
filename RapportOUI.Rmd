@@ -556,16 +556,9 @@ fviz_cluster(reskmeans,data=dataACPv,
 reskmeans$cluster
 ```
 
-Cluster 1 : Réponse homogène aux traitements T2 et T3
-Ce cluster regroupe principalement les observations des traitements T2 et T3, en particulier pour les heures de ces derniers. On peut en déduire que les premiers effets de ces présentent une faible variabilité.
-
-Cluster 2 : Transition ou réponse intermédiaire
-Les observations associées à ce cluster une couverture plus large, incluant des variations d’expression génétique pour T2 et T3 aux heures 3 à 6. Elles reflètent des changements plus dynamiques des gènes dans le temps, potentiellement liés aux différentes réponses des gènes face aux traitements.
-Les réplicats de ce cluster montrent des similarités notables entre les traitements T2 et T3, renforçant l’idée que ces deux traitements agissent de manière similaire sur les gènes, mais peut être à des moments différents.
-
-Cluster 3 : Réponse spécifique aux premières heures de T1
-Les observations du cluster 3 sont principalement liées au traitement T1. Cela indique que T1 induit une réponse différente par rapport à T2 et T3, caractérisée par des variations génétiques plus faibles. T1 ne déclenche pas les mêmes mécanismes biologiques et exprime beaucoup moins de changement génétique.
-
+Le cluster 1 est caractérisé par une réponse homogène aux traitements. Il regroupe principalement les observations des traitements T2 et T3, en particulier pour les heures avancées de ces derniers. On peut en déduire que les premiers effets de ces présentent une faible variabilité.
+Le cluster 2 illustre une phase de transition. Les observations associées couvrent un intervalle plus large, incluant des variations d’expression génétique pour T2 et T3 entre les heures trois et six. Les réplicats de ce cluster mettent en évidence des similarités significatives entre les effets de T2 et T3, renforçant l’idée que ces deux traitements agissent de manière similaire sur les gènes.
+Enfin, le cluster 3 révèle une réponse spécifique aux premières heures du traitement T1. Les observations montrent que T1 se démarque, avec des variations génétiques beaucoup plus faibles comparées à T2 et T3. On peut emettre l'hypothèse que T1 active des mécanismes biologiques différents, engendrant moins de changements dans l’expression des gènes.
 
 ### Classification hiérarchique
 
@@ -600,11 +593,11 @@ grid.arrange(g1,g2,g3,ncol=3)
 ```
 Le choix du nombre de cluster n'est pas évident en voyant le pic du critère de Calinski-Harabasz. L'hyopthèse de trois clusters faite lors des Kmeans n'est donc pas incohérente et peut être gardée pour la classification hierarchique.
 
-Sur le dendrogramme, l’axe vertical représente la distance/différences entre les observations, ici les gènes selon leur d'expression sous différents traitements.
+Sur le dendrogramme (Figure 13), l’axe vertical représente la distance/différences entre les gènes et leurs d'expressions sous différents traitements.
 Les gènes exposés au traitement T1 forment un groupe distinct (cluster rouge). Ce cluster se regroupe avec les autres seulement à une grande hauteur (environ 200), ce qui indique qu’il est très différent des groupes correspondant aux traitements T2 et T3.
 Les gènes des traitements T2 et T3 se regroupent à des hauteurs plus faibles (inférieures à 100), indiquant une plus grande similarité dans leurs réponses aux traitements. Cela reflète que T2 et T3 induisent des expressions génétiques similaires.
 
-Sur le graphiques des individus, les clusters projetés sur le premier plan factoriel montrent une bonne séparation dans les deux premières composantes principales (Dim1 et Dim2). On a bien des différences significatives entre les groupes. On observe que les gènes classés dans un même cluster partagent des comportements similaires en termes d'expression génétique sous l'effet de différents traitements. 
+Sur le graphiques des individus (Figure 13), les clusters projetés sur le premier plan factoriel froment trois groupes distincts. On a bien des différences significatives entre les groupes. On observe que les gènes classés dans un même cluster partagent des comportements similaires en termes d'expression génétique sous l'effet de différents traitements. 
 
 # Analyse des gènes
 
@@ -740,23 +733,10 @@ fviz_cluster(reskmeans,data=dataACPgC,
 reskmeans$cluster
 ```
 
-Cluster 1 : Gènes faiblement influencés par les traitements
-Ce cluster regroupe des gènes dont les variations d’expression sont faibles, quel que soit le traitement ou l’heure d’observation. On les retrouve prêt de l’origine du repère. 
-Ces gènes pourraient correspondre au traitement 1, qui ne déclenche majoritairement pas de changement majeur.
-Ils peuvent cependant servir de référence pour analyser les gènes plus « dynamiques » aux traitements 2 et 3.
-
-Cluster 2 : Gènes avec une dynamique intermédiaire dans les variations d’expression
-Ce cluster regroupe des gènes présentant des réponses modérées aux traitements. Les variations d’expression observées dans ce groupe ne sont ni faibles ni fortement marquées.
-Ces gènes pourraient refléter l'etape intermédiaire de la progression.
-Ainsi on peut voir les transitions entre des gènes peu réactifs et ceux fortement influencés, particulièrement sous l’effet des traitements T2 et T3.
-
-Cluster 3 : Gènes avec des réactions génétiques marquées aux traitements avancés
-Ce cluster se distingue par des variations génétiques importantes, associées principalement aux heures avancées des traitements T2 et T3. 
-L'évolution de ces gènes sont déclenchés dans la durée par les traitements T2 et T3.
-
-Cluster 4 :Gènes fortement influencés par les traitements T2 et T3 aux premières heures
-Ce cluster regroupe des gènes dont les variations d’expression sont rapides et marquées, observées principalement dans les premières heures des traitements T2 et T3.
-Ces gènes traduisent une réponse précoce aux traitements.
+Le cluster 1 regroupe des gènes faiblement influencés par les traitements. Les variations d’expression sont faibles, indépendamment du traitement ou du moment d’observation. Sur la Figure \ref{fig:Kmeans2}, ces gènes se situent relativement proche de l'origine du repère. Ils pourraient correspondre au traitement T1, qui ne provoque généralement pas de changements majeurs. Toutefois, ils peuvent servir de référence pour analyser les gènes plus dynamiques en réponse aux traitements T2 et T3.
+Le cluster 2 rassemble des gènes avec une dynamique modérée dans les variations de leurs expressions. Ces gènes présentent des variations n’étant ni faibles ni très marquées. Ils pourraient refléter une étape intermédiaire dans la progression, illustrant des transitions entre des gènes peu réactifs et ceux fortement influencés, particulièrement sous l’effet des traitements T2 et T3.
+Le cluster 3 est caractérisé par des gènes avec des réactions génétiques marquées, associées principalement aux heures avancées des traitements T2 et T3. Les variations importantes de ces gènes sont déclenchées dans la durée, reflétant une réponse génétique significative aux traitements administrés tardivement.
+Enfin, le cluster 4 regroupe des gènes fortement influencés par les traitements T2 et T3 dès les premières heures. Ces gènes présentent des variations d’expression rapides et marquées, traduisant une réponse précoce et intense à ces traitements.
 
 ### Classification hiérarchique
 
@@ -792,18 +772,19 @@ grid.arrange(g1,g2,g3,ncol=3)
 ```
 
 Sur le  graphe du critère de Calinski-Harabasz, on observe une forte diminution du critère CH au début (entre un et cinq clusters), suivie d'une diminution plus progressive pour un nombre de clusters supérieur.
-Le point de "coude" semble être autour de quatre clusters, où la pente change notablement avant de devenir plus linéaire.
+Le point de "coude" est choisi à quatre clusters, où la pente commence à devenir plus linéaire.
 Sur la base de ce graphique et des Kmeans fait précédemment, quatre clusters ont choisis pour la classification hiérarchique. Ils maximisent le critère CH tout en évitant une complexité inutile liée à un trop grand nombre de clusters.
 
 La hauteur où le dendrogramme présente quatre grandes branches, les gènes sont donc classés en quatre clusters.
-Ces derniers sont interprétés à l'aide du graphe des individus:
 
-Cluster 1 : Gènes faiblement influencés par les traitements (variations faibles, proches de l'origine du repère). Ils pourraient être associés principalement au traitement T1.
-Cluster 2 : Gènes avec une réponse modérée aux traitements.
-Cluster 3 : Gènes fortement influencés par les traitements aux heures avancées, principalement T2 et T3. Ces gènes montrent de grandes variations après plusieurs heures de traitement.
-Cluster 4 : Gènes avec des variations marquées tôt dans le traitement, surtout pour T2 et T3, montrant une réponse rapide aux traitements.
+Le grape des individus ne permet pas de distingier des groupe distincts sans les clusters. 
+Les gènes du cluster 1 sont faiblement influencés par les traitements, présentant des variations minimes. Ils semblent principalement associés au traitement T1.
+En ce qui concerne le cluster 2, il regroupe des gènes dont les réponses aux traitements sont modérées. 
+Le cluster 3, quant à lui, contient des gènes fortement influencés par les traitements appliqués à des heures avancées. On note que sur les traitements T2 et T3, des variations significatives sont observées après plusieurs heures de traitement. 
+Enfin, le cluster 4 se distingue par des gènes qui affichent des variations marquées dès le début du traitement, particulièrement en réponse à T2 et T3, traduisant une réaction rapide à ces traitements.
+On a des résultats similaires aux K-Means, ce qui permet de valider l'interprétation.
 
-```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:a completer}Diagramme d'alluvions des correspondances entre les clusters des K-means et de la classification hiérarchique", results='hide'}
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:alluvions1}Diagramme d'alluvions des correspondances entre les clusters des K-means et de la classification hiérarchique", results='hide'}
 clust1<-paste("Cl-K",reskmeans$cluster,sep="")
 clust2<-paste("Cl-hiérarchique",ClustCH,sep="")
 Tab<-melt(table(clust1,clust2))
@@ -815,11 +796,11 @@ ggplot(Tab,aes(y=value,axis1=clust1,axis2=clust2))+
 ```
 
 Les deux méthodes (Kmeans et classification hiérarchique) ont identifié quatre clusters optimaux.
-On observe que le quatrième clusters des Kmeans présente des gènes qui sont plus éparpillés dans la classification hiérarchique. On en conclut que la classification hiérarchique donne un résultat légèrement plus précis sur la classification des gènes? Excepté cela, on remarque que les clusters sont presque identiques, quelque soit la méthode utilisée.
+Sur la Figure \ref{fig:alluvions1}, on observe que le quatrième clusters des Kmeans présente des gènes qui sont plus éparpillés dans la classification hiérarchique. On en conclut que la classification hiérarchique donne un résultat légèrement plus précis sur la classification des gènes? Excepté cela, on remarque que les clusters sont presque identiques, quelque soit la méthode utilisée.
 
 ### Comparaison des différentes méthodes d'ACP et de clustering des différentes experiences
 
-```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig: completer}Habillage du graphe des individus par expression des gènes sur chaque experience"}
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig: graph indiv sur_sous_non}Habillage du graphe des individus par expression des gènes sur chaque experience"}
 g1<-fviz_pca_ind(respcag,habillage="ExpT1",geom=c("point"))
 g2<-fviz_pca_ind(respcag,habillage="ExpT2",geom=c("point"))
 g3<-fviz_pca_ind(respcag,habillage="ExpT3",geom=c("point"))
@@ -827,7 +808,7 @@ grid.arrange(g1,g2,g3,ncol=3)
 
 ```
 
-Les graphiques des individus révèlent des différences marquées entre les traitements T1, T2, et T3 en termes de réponse génétique. D’après la Figure (ExpT1), la majorité des gènes sous le traitement T1 restent dans la modalité "Non", indiquant une absence d'évolution significative de leur expression. Les groupes "Sous" et "Sur" sont peu représentés, soulignant l’effet limité de T1 sur l'expression génétique. 
+Les graphiques des individus de la Figure \ref{fig: graph indiv sur_sous_non} révèlent des différences marquées entre les traitements T1, T2, et T3 en termes de réponse génétique. D’après la Figure (ExpT1), la majorité des gènes sous le traitement T1 restent dans la modalité "Non", indiquant une absence d'évolution significative de leur expression. Les groupes "Sous" et "Sur" sont peu représentés, soulignant l’effet limité de T1 sur l'expression génétique. 
 En revanche, la Figure (ExpT2) montre une répartition plus large des gènes dans les modalités "Sous" et "Sur", ce qui traduit une réponse génétique plus forte au traitement T2, avec un nombre significativement réduit de gènes dans la modalité "Non" par rapport à T1.
 Enfin, la Figure (ExpT3) présente une distribution similaire à celle de T2, mais avec une augmentation notable du groupe "Sur" exprimé. Cela confirme que le traitement T3, issu d'une combinaison des traitements T1 et T2, amplifie les effets de T2 tout en masquant en grande partie l’impact limité de T1.
 
@@ -857,7 +838,7 @@ g2<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
 
 ```
 
-```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:completer}Diagramme d'alluvions des expressions génétiques dans les clusters du K-means", results='hide', fig.height=2.5}
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:alluvions2}Diagramme d'alluvions des expressions génétiques dans les clusters du K-means", results='hide', fig.height=2.5}
 clust<-paste("Cl-K",reskmeans$cluster,sep="")
 Tab<-melt(table(clust,dataACPg[,21]))
 g3<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
@@ -893,7 +874,7 @@ g2<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
 
 ```
 
-```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:completer}Diagramme d'alluvions des expressions génétiques dans les clusters de la classification hiérarchique", results='hide', fig.height=2.5}
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:alluvions3}Diagramme d'alluvions des expressions génétiques dans les clusters de la classification hiérarchique", results='hide', fig.height=2.5}
 clust<-paste("Cl-hiérarchique",ClustCH,sep="")
 Tab<-melt(table(clust,dataACPg[,21]))
 g3<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
@@ -908,7 +889,7 @@ grid.arrange(g1,g2,g3,ncol=3)
 
 
 
-Les résultats des clustering suite aux Kmeans (Figure 23) et de la classification hiérarchique (Figure 24) permettent d'en arriver aux mêmes conclusions: Les gènes répondent de manière distincte aux traitements. EXPT1 génère une faible réponse, avec des gènes sans réaction notables dans tous les clusters et en grand nombre. EXPT2 et EXPT3 induisent des réponses plus variées, avec une minorité quasimet négligeable de gène "Non".
+On observe sur la Figure \ref{fig:alluvions2} les résultats des clustering suite aux Kmeans et ceux de la classification hiérarchique sur la Figure \ref{fig:alluvions3}. Ils permettent d'en arriver à la même conclusion: Les gènes répondent de manière distincte aux traitements. EXPT1 génère une faible réponse, avec des gènes sans réaction notables dans tous les clusters et en grand nombre. EXPT2 et EXPT3 induisent des réponses plus variées, avec une minorité quasimet négligeable de gène "Non".
 
 # Conclusion
 
