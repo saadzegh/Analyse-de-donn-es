@@ -579,7 +579,7 @@ hward<-hclust(dist_dataACPv, method = "ward.D2")
 #fviz_dend(hward,show_labels=FALSE)
 ```
 
-```{r ,fig.cap="\\label{fig:CAH1}A compléter v"}
+```{r ,fig.cap="\\label{fig:CAH1}Dendrogramme et répartition des clusters de la classification hiérarchique"}
 # A COMPLETER
 CH<-NULL
 Kmax<-20
@@ -772,7 +772,7 @@ fviz_dend(hward,show_labels=FALSE)
 
 Au vu du nombre important de gènes considérés ici, on ne peut pas faire une conjecture du nombre de clusters grâce à la lecture du dendrogramme.
 
-```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:à completer}à completer"}
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:Dendrogramme et répartition des clusters de la classification hiérarchique}à completer"}
 CH<-NULL
 Kmax<-20
 for (k in 2:Kmax){
