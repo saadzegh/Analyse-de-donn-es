@@ -72,7 +72,7 @@ Afin de visualiser les données, les premières lignes du jeu de données sont a
 En raison de la grande quantité de données, nous avons choisi de représenter seulement les variables T1_1H_R1 à T1_6H_R1 et ExpT1 qui donnent un aperçu de la structure du jeu de données pour le réplicat R1.
 
 ```{r, echo=FALSE, eval=TRUE}
-kable(head(data[,c(1:6,37)]),caption="\\label{tab:tabdata}Les premières lignes du jeu de données.")
+kable(head(data[,c(1:6,37)]),caption="\\label{tab :tabdata}Les premières lignes du jeu de données.")
 ```
 
 ## Analyse uni-dimensionnelle
@@ -88,7 +88,7 @@ levels(data$ExpT2)
 levels(data$ExpT3)
 ```
 
-Nous avons à notre disposition trois variables qualitatives : ExpT1, ExpT2, ExpT3 comme décrites précédemment. Pour extraire certaines tendances des traitements appliqués, nous analysons les fréquences d'apparition des différentes modalités et nous les représentons sous forme de diagrammes en secteurs dans la Figure \ref{fig:diagsecteurs}.
+Nous avons à notre disposition trois variables qualitatives : ExpT1, ExpT2 et ExpT3 comme décrites précédemment. Pour extraire certaines tendances des traitements appliqués, nous analysons les fréquences d'apparition des différentes modalités et nous les représentons sous forme de diagrammes en secteurs dans la Figure \ref{fig:diagsecteurs}.
 
 ```{r ,echo=F, eval=FALSE}
 #Tableau des fréquences pour les variables qualitatives (non utilisé dans le rapport)
@@ -118,7 +118,7 @@ g3 = ggplot(data) + geom_bar(aes(x = ExpT3))
 grid.arrange(g1,g2,g3,ncol=3)
 ```
 
-```{r, echo=FALSE, eval=TRUE, fig.align='center', fig.cap="\\label{fig:diagsecteurs}Diagrammes en secteurs des fréquences des variables ExpT1, ExpT2 et ExpT3"}
+```{r, echo=FALSE, eval=TRUE, fig.align='center', fig.cap="\\label{fig :diagsecteurs}Diagrammes en secteurs des fréquences des variables ExpT1, ExpT2 et ExpT3"}
 #Diagrammes en secteurs des fréquences pour les variables qualitatives
 
 #Pour ExpT1
@@ -286,7 +286,7 @@ Enfin, Les variables mesurant le même traitement (T1, T2, ou T3) à des heures 
 
 ### Deux variables qualitatives
 
-Dans le cas de deux variables qualitatives, on représente les profils-ligne ou profils-colonne dans la Figure \ref{fig:profils_lignes}.
+Dans le cas de deux variables qualitatives, on représente les profils-ligne dans la Figure \ref{fig:profils_lignes}.
 
 ```{r, fig.height=5, fig.width=15, fig.cap="\\label{fig:profils_lignes}Profils-lignes des variables qualitatives"}
 #Tableaux de contingence et profils-lignes des variables qualitatives
@@ -305,11 +305,11 @@ geom_bar(position = "fill")
 
 grid.arrange(g1,g2,g3,ncol=3)
 ```
-Les profils-lignes montrent la répartition des modalités des variables qualitatives (ExpT1, ExpT2, ExpT3) et permet de comparer les résultats biologiques de décision obtenus par les trois traitements. L'analyse de la Figure \ref{fig:profils_lignes} montre à nouveau que les réponses des traitements T2 et T3 sont similaires avce une légère prépondérence de "sur" exprimé pour T3 et moins de "non" exprimé. De plus, T3 déclenche des réponses significatives sur plus de gènes que T2 ce qui concorde avec le fait que T3 est une combinaison des effets de T1 et T2. La similarité pourrait indiquer que l'effet de T2 domine dans la combinaison.
+Les profils-ligne montrent la répartition des modalités des variables qualitatives (ExpT1, ExpT2, ExpT3) et permet de comparer les résultats biologiques de décision obtenus par les trois traitements. L'analyse de la Figure \ref{fig:profils_lignes} montre à nouveau que les réponses des traitements T2 et T3 sont similaires avce une légère prépondérence de "sur" exprimé pour T3 et moins de "non" exprimé. De plus, T3 déclenche des réponses significatives sur plus de gènes que T2 ce qui concorde avec le fait que T3 est une combinaison des effets de T1 et T2. La similarité pourrait indiquer que l'effet de T2 domine dans la combinaison.
 
 On peut également observer que les réponses des gènes au traitement T1 sont très différentes des réponses aux traitements T2 et T3. La majorité des gènes "sous" exprimés par le traitement T1 le restent avec les deux autres traitements mais les gènes "non" exprimé deviennent "sur" et "sous" exprimés par les traitements T2 et T3 avec des proportions similaires. De même, les gènes "sur" exprimés avec T1 se divisent dans les trois modalités pour les deux traitements restants.
 
-Les profils ligne illustrent des tendances qualitatives cohérentes avec les boxplots de l'analyse uni-dimensionnelle. Par exemple, les distributions équilibrées des modalités "Sur" et "Sous" pour T2 et T3 sont en accord avec les variances plus importantes observées dans les boxplots.
+Les profils-ligne illustrent des tendances qualitatives cohérentes avec les boxplots de l'analyse uni-dimensionnelle. Par exemple, les distributions équilibrées des modalités "Sur" et "Sous" pour T2 et T3 sont en accord avec les variances plus importantes observées dans les boxplots.
 
 
 ### Une variable qualitative et une variable quantitative
@@ -339,6 +339,7 @@ Pour la modalité "non", les valeurs des boxplots (médiane et dispersion) se re
 Pour la modalité "sous", les valeurs des boxplots sont toujours négatives, ce qui est attendu puisque ces gènes sont sous-exprimés par définition. Au contraire, pour la modalité "sur", les valeurs des boxplots sont toujours positives, avec des médianes plus élevées et une dispersion qui reflète une surexpression des gènes.
 
 \newpage
+
 # Analyse des Tt_sH_Rr
 
 Nous souhaitons maintenant analyser les variables quantitatives Tt_sH_Rr en tant qu'individus.
@@ -474,11 +475,11 @@ Après cette séparation, la variabilité entre les heures oscille principalemen
 
 ## Clustering
 
-Nous souhaitons maintenant faire une classification non supervisée des données afin de regrouper les Tt_sH_Rr en plusieurs calsses homogènes.
+Nous souhaitons maintenant faire une classification non supervisée des données afin de regrouper les Tt_sH_Rr en plusieurs classes homogènes.
 
 ### Détermination du nombre de classes nécessaires
 
-Tout d'abord, nous déterminons le nombre de classes nécéssaires au clustering à l'aide de deux critères distincts : l'étude de l'évolution de l'inertie intra-classe et l'étude de silhouette, pour lesquels nous affichons les résultats en Figure \ref{fig:nb_classes1}.
+Tout d'abord, nous déterminons le nombre de classes nécessaires au clustering à l'aide de deux critères distincts : l'étude de l'évolution de l'inertie intra-classe et l'étude de silhouette, pour lesquels nous affichons les résultats en Figure \ref{fig:nb_classes1}.
 
 ```{r, echo=FALSE, eval=TRUE, results='hide'}
 #Inertie intraclasse
@@ -529,19 +530,23 @@ g3 <- g3 + ggtitle("Figure 9.3 : Visualisation des silhouettes") + theme(plot.ti
 
 grid.arrange(g1,g2,g3,ncol=3)
 ```
-En observant le graphique de l'inertie intra-classe, le "coude" apparaît au bout de trois classes. On décide donc d'en créer trois, ce qui devrait permettre de capturer une quantité significative de variance.
+En observant l'évolution de l'inertie intra-classe, le "coude" apparaît pour trois classes. On décide donc d'en créer trois, ce qui devrait permettre de capturer une quantité significative de variance.
 
-Le graphe de silhouette connait sa chute significative au bout de 3 classes. Ainsi les deux graphiques convergent vers l'hypothèse de créer 3 classes différentes dans notre clusering.
+Le graphe de silhouette connait sa chute significative également pour de trois classes. Ainsi les deux critères convergent vers l'hypothèse de créer trois classes différentes dans notre clustering.
 
-### Méthode des Kmeans
+### Méthode des K-means
 
-On applique dans un premier temps la méthode des Kmeans qui permet d'obtenir les trois clusters : {\textbf{\textsf{R}}} 
-Figure \ref{fig:kmeans1}
+On applique dans un premier temps la méthode des K-means qui permet d'obtenir les trois clusters que l'on représente en Figure \ref{fig:kmeans1}. {\textbf{\textsf{R}}} 
 
-Grace à la commande reskmeans$cluster on visualise les appartenances aux différents clusters
+Grace à la commande `reskmeans$cluster` on visualise les variables et leur cluster d'appartenance afin de pouvoir interpréter les différentes classes obtenues.
 ```{r,echo=F,eval=T,results='hide'}
 set.seed(25)
 reskmeans<-kmeans(dataACPv,3) 
+```
+
+```{r,eval=T}
+#Visualisation des variables et de leur cluster d'appartenance
+reskmeans$cluster
 ```
 
 ```{r, ehco=F, eval=T, fig.cap="\\label{fig:kmeans1}Graphe des individus avec représentation des clusters après K-Means"}
@@ -550,19 +555,17 @@ fviz_cluster(reskmeans,data=dataACPv,
              geom=c("point"))+ggtitle("")
 
 ```
+Le cluster 1 est caractérisé par une réponse homogène aux traitements. Il regroupe principalement les observations des traitements T2 et T3, en particulier les premières heures de ces derniers. On peut en déduire que les premiers effets de ces présentent une faible variabilité.
 
-```{r,eval=T}
-#Visualisation des variables et de leur cluster d'appartenance
-reskmeans$cluster
-```
-
-Le cluster 1 est caractérisé par une réponse homogène aux traitements. Il regroupe principalement les observations des traitements T2 et T3, en particulier pour les heures avancées de ces derniers. On peut en déduire que les premiers effets de ces présentent une faible variabilité.
 Le cluster 2 illustre une phase de transition. Les observations associées couvrent un intervalle plus large, incluant des variations d’expression génétique pour T2 et T3 entre les heures trois et six. Les réplicats de ce cluster mettent en évidence des similarités significatives entre les effets de T2 et T3, renforçant l’idée que ces deux traitements agissent de manière similaire sur les gènes.
-Enfin, le cluster 3 révèle une réponse spécifique aux premières heures du traitement T1. Les observations montrent que T1 se démarque, avec des variations génétiques beaucoup plus faibles comparées à T2 et T3. On peut emettre l'hypothèse que T1 active des mécanismes biologiques différents, engendrant moins de changements dans l’expression des gènes.
+
+Enfin, le cluster 3 révèle une réponse spécifique aux premières heures du traitement T1. Les observations montrent que T1 se démarque, avec des variations génétiques beaucoup plus faibles comparées à T2 et T3. On peut émettre l'hypothèse que T1 active des mécanismes biologiques différents, engendrant moins de changements dans l’expression des gènes.
 
 ### Classification hiérarchique
 
 Nous souhaitons maintenant mettre en place un classification hiérarchique des Tt_sH_Rr.
+
+Pour cela, on visualise le critère de Calinski-Harabasz et le dendrogramme en Figure \ref{fig:CAH1}. Le choix du nombre de cluster n'est pas évident en cherchant le pic du critère de Calinski-Harabasz. L'hyopthèse de trois clusters faite lors des K-means n'est donc pas incohérente et peut être gardée pour la classification hierarchique.
 
 ```{r, echo=F, eval=T}
 # dendogramme
@@ -591,13 +594,12 @@ g3<-fviz_pca_ind(respcav, geom = c("point"), habillage = as.factor(ClustCH))
 
 grid.arrange(g1,g2,g3,ncol=3)
 ```
-Le choix du nombre de cluster n'est pas évident en voyant le pic du critère de Calinski-Harabasz. L'hyopthèse de trois clusters faite lors des Kmeans n'est donc pas incohérente et peut être gardée pour la classification hierarchique.
 
-Sur le dendrogramme (Figure 13), l’axe vertical représente la distance/différences entre les gènes et leurs d'expressions sous différents traitements.
-Les gènes exposés au traitement T1 forment un groupe distinct (cluster rouge). Ce cluster se regroupe avec les autres seulement à une grande hauteur (environ 200), ce qui indique qu’il est très différent des groupes correspondant aux traitements T2 et T3.
-Les gènes des traitements T2 et T3 se regroupent à des hauteurs plus faibles (inférieures à 100), indiquant une plus grande similarité dans leurs réponses aux traitements. Cela reflète que T2 et T3 induisent des expressions génétiques similaires.
+Sur le dendrogramme en Figure \ref{fig:CAH1}, l’axe vertical représente la distance entre les gènes et leurs différences d'expression sous différents traitements.
+Les variables du traitement T1 forment un groupe distinct (cluster rouge). Ce cluster se regroupe avec les autres seulement à une grande hauteur (environ 250), ce qui indique qu’il est très différent des groupes correspondant aux traitements T2 et T3.
+Au contraire, les variables des traitements T2 et T3 se regroupent à des hauteurs plus faibles (inférieures à 100), indiquant une plus grande similarité dans leurs réponses aux traitements. Cela reflète que T2 et T3 induisent des expressions génétiques similaires.
 
-Sur le graphiques des individus (Figure 13), les clusters projetés sur le premier plan factoriel froment trois groupes distincts. On a bien des différences significatives entre les groupes. On observe que les gènes classés dans un même cluster partagent des comportements similaires en termes d'expression génétique sous l'effet de différents traitements. 
+Sur le graphiques des individus visualisé également en Figure \ref{fig:CAH1}, les clusters projetés sur les premiers plans factoriels forment trois groupes distincts. On a bien des différences significatives entre les groupes. On observe que les gènes classés dans un même cluster partagent des comportements similaires en termes d'expression génétique sous l'effet de différents traitements. 
 
 # Analyse des gènes
 
@@ -633,8 +635,6 @@ Les deux premières composantes principales (Dim1 et Dim2) capturent 59,2 % et 2
 
 Nous affichons la projection des individus sur les plans factoriels ainsi que le cercle des corrélations des variables initiales avec les méta-variables en Figure \ref{fig:figuresACP2} afin d’identifier les individus et les variables importants. Nous complétons avec la matrice des corrélations en Figure \ref{fig:corrACP2}.
 
-\newpage
-
 ```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:figuresACP2}Graphe des variables (gauche) et graphe des individus (droite)"}
 Aux<-rownames(respcag$var$coord)
 #Aux
@@ -657,9 +657,12 @@ D'après le graphe des individus en Figure \ref{fig:figuresACP2}, la majorité d
 
 ## Clustering
 
-On décide de faire un clustering sur les données brutes car, quelque soit le gène considéré, on étudie les mêmes composantes. Le fait de centrer et réduire les données nous ferait perdre de l'information.
+Nous souhaitons faire une classification non supervisée (clustering) des gènes à partir de leur expression afin d’obtenir des classes de gènes homogènes (ayant la même évolution d’expression).
+Nous avons décidé de faire un clustering sur les données brutes car quelque soit le gène considéré, nous étudions les mêmes composantes. Le fait de centrer et réduire les données nous ferait perdre de l'information.
 
 ### Détermination du nombre de classes nécessaires
+
+Nous déterminons à nouveau le nombre de classes nécessaires à partir de deux critères différents qu enous visualisons en Figure \ref{fig:nb_classes2}.
 
 ```{r, echo=FALSE, eval=TRUE, results='hide'}
 set.seed(25)
@@ -710,13 +713,14 @@ rm(df,Silhou,aux)
 
 grid.arrange(g1,g2,g3,g4,ncol=4)
 ```
-En observant le graphique de l'inertie intra-classe sur la Figure \ref{fig:nb_classes2}, le "coude" apparaît autour de quatre classes. On décide donc d'en créer quatre, ce qui devrait permettre de capturer une quantité significative de variance.
+En observant l'évolution de l'inertie intra-classe sur la Figure \ref{fig:nb_classes2}, le "coude" apparaît autour de quatre classes. On décide donc d'en créer quatre, ce qui devrait permettre de capturer une quantité significative de variance.
 
-On observe de "chute" sur le graphique de silhouette au point trois et cinq. On prend le coefficient de silhouette moyen de quatre classes qui est légèrement plus élevé que pour d'autres choix de nombre de clusters.
+On observe des "chutes" sur le graphique de silhouette au point trois et cinq. On prend le coefficient de silhouette moyen de quatre classes qui est légèrement plus élevé que pour d'autres choix de nombre de clusters.
 
-### Méthode des Kmeans
+### Méthode des K-means
 
-On applique la méthode des Kmeans qui permet d'obtenir les quatre clusters : {\textbf{\textsf{R}}} 
+On applique la méthode des K-means qui permet d'obtenir les quatre clusters que l'on représente en Figure \ref{fig:Kmeans2}. {\textbf{\textsf{R}}} 
+
 ```{r, echo=F, eval=T}
 set.seed(1)
 reskmeans<-kmeans(dataACPgC,4) 
@@ -732,15 +736,17 @@ fviz_cluster(reskmeans,data=dataACPgC,
 #fviz_pca_ind(respcag,col.ind=as.factor(reskmeans$cluster), geom = c("point"),axes=c(1,2))
 reskmeans$cluster
 ```
+D'après nos résulats, le cluster 1 regroupe des gènes faiblement influencés par les traitements. Les variations d’expression sont faibles, indépendamment du traitement ou du moment d’observation. Sur la Figure \ref{fig:Kmeans2}, ces gènes se situent relativement proche de l'origine du repère. Ils pourraient correspondre au traitement T1, qui ne provoque généralement pas de changements majeurs. Toutefois, ils peuvent servir de référence pour analyser les gènes plus dynamiques en réponse aux traitements T2 et T3.
 
-Le cluster 1 regroupe des gènes faiblement influencés par les traitements. Les variations d’expression sont faibles, indépendamment du traitement ou du moment d’observation. Sur la Figure \ref{fig:Kmeans2}, ces gènes se situent relativement proche de l'origine du repère. Ils pourraient correspondre au traitement T1, qui ne provoque généralement pas de changements majeurs. Toutefois, ils peuvent servir de référence pour analyser les gènes plus dynamiques en réponse aux traitements T2 et T3.
 Le cluster 2 rassemble des gènes avec une dynamique modérée dans les variations de leurs expressions. Ces gènes présentent des variations n’étant ni faibles ni très marquées. Ils pourraient refléter une étape intermédiaire dans la progression, illustrant des transitions entre des gènes peu réactifs et ceux fortement influencés, particulièrement sous l’effet des traitements T2 et T3.
+
 Le cluster 3 est caractérisé par des gènes avec des réactions génétiques marquées, associées principalement aux heures avancées des traitements T2 et T3. Les variations importantes de ces gènes sont déclenchées dans la durée, reflétant une réponse génétique significative aux traitements administrés tardivement.
+
 Enfin, le cluster 4 regroupe des gènes fortement influencés par les traitements T2 et T3 dès les premières heures. Ces gènes présentent des variations d’expression rapides et marquées, traduisant une réponse précoce et intense à ces traitements.
 
 ### Classification hiérarchique
 
-Puisqu'on analyse un même nombre de gènes entre chaque experience, on  utilise Ward comme mesure d'agrégation. Au vu de l'analyse des composantes principales, on cherche à former des classes sphériques avec des effectifs équivalents. 
+Nous souhaitons maintenant mettre en place une classification hiérarchique des gènes. Puisque l'on analyse un même nombre de gènes entre chaque experience, on  utilise la méthode de Ward comme mesure d'agrégation. Suite à l'analyse en composantes principales, on cherche à former des classes sphériques avec des effectifs équivalents. 
 
 ```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:dendrogramme}Dendrogramme des gènes"}
 # dendrogramme
@@ -749,10 +755,11 @@ dist_dataACPg = dist(dataACPgC)
 hward<-hclust(dist_dataACPg, method = "ward.D2") 
 fviz_dend(hward,show_labels=FALSE)
 ```
+Au vu du nombre important de gènes considérés ici, on ne peut pas faire de conjecture du nombre de clusters grâce à la lecture du dendrogramme en Figure \ref{fig:dendrogramme}.
 
-Au vu du nombre important de gènes considérés ici, on ne peut pas faire une conjecture du nombre de clusters grâce à la lecture du dendrogramme.
+On représente en Figure \ref{fig:CAH2} le critère de Calinski-Harabasz et le dendrogramme.
 
-```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:Dendrogramme et répartition des clusters de la classification hiérarchique}à completer"}
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:CAH2}Dendrogramme et répartition des clusters de la classification hiérarchique"}
 CH<-NULL
 Kmax<-20
 for (k in 2:Kmax){
@@ -770,19 +777,15 @@ g3<-fviz_pca_ind(respcag, geom = c("point"), habillage = as.factor(ClustCH))
 
 grid.arrange(g1,g2,g3,ncol=3)
 ```
-
-Sur le  graphe du critère de Calinski-Harabasz, on observe une forte diminution du critère CH au début (entre un et cinq clusters), suivie d'une diminution plus progressive pour un nombre de clusters supérieur.
+Sur le  graphe du critère de Calinski-Harabasz, on observe une forte diminution du critère CH dès le début (entre un et cinq clusters), suivie d'une diminution plus progressive pour un nombre de clusters supérieur.
 Le point de "coude" est choisi à quatre clusters, où la pente commence à devenir plus linéaire.
-Sur la base de ce graphique et des Kmeans fait précédemment, quatre clusters ont choisis pour la classification hiérarchique. Ils maximisent le critère CH tout en évitant une complexité inutile liée à un trop grand nombre de clusters.
+Sur la base de ce graphique et des K-means effectués précédemment, le nombre de quatre clusters a été choisi pour la classification hiérarchique. Ils maximisent le critère CH tout en évitant une complexité inutile liée à un trop grand nombre de clusters.
 
-La hauteur où le dendrogramme présente quatre grandes branches, les gènes sont donc classés en quatre clusters.
+On cherche la hauteur pour laquelle le dendrogramme présente quatre grandes branches, les gènes sont donc classés en quatre clusters.
 
-Le grape des individus ne permet pas de distingier des groupe distincts sans les clusters. 
-Les gènes du cluster 1 sont faiblement influencés par les traitements, présentant des variations minimes. Ils semblent principalement associés au traitement T1.
-En ce qui concerne le cluster 2, il regroupe des gènes dont les réponses aux traitements sont modérées. 
-Le cluster 3, quant à lui, contient des gènes fortement influencés par les traitements appliqués à des heures avancées. On note que sur les traitements T2 et T3, des variations significatives sont observées après plusieurs heures de traitement. 
-Enfin, le cluster 4 se distingue par des gènes qui affichent des variations marquées dès le début du traitement, particulièrement en réponse à T2 et T3, traduisant une réaction rapide à ces traitements.
-On a des résultats similaires aux K-Means, ce qui permet de valider l'interprétation.
+Le grape des individus ne nous permet pas de distinguer des groupe distincts sans les clusters. 
+Les gènes du cluster 1 sont faiblement influencés par les traitements, présentant des variations minimes. Ils semblent principalement associés au traitement T1. En ce qui concerne le cluster 2, il regroupe des gènes dont les réponses aux traitements sont modérées.  Le cluster 3, quant à lui, contient des gènes fortement influencés par les traitements appliqués à des heures avancées. On note que sur les traitements T2 et T3, des variations significatives sont observées après plusieurs heures de traitement. Enfin, le cluster 4 se distingue par des gènes qui affichent des variations marquées dès le début du traitement, particulièrement en réponse à T2 et T3, traduisant une réaction rapide à ces traitements.
+On a des résultats similaires aux K-Means, ce qui nous permet de valider l'interprétation.
 
 ```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:alluvions1}Diagramme d'alluvions des correspondances entre les clusters des K-means et de la classification hiérarchique", results='hide'}
 clust1<-paste("Cl-K",reskmeans$cluster,sep="")
@@ -794,26 +797,29 @@ ggplot(Tab,aes(y=value,axis1=clust1,axis2=clust2))+
   geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
   theme(legend.position = "none")
 ```
-
 Les deux méthodes (Kmeans et classification hiérarchique) ont identifié quatre clusters optimaux.
-Sur la Figure \ref{fig:alluvions1}, on observe que le quatrième clusters des Kmeans présente des gènes qui sont plus éparpillés dans la classification hiérarchique. On en conclut que la classification hiérarchique donne un résultat légèrement plus précis sur la classification des gènes? Excepté cela, on remarque que les clusters sont presque identiques, quelque soit la méthode utilisée.
+Sur la Figure \ref{fig:alluvions1} représentant le diagramme d'alluvions des correspondances entre les clusters des K-means et de la classification hiérarchique, on observe que le quatrième cluster des Kmeans présente des gènes qui sont plus éparpillés dans la classification hiérarchique. On en conclut que la classification hiérarchique donne un résultat légèrement plus précis sur la classification des gènes. Excepté cela, on remarque que les clusters sont presque identiques, quelque soit la méthode utilisée, ce qui confirme les classes obtenues.
 
 ### Comparaison des différentes méthodes d'ACP et de clustering des différentes experiences
 
-```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig: graph indiv sur_sous_non}Habillage du graphe des individus par expression des gènes sur chaque experience"}
+Nous souhaitons maintenant comparer quelques résultats obtenus sur les clustering et l'analyse en composantes principales.
+
+Tout d'abord, on habille le graphe des individus de l'analyse en composantes principales des gènes par les résultats des variables ExpT1, ExpT2 et ExpT3 en Figure \ref{fig:graph_indiv_sur_sous_non}. Ces graphes nous permettent de comparer les réactions des gènes spécifiques aux différents traitements.
+
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:graph_indiv_sur_sous_non}Habillage du graphe des individus par expression des gènes sur chaque experience"}
 g1<-fviz_pca_ind(respcag,habillage="ExpT1",geom=c("point"))
 g2<-fviz_pca_ind(respcag,habillage="ExpT2",geom=c("point"))
 g3<-fviz_pca_ind(respcag,habillage="ExpT3",geom=c("point"))
 grid.arrange(g1,g2,g3,ncol=3)
-
 ```
+Les graphiques des individus de la Figure \ref{fig:graph_indiv_sur_sous_non} révèlent des différences marquées entre les traitements T1, T2, et T3 en termes de réponse génétique. D’après la Figure (ExpT1), la majorité des gènes sous le traitement T1 restent dans la modalité "Non", indiquant une absence d'évolution significative de leur expression. Les groupes "Sous" et "Sur" sont peu représentés, soulignant l’effet limité de T1 sur l'expression génétique. 
+En revanche, la Figure (ExpT2) montre une répartition plus large des gènes dans les modalités "Sous" et "Sur", ce qui traduit une réponse génétique plus forte au traitement T2, avec un nombre significativement réduit de gènes dans la modalité "Non" par rapport à T1. Enfin, la Figure (ExpT3) présente une distribution similaire à celle de T2, mais avec une augmentation notable du groupe "Sur" exprimé. Cela confirme que le traitement T3, issu d'une combinaison des traitements T1 et T2, amplifie les effets de T2 tout en masquant en grande partie l’impact limité de T1.
 
-Les graphiques des individus de la Figure \ref{fig: graph indiv sur_sous_non} révèlent des différences marquées entre les traitements T1, T2, et T3 en termes de réponse génétique. D’après la Figure (ExpT1), la majorité des gènes sous le traitement T1 restent dans la modalité "Non", indiquant une absence d'évolution significative de leur expression. Les groupes "Sous" et "Sur" sont peu représentés, soulignant l’effet limité de T1 sur l'expression génétique. 
-En revanche, la Figure (ExpT2) montre une répartition plus large des gènes dans les modalités "Sous" et "Sur", ce qui traduit une réponse génétique plus forte au traitement T2, avec un nombre significativement réduit de gènes dans la modalité "Non" par rapport à T1.
-Enfin, la Figure (ExpT3) présente une distribution similaire à celle de T2, mais avec une augmentation notable du groupe "Sur" exprimé. Cela confirme que le traitement T3, issu d'une combinaison des traitements T1 et T2, amplifie les effets de T2 tout en masquant en grande partie l’impact limité de T1.
+On observe par ailleurs que les gènes s'exprimant en "sous" sous le traitement T2 s'expriment toujours en "sous" sous le traitement T3 avec quelques gènes "non" exprimés qui évoluent avec T3. De même pour les gènes s'exprimant en "sur". On voit bien que quelques gènes s'étant "sur" exprimés ave le traitement T1 deviennent également "sur" exprimés avec T3, ce qui n'etait pas le cas avec T2. T1 a donc tout de même une part d'influence sur T3.
 
-On retrouve les mêmes conclusions que la première ACP faite précédemment.
+On peut également souligner que ce sont les gènes qui "sur" réagissent à l'issue du traitement T1 qui contribuent le plus aux comopsantes principales et notamment à Dim2.
 
+Enfin, nous comparons les résultats des clusterings aux variables qualitatives données à l'aide de diagrammes d'alluvions dans la Figure \ref{fig:alluvions2} (K-means) et la Figure \ref{fig:alluvions3} (classification hiérarchique).
 ```{r}
 clust<-paste("Cl-K",reskmeans$cluster,sep="")
 Tab<-melt(table(clust,dataACPg[,19]))
@@ -825,7 +831,6 @@ g1<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
   theme(legend.position = "none")
 ```
 
-
 ```{r, echo=FALSE, eval=TRUE, results='hide'}
 clust<-paste("Cl-K",reskmeans$cluster,sep="")
 Tab<-melt(table(clust,dataACPg[,20]))
@@ -835,10 +840,9 @@ g2<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
   geom_text(stat = "stratum", aes(label = after_stat(stratum)))+
   ggtitle("EXPT2")
   theme(legend.position = "none")
-
 ```
 
-```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:alluvions2}Diagramme d'alluvions des expressions génétiques dans les clusters du K-means", results='hide', fig.height=2.5}
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:alluvions2}Diagramme d'alluvions des expressions génétiques dans les clusters du K-means", results='hide', fig.height=3}
 clust<-paste("Cl-K",reskmeans$cluster,sep="")
 Tab<-melt(table(clust,dataACPg[,21]))
 g3<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
@@ -874,7 +878,7 @@ g2<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
 
 ```
 
-```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:alluvions3}Diagramme d'alluvions des expressions génétiques dans les clusters de la classification hiérarchique", results='hide', fig.height=2.5}
+```{r, echo=FALSE, eval=TRUE, fig.cap="\\label{fig:alluvions3}Diagramme d'alluvions des expressions génétiques dans les clusters de la classification hiérarchique", results='hide', fig.height=3}
 clust<-paste("Cl-hiérarchique",ClustCH,sep="")
 Tab<-melt(table(clust,dataACPg[,21]))
 g3<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
@@ -886,15 +890,12 @@ g3<-ggplot(Tab,aes(y=value,axis1=clust,axis2=Var2))+
 grid.arrange(g1,g2,g3,ncol=3)
 
 ```
-
-
-
-On observe sur la Figure \ref{fig:alluvions2} les résultats des clustering suite aux Kmeans et ceux de la classification hiérarchique sur la Figure \ref{fig:alluvions3}. Ils permettent d'en arriver à la même conclusion: Les gènes répondent de manière distincte aux traitements. EXPT1 génère une faible réponse, avec des gènes sans réaction notables dans tous les clusters et en grand nombre. EXPT2 et EXPT3 induisent des réponses plus variées, avec une minorité quasimet négligeable de gène "Non".
+Ces diagrammes d'alluvions permettent d'en arriver à la même conclusion : Les gènes répondent de manière distincte aux traitements. EXPT1 génère une faible réponse, avec des gènes sans réaction notables dans tous les clusters et en grand nombre. EXPT2 et EXPT3 induisent des réponses plus variées, avec une minorité quasiment négligeable de gènes "Non".
 
 # Conclusion
 
-Les analyses descriptives ont montré des disparités marquées entre les traitements. T1 s’est révélé peu efficace, avec une majorité de gènes ne présentant pas de variation notable d’expression. En revanche, T2 a induit des changements significatifs, avec une répartition équilibrée entre les gènes surexprimés et sous-exprimés. Le traitement T3, conçu comme une combinaison des effets de T1 et T2, s’est distingué par ses effets légèrement amplifié par rapport au second traitement. On retrouve des résultats similaires à ceux observées avec T2 tout en masquant en grande partie l’effet limité de T1. Ainsi on peut en conclure que T2 constitue le facteur dominant dans la combinaison.
+En conclusion, les statistiques descriptives menées ont montré des disparités marquées entre les traitements. T1 s’est révélé peu efficace, avec une majorité de gènes ne présentant pas de variation notable d’expression. En revanche, T2 a induit des changements significatifs, avec une répartition équilibrée entre les gènes surexprimés et sous-exprimés. Le traitement T3, conçu comme une combinaison des effets de T1 et T2, s’est distingué par ses effets légèrement amplifiés par rapport au second traitement. On retrouve des résultats similaires à ceux observées avec T2 tout en masquant en grande partie l’effet limité de T1. Ainsi on peut en conclure que T2 constitue le facteur dominant dans la combinaison, même si nous avons pu par la suite observer l'effet de T1.
 
-L’ACP a confirmé cette observation en identifiant deux composantes principales où les effets de T2 et T3 se regroupent, tandis que T1 se positionne à part, avec des réponses globalement faibles.
+Ensuite, l'analsye en composantes principales a confirmé cette observation en identifiant deux composantes principales où les effets de T2 et T3 se regroupent, tandis que T1 se positionne à part, avec des réponses globalement faibles.
 
-Le clustering a renforcé ces conclusions en identifiant des groupes de gènes différenciés par leurs réponses aux traitements, notamment par rapport au temps. Ces résultats ont mis en évidence des gènes réagissant rapidement (notamment aux premières heures de T2 et T3), ainsi que des gènes montrant des variations plus marquées sur une période prolongée.
+Enfin, le clustering a renforcé ces conclusions en identifiant des groupes de gènes différenciés par leurs réponses aux traitements, notamment par rapport au temps. Ces résultats ont mis en évidence des gènes réagissant rapidement (notamment aux premières heures de T2 et T3), ainsi que des gènes montrant des variations plus marquées sur une période prolongée.
